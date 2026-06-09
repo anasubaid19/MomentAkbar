@@ -1,0 +1,997 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Photobooth — Wisuda Akbar AL-WILDAN 2026</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #060e20; --navy: #0d1e40; --navy-lt: #1a3461;
+      --gold: #fbbf24; --gold-lt: #fde68a; --gold-dk: #b45309;
+      --white: #ffffff; --glass: rgba(255,255,255,0.05);
+      --glass-bd: rgba(251,191,36,0.2); --r-xl: 24px; --r-lg: 16px; --r-md: 12px;
+    }
+
+    html, body { height: 100%; overflow: hidden; }
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background: var(--bg); color: var(--white);
+      display: flex; flex-direction: column;
+    }
+
+    body::before {
+      content:''; position:fixed; inset:0; pointer-events:none; z-index:0;
+      background:
+        radial-gradient(ellipse 70% 50% at 80% 10%, rgba(251,191,36,.08) 0%,transparent 60%),
+        radial-gradient(ellipse 50% 40% at 10% 90%, rgba(59,130,246,.08) 0%,transparent 55%);
+    }
+
+    /* ══ HEADER ══ */
+    .header {
+      position: relative; z-index: 10;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 12px 16px;
+      background: rgba(6,14,32,.9);
+      border-bottom: 1px solid rgba(251,191,36,.15);
+      backdrop-filter: blur(20px);
+      flex-shrink: 0;
+    }
+    .header-brand { display: flex; align-items: center; gap: 10px; }
+    .header-logo {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: rgba(251,191,36,.1); border: 1.5px solid rgba(251,191,36,.3);
+      display: flex; align-items: center; justify-content: center;
+      overflow: hidden;
+    }
+    .header-logo img { width: 100%; height: 100%; object-fit: contain; }
+    .header-title { font-size: 13px; font-weight: 800; color: var(--gold); line-height: 1.2; }
+    .header-sub { font-size: 10px; color: rgba(255,255,255,.4); font-weight: 500; }
+
+    /* ══ MODE SELECTOR ══ */
+    .mode-bar {
+      position: relative; z-index: 10;
+      display: flex; gap: 8px; padding: 10px 16px;
+      background: rgba(6,14,32,.7);
+      border-bottom: 1px solid rgba(255,255,255,.06);
+      flex-shrink: 0;
+    }
+    .mode-btn {
+      flex: 1; padding: 8px; border-radius: var(--r-md);
+      border: 1.5px solid rgba(255,255,255,.1);
+      background: rgba(255,255,255,.04);
+      color: rgba(255,255,255,.4); font-family: inherit;
+      font-size: 12px; font-weight: 700; cursor: pointer;
+      transition: all .2s; text-align: center; line-height: 1.3;
+    }
+    .mode-btn small { display: block; font-size: 9px; font-weight: 500; opacity: .7; margin-top: 1px; }
+    .mode-btn.active {
+      border-color: var(--gold); background: rgba(251,191,36,.12);
+      color: var(--gold); box-shadow: 0 0 0 3px rgba(251,191,36,.08);
+    }
+
+    /* ══ MAIN AREA ══ */
+    .main {
+      flex: 1; position: relative; overflow: hidden;
+      display: flex; align-items: center; justify-content: center;
+      z-index: 1;
+    }
+
+    /* ══ CAMERA CONTAINER ══ */
+    .cam-wrap {
+      position: relative;
+      display: flex; align-items: center; justify-content: center;
+      width: 100%; height: 100%;
+    }
+
+    .cam-inner {
+      position: relative; overflow: hidden;
+      border-radius: var(--r-lg);
+      box-shadow: 0 0 0 2px rgba(251,191,36,.2), 0 24px 48px rgba(0,0,0,.5);
+    }
+
+    /* Single: 3:4, Strip: 3:4 x3 side by side → wrapped */
+    .cam-inner.mode-single { aspect-ratio: 3/4; }
+    .cam-inner.mode-strip  { aspect-ratio: 1/4; } /* 3 foto 3:4 vertikal stacked */
+
+    #video {
+      width: 100%; height: 100%;
+      object-fit: cover; display: block;
+      transform: scaleX(-1); /* mirror kamera depan */
+      background: #000;
+    }
+    #video.no-mirror { transform: scaleX(1); }
+
+    /* Frame overlay */
+    .frame-overlay {
+      position: absolute; inset: 0;
+      background-size: cover; background-position: center;
+      pointer-events: none; z-index: 3;
+    }
+
+    /* Countdown */
+    .countdown {
+      position: absolute; inset: 0; z-index: 10;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      background: rgba(6,14,32,.6);
+      backdrop-filter: blur(4px);
+      display: none;
+    }
+    .countdown.on { display: flex; }
+    .countdown-num {
+      font-size: 96px; font-weight: 900; color: var(--gold);
+      line-height: 1; letter-spacing: -4px;
+      text-shadow: 0 0 40px rgba(251,191,36,.6);
+      animation: countPop .4s cubic-bezier(.34,1.56,.64,1) both;
+    }
+    @keyframes countPop {
+      from { transform: scale(1.5); opacity: 0; }
+      to   { transform: scale(1);   opacity: 1; }
+    }
+    .countdown-lbl { font-size: 13px; color: rgba(255,255,255,.5); font-weight: 600; margin-top: 8px; }
+
+    /* Flash */
+    .flash {
+      position: absolute; inset: 0; z-index: 20;
+      background: #fff; opacity: 0; pointer-events: none;
+      transition: opacity .08s ease;
+    }
+    .flash.on { opacity: .9; }
+
+    /* Strip progress */
+    .strip-prog {
+      position: absolute; bottom: 12px; left: 0; right: 0;
+      z-index: 5; display: flex; justify-content: center; gap: 8px;
+      display: none;
+    }
+    .strip-prog.on { display: flex; }
+    .strip-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: rgba(255,255,255,.25);
+      transition: all .3s;
+    }
+    .strip-dot.done { background: var(--gold); box-shadow: 0 0 8px rgba(251,191,36,.5); }
+    .strip-dot.active { background: #fff; transform: scale(1.3); }
+
+    /* ══ PREVIEW PANEL (strip thumbnails) ══ */
+    .strip-preview {
+      position: absolute; right: -80px; top: 50%;
+      transform: translateY(-50%);
+      display: flex; flex-direction: column; gap: 6px;
+      transition: right .3s ease;
+      z-index: 5;
+    }
+    .strip-preview.visible { right: 8px; }
+    .strip-thumb {
+      width: 56px; aspect-ratio: 3/4;
+      border-radius: 6px; overflow: hidden;
+      border: 1.5px solid rgba(255,255,255,.15);
+      background: rgba(0,0,0,.4);
+      transition: border-color .2s;
+    }
+    .strip-thumb.done { border-color: var(--gold); }
+    .strip-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+    /* ══ CONTROLS ══ */
+    .controls {
+      position: relative; z-index: 10;
+      padding: 12px 16px 20px;
+      background: rgba(6,14,32,.9);
+      border-top: 1px solid rgba(255,255,255,.06);
+      backdrop-filter: blur(20px);
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 12px; flex-shrink: 0;
+    }
+
+    .ctrl-side { display: flex; gap: 8px; }
+
+    /* Shutter button */
+    .btn-shutter {
+      width: 68px; height: 68px; border-radius: 50%;
+      border: 3px solid var(--gold);
+      background: transparent; cursor: pointer;
+      position: relative; transition: transform .15s;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .btn-shutter::before {
+      content: ''; width: 54px; height: 54px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--gold-dk), var(--gold));
+      transition: transform .15s;
+    }
+    .btn-shutter:active { transform: scale(.92); }
+    .btn-shutter:active::before { transform: scale(.9); }
+    .btn-shutter:disabled { opacity: .35; cursor: not-allowed; }
+
+    /* Icon buttons */
+    .btn-icon {
+      width: 44px; height: 44px; border-radius: 50%;
+      border: 1.5px solid rgba(255,255,255,.15);
+      background: rgba(255,255,255,.07); cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: all .2s; color: rgba(255,255,255,.7);
+    }
+    .btn-icon:hover { background: rgba(255,255,255,.12); border-color: rgba(255,255,255,.3); }
+    .btn-icon svg { width: 20px; height: 20px; }
+
+    /* Frame selector */
+    .frame-sel-wrap {
+      display: flex; flex-direction: column; gap: 4px;
+    }
+    .frame-sel-lbl { font-size: 9px; font-weight: 700; color: rgba(255,255,255,.35); letter-spacing: 1px; text-transform: uppercase; }
+    .frame-sel {
+      background: rgba(255,255,255,.07); border: 1.5px solid rgba(255,255,255,.12);
+      border-radius: var(--r-md); color: var(--white);
+      font-family: inherit; font-size: 12px; font-weight: 600;
+      padding: 6px 10px; outline: none; cursor: pointer;
+      -webkit-appearance: none; appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='7'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23fbbf24' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: right 8px center;
+      padding-right: 26px;
+      max-width: 120px;
+    }
+    .frame-sel option { background: #0d1e40; }
+
+    /* ══ RESULT OVERLAY ══ */
+    .result-overlay {
+      position: fixed; inset: 0; z-index: 100;
+      background: rgba(0,0,0,.88);
+      backdrop-filter: blur(16px);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 20px; gap: 16px;
+      opacity: 0; pointer-events: none;
+      transition: opacity .3s;
+    }
+    .result-overlay.on { opacity: 1; pointer-events: all; }
+
+    .result-canvas-wrap {
+      position: relative; border-radius: var(--r-lg);
+      overflow: hidden;
+      box-shadow: 0 0 0 2px rgba(251,191,36,.3), 0 32px 64px rgba(0,0,0,.6);
+      transform: scale(.9) translateY(20px);
+      transition: transform .4s cubic-bezier(.34,1.2,.64,1);
+    }
+    .result-overlay.on .result-canvas-wrap { transform: none; }
+
+    #canvas-result {
+      display: block; max-height: 60vh; width: auto;
+      border-radius: var(--r-lg);
+    }
+
+    .result-actions { display: flex; gap: 10px; }
+
+    .btn-dl {
+      padding: 14px 28px;
+      background: linear-gradient(135deg, var(--gold-dk), var(--gold));
+      border: none; border-radius: var(--r-lg);
+      font-family: inherit; font-size: 14px; font-weight: 800;
+      color: var(--navy); cursor: pointer;
+      display: flex; align-items: center; gap: 8px;
+      transition: transform .18s, opacity .18s;
+    }
+    .btn-dl:active { transform: scale(.97); }
+    .btn-dl.loading { opacity: .7; cursor: wait; }
+    .dl-spin {
+      width: 16px; height: 16px;
+      border: 2.5px solid rgba(13,30,64,.25);
+      border-top-color: var(--navy);
+      border-radius: 50%;
+      animation: spin .7s linear infinite;
+      display: none;
+    }
+    .btn-dl.loading .dl-spin { display: block; }
+    .btn-dl.loading .dl-ic { display: none; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .btn-retake {
+      padding: 14px 24px;
+      background: rgba(255,255,255,.08); border: 1.5px solid rgba(255,255,255,.15);
+      border-radius: var(--r-lg); font-family: inherit;
+      font-size: 14px; font-weight: 700; color: rgba(255,255,255,.7);
+      cursor: pointer; transition: background .2s;
+    }
+    .btn-retake:hover { background: rgba(255,255,255,.14); }
+
+    /* ══ LOADING FRAMES ══ */
+    .frames-loading {
+      position: absolute; inset: 0; z-index: 5;
+      display: flex; align-items: center; justify-content: center;
+      background: rgba(6,14,32,.8); border-radius: var(--r-lg);
+      display: none;
+    }
+    .frames-loading.on { display: flex; }
+    .frames-loading-dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      background: var(--gold); margin: 0 4px;
+      animation: dotBounce .7s ease-in-out infinite;
+    }
+    .frames-loading-dot:nth-child(2) { animation-delay: .15s; }
+    .frames-loading-dot:nth-child(3) { animation-delay: .3s; }
+    @keyframes dotBounce { 0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)} }
+
+    /* ══ TOAST ══ */
+    .toast {
+      position: fixed; top: 70px; left: 50%;
+      transform: translateX(-50%) translateY(-10px);
+      background: rgba(13,30,64,.97); border: 1px solid rgba(251,191,36,.3);
+      border-radius: var(--r-lg); padding: 10px 20px;
+      font-size: 13px; font-weight: 600; white-space: nowrap; z-index: 9999;
+      opacity: 0; pointer-events: none; transition: all .25s;
+    }
+    .toast.on { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+    /* ══ NO CAMERA ══ */
+    .no-cam {
+      display: flex; flex-direction: column; align-items: center;
+      justify-content: center; gap: 12px; text-align: center;
+      padding: 32px;
+    }
+    .no-cam-ic { font-size: 48px; opacity: .4; }
+    .no-cam h3 { font-size: 16px; font-weight: 700; color: rgba(255,255,255,.6); }
+    .no-cam p { font-size: 13px; color: rgba(255,255,255,.35); line-height: 1.6; }
+
+    /* download progress overlay */
+    .dl-progress {
+      position: fixed; inset: 0; z-index: 200;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      gap: 16px; background: rgba(6,14,32,.95);
+      opacity: 0; pointer-events: none; transition: opacity .3s;
+    }
+    .dl-progress.on { opacity: 1; pointer-events: all; }
+    .dl-progress-ring {
+      width: 80px; height: 80px; position: relative;
+    }
+    .dl-progress-ring svg { transform: rotate(-90deg); }
+    .dl-progress-ring circle {
+      fill: none; stroke-width: 6;
+      stroke-dasharray: 220; stroke-dashoffset: 220;
+      stroke-linecap: round;
+      transition: stroke-dashoffset .3s ease;
+    }
+    .dl-ring-bg { stroke: rgba(255,255,255,.1); }
+    .dl-ring-fill { stroke: var(--gold); }
+    .dl-progress-icon {
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 28px;
+    }
+    .dl-progress-lbl { font-size: 14px; font-weight: 700; color: rgba(255,255,255,.7); }
+    .dl-progress-sub { font-size: 11px; color: rgba(255,255,255,.35); }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-brand">
+    <div class="header-logo">
+      <img src="logoalwildan.png" alt="AL-WILDAN" onerror="this.style.display='none';this.parentNode.textContent='🎓'">
+    </div>
+    <div>
+      <div class="header-title">PHOTOBOOTH WISUDA</div>
+      <div class="header-sub">AL-WILDAN Islamic School 2026</div>
+    </div>
+  </div>
+  <!-- Frame selector di header -->
+  <div class="frame-sel-wrap">
+    <div class="frame-sel-lbl">Frame</div>
+    <select class="frame-sel" id="frame-sel">
+      <option value="">Tanpa Frame</option>
+    </select>
+  </div>
+</div>
+
+<!-- MODE BAR -->
+<div class="mode-bar">
+  <button class="mode-btn active" id="btn-mode-single" onclick="setMode('single')">
+    📷 Single Shot
+    <small>1 foto · 3:4</small>
+  </button>
+  <button class="mode-btn" id="btn-mode-strip" onclick="setMode('strip')">
+    🎞️ Strip 3 Foto
+    <small>3 foto · 1 frame</small>
+  </button>
+</div>
+
+<!-- MAIN CAMERA AREA -->
+<div class="main">
+  <div class="cam-wrap">
+    <div class="cam-inner mode-single" id="cam-inner">
+
+      <!-- Video -->
+      <video id="video" autoplay playsinline muted></video>
+
+      <!-- Frame overlay -->
+      <div class="frame-overlay" id="frame-overlay"></div>
+
+      <!-- Countdown -->
+      <div class="countdown" id="countdown">
+        <div class="countdown-num" id="countdown-num">3</div>
+        <div class="countdown-lbl" id="countdown-lbl">Bersiap...</div>
+      </div>
+
+      <!-- Flash -->
+      <div class="flash" id="flash"></div>
+
+      <!-- Strip progress dots -->
+      <div class="strip-prog" id="strip-prog">
+        <div class="strip-dot" id="dot-0"></div>
+        <div class="strip-dot" id="dot-1"></div>
+        <div class="strip-dot" id="dot-2"></div>
+      </div>
+
+      <!-- No camera fallback -->
+      <div class="no-cam" id="no-cam" style="display:none">
+        <div class="no-cam-ic">📷</div>
+        <h3>Kamera Tidak Tersedia</h3>
+        <p>Izinkan akses kamera di browser,<br>lalu refresh halaman.</p>
+      </div>
+
+    </div>
+
+    <!-- Strip thumbnails -->
+    <div class="strip-preview" id="strip-preview">
+      <div class="strip-thumb" id="thumb-0"></div>
+      <div class="strip-thumb" id="thumb-1"></div>
+      <div class="strip-thumb" id="thumb-2"></div>
+    </div>
+  </div>
+</div>
+
+<!-- CONTROLS -->
+<div class="controls">
+  <div class="ctrl-side">
+    <!-- Flip camera -->
+    <button class="btn-icon" id="btn-flip" onclick="flipCamera()" title="Ganti kamera">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M1 4v6h6"/><path d="M23 20v-6h-6"/>
+        <path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"/>
+      </svg>
+    </button>
+  </div>
+
+  <!-- Shutter -->
+  <button class="btn-shutter" id="btn-shutter" onclick="startCapture()"></button>
+
+  <div class="ctrl-side">
+    <!-- Timer info -->
+    <button class="btn-icon" id="btn-info" onclick="showToast('⏱️ Countdown 3 detik · Strip: jeda 3 detik antar foto')" title="Info">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+      </svg>
+    </button>
+  </div>
+</div>
+
+<!-- RESULT OVERLAY -->
+<div class="result-overlay" id="result-overlay">
+  <div class="result-canvas-wrap">
+    <canvas id="canvas-result"></canvas>
+  </div>
+  <div class="result-actions">
+    <button class="btn-dl" id="btn-dl" onclick="downloadResult()">
+      <span class="dl-ic">⬇ Simpan Foto</span>
+      <div class="dl-spin"></div>
+    </button>
+    <button class="btn-retake" onclick="retake()">🔄 Ulangi</button>
+  </div>
+</div>
+
+<!-- DOWNLOAD PROGRESS -->
+<div class="dl-progress" id="dl-progress">
+  <div class="dl-progress-ring">
+    <svg width="80" height="80" viewBox="0 0 80 80">
+      <circle class="dl-ring-bg" cx="40" cy="40" r="35"/>
+      <circle class="dl-ring-fill" id="dl-ring-fill" cx="40" cy="40" r="35"/>
+    </svg>
+    <div class="dl-progress-icon">📸</div>
+  </div>
+  <div class="dl-progress-lbl" id="dl-progress-lbl">Menyimpan foto...</div>
+  <div class="dl-progress-sub">Harap tunggu sebentar</div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<!-- Hidden canvas for capture -->
+<canvas id="canvas-capture" style="display:none"></canvas>
+
+<!-- AUDIO: shutter sound (Web Audio API) -->
+<script>
+// ═══════════════════════════════════════
+//  CONFIG
+// ═══════════════════════════════════════
+const MANIFEST_URL = 'frames/manifest.json';
+const FRAMES_BASE  = 'frames/';
+const PHOTO_W = 900;  // 3:4 → 900x1200
+const PHOTO_H = 1200;
+const COUNTDOWN_SEC = 3;
+const STRIP_DELAY   = 3000; // ms antar foto strip
+
+// ═══════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════
+let stream       = null;
+let facingMode   = 'user'; // 'user' = depan, 'environment' = belakang
+let currentMode  = 'single';
+let frames       = { single: [], strip: [] };
+let selectedFrame= null;
+let capturing    = false;
+let stripPhotos  = []; // array canvas per foto strip
+let toastTimer   = null;
+
+const $ = id => document.getElementById(id);
+
+// ═══════════════════════════════════════
+//  AUDIO: Shutter (Web Audio API)
+// ═══════════════════════════════════════
+let audioCtx = null;
+function ensureAudio() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+}
+function playShutter() {
+  try {
+    ensureAudio();
+    const now = audioCtx.currentTime;
+
+    // Klik mekanis
+    const buf = audioCtx.createBuffer(1, audioCtx.sampleRate * 0.12, audioCtx.sampleRate);
+    const data = buf.getChannelData(0);
+    for (let i = 0; i < data.length; i++) {
+      const t = i / audioCtx.sampleRate;
+      data[i] = (Math.random() * 2 - 1) * Math.exp(-t * 60) * 0.8
+              + Math.sin(2 * Math.PI * 800 * t) * Math.exp(-t * 40) * 0.3;
+    }
+    const src = audioCtx.createBufferSource();
+    src.buffer = buf;
+
+    const gain = audioCtx.createGain();
+    gain.gain.setValueAtTime(1, now);
+    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+
+    src.connect(gain);
+    gain.connect(audioCtx.destination);
+    src.start(now);
+  } catch(e) {}
+}
+
+function playCountdownBeep(pitch=440) {
+  try {
+    ensureAudio();
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
+    osc.frequency.value = pitch;
+    osc.type = 'sine';
+    gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 0.15);
+    osc.connect(gain); gain.connect(audioCtx.destination);
+    osc.start(); osc.stop(audioCtx.currentTime + 0.15);
+  } catch(e) {}
+}
+
+// ═══════════════════════════════════════
+//  CAMERA
+// ═══════════════════════════════════════
+async function startCamera() {
+  if (stream) { stream.getTracks().forEach(t => t.stop()); }
+  try {
+    stream = await navigator.mediaDevices.getUserMedia({
+      video: {
+        facingMode: facingMode,
+        width: { ideal: 1280 },
+        height: { ideal: 1280 }
+      },
+      audio: false
+    });
+    $('video').srcObject = stream;
+    $('video').classList.toggle('no-mirror', facingMode === 'environment');
+    $('no-cam').style.display = 'none';
+    $('btn-shutter').disabled = false;
+  } catch(e) {
+    $('no-cam').style.display = 'flex';
+    $('btn-shutter').disabled = true;
+    showToast('❌ Gagal akses kamera: ' + e.message);
+  }
+}
+
+async function flipCamera() {
+  facingMode = facingMode === 'user' ? 'environment' : 'user';
+  $('btn-flip').style.transform = 'rotate(180deg)';
+  setTimeout(() => $('btn-flip').style.transform = '', 400);
+  await startCamera();
+}
+
+// ═══════════════════════════════════════
+//  MODE
+// ═══════════════════════════════════════
+function setMode(mode) {
+  currentMode = mode;
+  $('btn-mode-single').classList.toggle('active', mode === 'single');
+  $('btn-mode-strip').classList.toggle('active',  mode === 'strip');
+  $('cam-inner').className = `cam-inner mode-${mode}`;
+
+  // Show/hide strip UI
+  $('strip-prog').classList.toggle('on', mode === 'strip');
+  $('strip-preview').classList.toggle('visible', false);
+
+  // Reset strip
+  stripPhotos = [];
+  ['thumb-0','thumb-1','thumb-2'].forEach(id => { $(id).innerHTML=''; $(id).classList.remove('done'); });
+  ['dot-0','dot-1','dot-2'].forEach(id => { $(id).className='strip-dot'; });
+
+  // Populate frame selector
+  populateFrameSelector();
+}
+
+// ═══════════════════════════════════════
+//  FRAMES
+// ═══════════════════════════════════════
+async function loadFrames() {
+  try {
+    const r = await fetch(MANIFEST_URL);
+    if (!r.ok) throw new Error('manifest not found');
+    frames = await r.json();
+  } catch(e) {
+    frames = { single: [], strip: [] };
+  }
+  populateFrameSelector();
+}
+
+function populateFrameSelector() {
+  const sel = $('frame-sel');
+  const list = frames[currentMode] || [];
+  sel.innerHTML = '<option value="">Tanpa Frame</option>';
+  list.forEach((f, i) => {
+    const o = document.createElement('option');
+    o.value = `${FRAMES_BASE}${currentMode}/${f}`;
+    o.textContent = f.replace(/\.[^.]+$/, '').replace(/-/g, ' ');
+    sel.appendChild(o);
+  });
+  sel.disabled = list.length === 0;
+  onFrameChange();
+}
+
+function onFrameChange() {
+  const val = $('frame-sel').value;
+  selectedFrame = val || null;
+  if (val) {
+    $('frame-overlay').style.backgroundImage = `url('${val}')`;
+    $('frame-overlay').style.display = 'block';
+  } else {
+    $('frame-overlay').style.backgroundImage = '';
+    $('frame-overlay').style.display = 'none';
+  }
+}
+$('frame-sel').addEventListener('change', onFrameChange);
+
+// ═══════════════════════════════════════
+//  COUNTDOWN HELPER
+// ═══════════════════════════════════════
+function runCountdown(label = 'Bersiap...') {
+  return new Promise(resolve => {
+    const cd = $('countdown');
+    const num = $('countdown-num');
+    const lbl = $('countdown-lbl');
+    lbl.textContent = label;
+    cd.classList.add('on');
+    let n = COUNTDOWN_SEC;
+
+    const tick = () => {
+      num.textContent = n;
+      num.style.animation = 'none';
+      num.offsetHeight; // reflow
+      num.style.animation = '';
+      playCountdownBeep(n === 1 ? 880 : 440);
+
+      if (n <= 0) {
+        cd.classList.remove('on');
+        resolve();
+        return;
+      }
+      n--;
+      setTimeout(tick, 1000);
+    };
+    tick();
+  });
+}
+
+// ═══════════════════════════════════════
+//  CAPTURE SINGLE FRAME
+// ═══════════════════════════════════════
+async function captureOne() {
+  const video = $('video');
+  const canvas = $('canvas-capture');
+  canvas.width = PHOTO_W;
+  canvas.height = PHOTO_H;
+  const ctx = canvas.getContext('2d');
+
+  // Mirror jika kamera depan
+  if (facingMode === 'user') {
+    ctx.translate(PHOTO_W, 0);
+    ctx.scale(-1, 1);
+  }
+
+  // Crop center 3:4 dari video
+  const vw = video.videoWidth, vh = video.videoHeight;
+  const targetRatio = PHOTO_W / PHOTO_H; // 3:4
+  let sx, sy, sw, sh;
+  if (vw / vh > targetRatio) {
+    sh = vh; sw = vh * targetRatio;
+    sx = (vw - sw) / 2; sy = 0;
+  } else {
+    sw = vw; sh = vw / targetRatio;
+    sx = 0; sy = (vh - sh) / 2;
+  }
+  ctx.drawImage(video, sx, sy, sw, sh, 0, 0, PHOTO_W, PHOTO_H);
+
+  // Reset transform
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+
+  // Apply frame
+  if (selectedFrame) {
+    await new Promise(res => {
+      const img = new Image();
+      img.crossOrigin = 'anonymous';
+      img.onload = () => { ctx.drawImage(img, 0, 0, PHOTO_W, PHOTO_H); res(); };
+      img.onerror = res;
+      img.src = selectedFrame;
+    });
+  }
+
+  // Flash effect
+  const flash = $('flash');
+  flash.classList.add('on');
+  setTimeout(() => flash.classList.remove('on'), 150);
+  playShutter();
+
+  // Return canvas copy
+  const out = document.createElement('canvas');
+  out.width = PHOTO_W; out.height = PHOTO_H;
+  out.getContext('2d').drawImage(canvas, 0, 0);
+  return out;
+}
+
+// ═══════════════════════════════════════
+//  MAIN CAPTURE FLOW
+// ═══════════════════════════════════════
+async function startCapture() {
+  if (capturing) return;
+  capturing = true;
+  $('btn-shutter').disabled = true;
+  ensureAudio(); // unlock audio context
+
+  if (currentMode === 'single') {
+    await runCountdown('Bersiap...');
+    const photo = await captureOne();
+    showResult([photo]);
+  } else {
+    // Strip: 3 foto
+    stripPhotos = [];
+    $('strip-preview').classList.add('visible');
+
+    for (let i = 0; i < 3; i++) {
+      // Update dots
+      if (i > 0) {
+        $(`dot-${i-1}`).classList.remove('active');
+        $(`dot-${i-1}`).classList.add('done');
+      }
+      $(`dot-${i}`).classList.add('active');
+
+      const lbl = i === 0 ? 'Foto 1 dari 3' : `Foto ${i+1} dari 3`;
+      await runCountdown(lbl);
+      const photo = await captureOne();
+      stripPhotos.push(photo);
+
+      // Thumbnail
+      const thumb = $(`thumb-${i}`);
+      const tImg = document.createElement('img');
+      tImg.src = photo.toDataURL('image/jpeg', 0.8);
+      thumb.innerHTML = ''; thumb.appendChild(tImg);
+      thumb.classList.add('done');
+
+      if (i < 2) await sleep(STRIP_DELAY);
+    }
+
+    // Final dots
+    $('dot-2').classList.remove('active');
+    $('dot-2').classList.add('done');
+
+    // Compose strip
+    const strip = await composeStrip(stripPhotos);
+    showResult([strip], true);
+  }
+}
+
+// ═══════════════════════════════════════
+//  COMPOSE STRIP (3 foto vertikal)
+// ═══════════════════════════════════════
+async function composeStrip(photos) {
+  const GAP = 20;
+  const PAD = 40;
+  const totalW = PHOTO_W + PAD * 2;
+  const totalH = PHOTO_H * 3 + GAP * 2 + PAD * 2;
+
+  const canvas = document.createElement('canvas');
+  canvas.width = totalW;
+  canvas.height = totalH;
+  const ctx = canvas.getContext('2d');
+
+  // Background
+  ctx.fillStyle = '#0d1e40';
+  ctx.fillRect(0, 0, totalW, totalH);
+
+  // Gold border
+  ctx.strokeStyle = 'rgba(251,191,36,0.3)';
+  ctx.lineWidth = 2;
+  ctx.strokeRect(1, 1, totalW-2, totalH-2);
+
+  // 3 foto
+  photos.forEach((p, i) => {
+    const y = PAD + i * (PHOTO_H + GAP);
+    ctx.drawImage(p, PAD, y, PHOTO_W, PHOTO_H);
+  });
+
+  // Apply strip frame jika ada
+  if (selectedFrame) {
+    await new Promise(res => {
+      const img = new Image();
+      img.crossOrigin = 'anonymous';
+      img.onload = () => {
+        ctx.drawImage(img, 0, 0, totalW, totalH);
+        res();
+      };
+      img.onerror = res;
+      img.src = selectedFrame;
+    });
+  }
+
+  return canvas;
+}
+
+// ═══════════════════════════════════════
+//  SHOW RESULT
+// ═══════════════════════════════════════
+function showResult(photos, isStrip = false) {
+  const src = photos[0];
+  const canvas = $('canvas-result');
+  canvas.width  = src.width;
+  canvas.height = src.height;
+  canvas.getContext('2d').drawImage(src, 0, 0);
+
+  $('result-overlay').classList.add('on');
+  capturing = false;
+  $('btn-shutter').disabled = false;
+
+  // Reset strip UI
+  if (!isStrip) {
+    stripPhotos = [];
+    $('strip-preview').classList.remove('visible');
+    ['dot-0','dot-1','dot-2'].forEach(id => { $(id).className = 'strip-dot'; });
+  }
+}
+
+// ═══════════════════════════════════════
+//  DOWNLOAD WITH ANIMATION
+// ═══════════════════════════════════════
+async function downloadResult() {
+  const canvas = $('canvas-result');
+  const prog = $('dl-progress');
+  const ring = $('dl-ring-fill');
+  const lbl  = $('dl-progress-lbl');
+
+  // Show progress
+  prog.classList.add('on');
+
+  // Animate ring
+  let pct = 0;
+  const circumference = 220;
+  ring.style.strokeDashoffset = circumference;
+
+  const animate = (target, label) => new Promise(res => {
+    lbl.textContent = label;
+    const step = () => {
+      if (pct >= target) { res(); return; }
+      pct = Math.min(pct + 3, target);
+      ring.style.strokeDashoffset = circumference * (1 - pct/100);
+      requestAnimationFrame(step);
+    };
+    step();
+  });
+
+  await animate(40, 'Memproses foto...');
+  await sleep(300);
+  await animate(80, 'Menyiapkan file...');
+
+  // Actual download
+  const ts   = new Date().toISOString().slice(0,19).replace(/[-:T]/g,'-');
+  const mode = currentMode === 'strip' ? 'strip' : 'single';
+  const name = `photobooth-wisuda-alwildan-${mode}-${ts}.jpg`;
+
+  canvas.toBlob(blob => {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = name; a.click();
+    URL.revokeObjectURL(url);
+  }, 'image/jpeg', 0.95);
+
+  await animate(100, '✅ Foto tersimpan!');
+  await sleep(800);
+
+  prog.classList.remove('on');
+  pct = 0;
+  showToast('✅ Foto berhasil disimpan!');
+}
+
+// ═══════════════════════════════════════
+//  RETAKE
+// ═══════════════════════════════════════
+function retake() {
+  $('result-overlay').classList.remove('on');
+  stripPhotos = [];
+  $('strip-preview').classList.remove('visible');
+  ['thumb-0','thumb-1','thumb-2'].forEach(id => { $(id).innerHTML=''; $(id).classList.remove('done'); });
+  ['dot-0','dot-1','dot-2'].forEach(id => { $(id).className = 'strip-dot'; });
+  capturing = false;
+  $('btn-shutter').disabled = false;
+}
+
+// ═══════════════════════════════════════
+//  UTILS
+// ═══════════════════════════════════════
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+let toastTmr = null;
+function showToast(msg, dur=3000) {
+  $('toast').textContent = msg;
+  $('toast').classList.add('on');
+  clearTimeout(toastTmr);
+  toastTmr = setTimeout(() => $('toast').classList.remove('on'), dur);
+}
+
+// ═══════════════════════════════════════
+//  RESPONSIVE: cam-inner sizing
+// ═══════════════════════════════════════
+function resizeCam() {
+  const inner = $('cam-inner');
+  const main  = inner.parentElement.parentElement; // .main
+  const mh = main.clientHeight - 16;
+  const mw = main.clientWidth  - 16;
+
+  if (currentMode === 'single') {
+    // 3:4
+    let h = mh, w = h * 3 / 4;
+    if (w > mw) { w = mw; h = w * 4 / 3; }
+    inner.style.width  = w + 'px';
+    inner.style.height = h + 'px';
+  } else {
+    // Strip: 1 kolom, 3 foto stacked → rasio 3:4 * 3 + gaps ≈ 1:4.2
+    // Tampilkan ukuran lebih kecil agar muat layar
+    let w = Math.min(mw * 0.4, 200);
+    let h = w * 4; // 3 foto 3:4 stacked
+    if (h > mh) { h = mh; w = h / 4; }
+    inner.style.width  = w + 'px';
+    inner.style.height = h + 'px';
+  }
+}
+window.addEventListener('resize', resizeCam);
+
+// ═══════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════
+async function init() {
+  await startCamera();
+  await loadFrames();
+  resizeCam();
+  setMode('single');
+}
+
+init();
+</script>
+</body>
+</html>
