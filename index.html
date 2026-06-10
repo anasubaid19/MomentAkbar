@@ -161,8 +161,10 @@
       position:relative;border-radius:var(--r-lg);overflow:hidden;
       box-shadow:0 0 0 1.5px rgba(251,191,36,.15),0 16px 48px rgba(0,0,0,.5);
     }
-    #video{width:100%;height:100%;object-fit:cover;display:block;background:#000;transform:scaleX(-1);}
+    #video{width:100%;height:100%;object-fit:contain;display:block;background:#000;transform:scaleX(-1);}
     #video.env{transform:scaleX(1);}
+    #video-strip{width:100%;height:100%;object-fit:contain;display:block;background:#000;transform:scaleX(-1);}
+    #video-strip.env{transform:scaleX(1);}
     .frame-layer{position:absolute;inset:0;pointer-events:none;z-index:3;background-size:100% 100%;background-repeat:no-repeat;}
 
     /* Countdown */
@@ -574,7 +576,6 @@ async function startCam(){
       video:{
         facingMode:facing,
         width:{ideal:1920},
-        aspectRatio:{ideal:isStrip?908/411:3/4}
       },audio:false
     };
     stream=await navigator.mediaDevices.getUserMedia(constraints);
