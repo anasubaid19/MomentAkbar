@@ -5,874 +5,978 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>SnapBooth — Wisuda Akbar AL-WILDAN 2026</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;0,800;0,900;1,400&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    :root {
-      --bg: #060e20; --navy: #0d1e40; --navy2: #1a3461;
-      --gold: #fbbf24; --gold-lt: #fde68a; --gold-dk: #b45309;
-      --white: #fff; --glass: rgba(255,255,255,.05);
-      --r-xl: 20px; --r-lg: 14px; --r-md: 10px; --r-sm: 7px;
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --bg:#060e20;--navy:#0d1e40;--navy2:#1a3461;
+      --gold:#fbbf24;--gold-lt:#fde68a;--gold-dk:#b45309;
+      --white:#fff;
+      --r-xl:20px;--r-lg:14px;--r-md:10px;--r-sm:7px;
     }
-    html, body { height: 100%; overflow: hidden; background: var(--bg); }
-    body { font-family: 'Plus Jakarta Sans', sans-serif; color: var(--white); display: flex; flex-direction: column; }
-    body::before {
-      content:''; position:fixed; inset:0; pointer-events:none; z-index:0;
+    html,body{height:100%;overflow:hidden;background:var(--bg);}
+    body{font-family:'Plus Jakarta Sans',sans-serif;color:var(--white);display:flex;flex-direction:column;}
+    body::before{
+      content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
       background:
-        radial-gradient(ellipse 60% 40% at 85% 5%, rgba(251,191,36,.09) 0%,transparent 55%),
-        radial-gradient(ellipse 50% 35% at 5% 95%, rgba(59,130,246,.07) 0%,transparent 55%);
+        radial-gradient(ellipse 60% 40% at 85% 5%,rgba(251,191,36,.08) 0%,transparent 55%),
+        radial-gradient(ellipse 50% 35% at 5% 95%,rgba(59,130,246,.07) 0%,transparent 55%);
     }
+
+    /* ── SPLASH SCREEN ── */
+    .splash{
+      position:fixed;inset:0;z-index:9999;
+      background:var(--bg);
+      display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;
+      transition:opacity .5s ease, visibility .5s ease;
+    }
+    .splash.hide{opacity:0;visibility:hidden;pointer-events:none;}
+    .splash-glow{
+      position:absolute;inset:0;pointer-events:none;
+      background:radial-gradient(ellipse 70% 50% at 50% 40%,rgba(251,191,36,.1) 0%,transparent 60%);
+    }
+    .splash-inner{
+      position:relative;z-index:1;display:flex;flex-direction:column;
+      align-items:center;gap:20px;padding:0 32px;width:100%;max-width:300px;
+    }
+    .splash-logo{
+      width:72px;height:72px;border-radius:50%;
+      border:2px solid rgba(251,191,36,.3);
+      background:rgba(251,191,36,.08);
+      display:flex;align-items:center;justify-content:center;
+      overflow:hidden;
+      box-shadow:0 0 32px rgba(251,191,36,.15);
+      animation:splashLogo .6s ease both;
+    }
+    .splash-logo img{width:100%;height:100%;object-fit:contain;}
+    @keyframes splashLogo{from{transform:scale(.7);opacity:0}to{transform:scale(1);opacity:1}}
+    .splash-title{
+      text-align:center;
+      animation:splashUp .5s .15s ease both;
+    }
+    .splash-title h1{font-size:26px;font-weight:900;color:var(--gold);line-height:1.1;letter-spacing:-.5px;}
+    .splash-title p{font-size:11px;color:rgba(255,255,255,.4);font-weight:500;margin-top:4px;letter-spacing:.5px;}
+    @keyframes splashUp{from{transform:translateY(14px);opacity:0}to{transform:translateY(0);opacity:1}}
+    .splash-bar-wrap{
+      width:100%;background:rgba(255,255,255,.07);border-radius:999px;height:4px;overflow:hidden;
+      animation:splashUp .5s .25s ease both;
+    }
+    .splash-bar{height:100%;width:0%;background:linear-gradient(90deg,var(--gold-dk),var(--gold));border-radius:999px;transition:width .3s ease;}
+    .splash-status{font-size:11px;color:rgba(255,255,255,.35);font-weight:600;min-height:16px;animation:splashUp .5s .3s ease both;}
 
     /* ── HEADER ── */
-    .hdr {
-      flex-shrink:0; position:relative; z-index:10;
-      display:flex; align-items:center; justify-content:space-between;
+    .hdr{
+      flex-shrink:0;position:relative;z-index:10;
+      display:flex;align-items:center;justify-content:space-between;
       padding:10px 14px;
       background:rgba(6,14,32,.92);
-      border-bottom:1px solid rgba(251,191,36,.12);
+      border-bottom:1px solid rgba(251,191,36,.1);
       backdrop-filter:blur(24px);
     }
-    .hdr-brand { display:flex; align-items:center; gap:9px; }
-    .hdr-logo {
-      width:34px; height:34px; border-radius:50%;
-      border:1.5px solid rgba(251,191,36,.3);
+    .hdr-brand{display:flex;align-items:center;gap:9px;}
+    .hdr-logo{
+      width:32px;height:32px;border-radius:50%;
+      border:1.5px solid rgba(251,191,36,.25);
       background:rgba(251,191,36,.08);
-      overflow:hidden; display:flex; align-items:center; justify-content:center;
-      font-size:16px;
+      overflow:hidden;display:flex;align-items:center;justify-content:center;font-size:15px;
     }
-    .hdr-logo img { width:100%; height:100%; object-fit:contain; }
-    .hdr-name { font-size:12px; font-weight:800; color:var(--gold); line-height:1.2; }
-    .hdr-sub  { font-size:9px; color:rgba(255,255,255,.38); font-weight:500; letter-spacing:.3px; }
-    .hdr-right { display:flex; align-items:center; gap:8px; }
-
-    /* ── FRAME PILL ── */
-    .frame-pill {
-      display:flex; align-items:center; gap:6px;
-      background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.1);
-      border-radius:999px; padding:5px 10px 5px 8px;
-      cursor:pointer; transition:all .2s;
+    .hdr-logo img{width:100%;height:100%;object-fit:contain;}
+    .hdr-name{font-size:11px;font-weight:800;color:var(--gold);line-height:1.2;}
+    .hdr-sub{font-size:9px;color:rgba(255,255,255,.3);font-weight:500;}
+    .hdr-frame-btn{
+      display:flex;align-items:center;gap:6px;
+      background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);
+      border-radius:999px;padding:6px 12px;cursor:pointer;transition:all .2s;
     }
-    .frame-pill:hover { background:rgba(251,191,36,.1); border-color:rgba(251,191,36,.25); }
-    .frame-pill-ic { font-size:13px; }
-    .frame-pill-txt { font-size:11px; font-weight:700; color:rgba(255,255,255,.6); max-width:90px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-    .frame-pill select {
-      position:absolute; inset:0; opacity:0; cursor:pointer; width:100%;
-    }
-    .frame-pill { position:relative; }
+    .hdr-frame-btn:hover{background:rgba(251,191,36,.1);border-color:rgba(251,191,36,.25);}
+    .hdr-frame-ic{font-size:13px;}
+    .hdr-frame-name{font-size:11px;font-weight:700;color:rgba(255,255,255,.7);max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 
     /* ── MODE BAR ── */
-    .modebar {
-      flex-shrink:0; position:relative; z-index:10;
-      display:flex; padding:8px 12px; gap:6px;
+    .modebar{
+      flex-shrink:0;position:relative;z-index:10;
+      display:flex;padding:7px 12px;gap:6px;
       background:rgba(6,14,32,.8);
       border-bottom:1px solid rgba(255,255,255,.05);
     }
-    .mode-tab {
-      flex:1; padding:7px 6px; border-radius:var(--r-sm);
+    .mode-tab{
+      flex:1;padding:7px 6px;border-radius:var(--r-sm);
       border:1.5px solid rgba(255,255,255,.08);
-      background:transparent; color:rgba(255,255,255,.35);
-      font-family:inherit; font-size:11px; font-weight:700;
-      cursor:pointer; transition:all .2s; text-align:center;
-      line-height:1.3;
+      background:transparent;color:rgba(255,255,255,.35);
+      font-family:inherit;font-size:11px;font-weight:700;
+      cursor:pointer;transition:all .2s;text-align:center;line-height:1.3;
     }
-    .mode-tab small { display:block; font-size:9px; font-weight:500; opacity:.6; margin-top:1px; }
-    .mode-tab.active {
-      border-color:var(--gold); background:rgba(251,191,36,.1);
-      color:var(--gold);
+    .mode-tab small{display:block;font-size:9px;font-weight:500;opacity:.6;margin-top:1px;}
+    .mode-tab.active{border-color:var(--gold);background:rgba(251,191,36,.1);color:var(--gold);}
+
+    /* ── VIEWPORT ── */
+    .viewport{
+      flex:1;position:relative;z-index:1;overflow:hidden;
+      display:flex;align-items:center;justify-content:center;
     }
 
-    /* ── MAIN VIEWPORT ── */
-    .viewport {
-      flex:1; position:relative; z-index:1; overflow:hidden;
-      display:flex; align-items:center; justify-content:center;
-    }
+    /* ── SINGLE MODE LAYOUT ── */
+    .layout-single{width:100%;height:100%;display:flex;align-items:center;justify-content:center;}
 
-    /* ── CAMERA STAGE ── */
-    .stage {
-      position:relative; border-radius:var(--r-lg); overflow:hidden;
-      box-shadow:0 0 0 1.5px rgba(251,191,36,.18), 0 20px 60px rgba(0,0,0,.55);
-      transition:width .3s ease, height .3s ease;
+    /* ── STRIP MODE LAYOUT ── */
+    .layout-strip{
+      width:100%;height:100%;
+      display:flex;align-items:stretch;
+      gap:0;
     }
-    #video {
-      width:100%; height:100%; object-fit:cover; display:block;
-      background:#000; transform:scaleX(-1);
+    .strip-cam-area{flex:1;display:flex;align-items:center;justify-content:center;position:relative;}
+    .strip-frame-panel{
+      width:110px;flex-shrink:0;
+      background:rgba(255,255,255,.03);
+      border-left:1px solid rgba(255,255,255,.06);
+      display:flex;flex-direction:column;align-items:center;
+      justify-content:center;gap:6px;padding:8px 6px;
+      overflow:hidden;
     }
-    #video.env { transform:scaleX(1); }
-    .frame-layer {
-      position:absolute; inset:0; pointer-events:none; z-index:3;
-      background-size:100% 100%; background-repeat:no-repeat;
+    .strip-frame-lbl{font-size:9px;font-weight:700;color:rgba(255,255,255,.3);letter-spacing:.5px;text-transform:uppercase;margin-bottom:2px;}
+    .strip-slot{
+      width:100%;border-radius:6px;overflow:hidden;
+      border:1.5px solid rgba(255,255,255,.1);
+      background:rgba(0,0,0,.4);position:relative;
+      aspect-ratio:908/411;
+      transition:border-color .3s;
     }
+    .strip-slot.active{border-color:var(--gold);box-shadow:0 0 10px rgba(251,191,36,.3);}
+    .strip-slot.done{border-color:rgba(251,191,36,.4);}
+    .strip-slot img{width:100%;height:100%;object-fit:cover;display:block;}
+    .strip-slot-num{
+      position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+      font-size:18px;font-weight:900;color:rgba(255,255,255,.12);
+    }
+    .strip-slot.active .strip-slot-num{color:rgba(251,191,36,.4);}
+    /* Photo fly-in animation */
+    @keyframes flyIn{
+      from{transform:scale(.4) translateY(-30px);opacity:0;}
+      to{transform:scale(1) translateY(0);opacity:1;}
+    }
+    .strip-slot.fly img{animation:flyIn .4s cubic-bezier(.34,1.3,.64,1) both;}
 
-    /* ── COUNTDOWN ── */
-    .cdown {
-      position:absolute; inset:0; z-index:15;
-      display:none; flex-direction:column;
-      align-items:center; justify-content:center;
-      background:rgba(6,14,32,.5); backdrop-filter:blur(3px);
+    /* ── STAGE (camera box) ── */
+    .stage{
+      position:relative;border-radius:var(--r-lg);overflow:hidden;
+      box-shadow:0 0 0 1.5px rgba(251,191,36,.15),0 16px 48px rgba(0,0,0,.5);
     }
-    .cdown.on { display:flex; }
-    .cdown-n {
-      font-size:88px; font-weight:900; color:var(--gold); line-height:1;
-      letter-spacing:-3px;
-      text-shadow:0 0 48px rgba(251,191,36,.5);
+    #video{width:100%;height:100%;object-fit:cover;display:block;background:#000;transform:scaleX(-1);}
+    #video.env{transform:scaleX(1);}
+    .frame-layer{position:absolute;inset:0;pointer-events:none;z-index:3;background-size:100% 100%;background-repeat:no-repeat;}
+
+    /* Countdown */
+    .cdown{
+      position:absolute;inset:0;z-index:15;
+      display:none;flex-direction:column;align-items:center;justify-content:center;
+      background:rgba(6,14,32,.45);backdrop-filter:blur(2px);
+    }
+    .cdown.on{display:flex;}
+    .cdown-n{
+      font-size:80px;font-weight:900;color:var(--gold);line-height:1;
+      text-shadow:0 0 40px rgba(251,191,36,.5);
       animation:cpop .35s cubic-bezier(.34,1.56,.64,1) both;
     }
-    @keyframes cpop { from{transform:scale(1.6);opacity:0} to{transform:scale(1);opacity:1} }
-    .cdown-lbl { font-size:12px; color:rgba(255,255,255,.5); font-weight:600; margin-top:6px; letter-spacing:.5px; }
-    .flash { position:absolute; inset:0; z-index:20; background:#fff; opacity:0; pointer-events:none; }
+    @keyframes cpop{from{transform:scale(1.5);opacity:0}to{transform:scale(1);opacity:1}}
+    .cdown-lbl{font-size:11px;color:rgba(255,255,255,.5);font-weight:600;margin-top:6px;}
+    .flash{position:absolute;inset:0;z-index:20;background:#fff;opacity:0;pointer-events:none;transition:opacity .08s;}
 
-    /* ── STRIP DOTS ── */
-    .strip-dots {
-      position:absolute; bottom:10px; left:50%; transform:translateX(-50%);
-      z-index:5; display:flex; gap:7px; display:none;
+    /* Dots (single mode) */
+    .sdots{
+      position:absolute;bottom:10px;left:50%;transform:translateX(-50%);
+      z-index:5;display:flex;gap:7px;display:none;
     }
-    .strip-dots.on { display:flex; }
-    .sdot {
-      width:7px; height:7px; border-radius:50%;
-      background:rgba(255,255,255,.2); transition:all .25s;
-    }
-    .sdot.done { background:var(--gold); box-shadow:0 0 6px rgba(251,191,36,.5); }
-    .sdot.cur  { background:#fff; transform:scale(1.3); }
+    .sdots.on{display:flex;}
+    .sdot{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.2);transition:all .25s;}
+    .sdot.done{background:var(--gold);box-shadow:0 0 6px rgba(251,191,36,.5);}
+    .sdot.cur{background:#fff;transform:scale(1.3);}
 
-    /* ── STRIP THUMBS ── */
-    .thumbs {
-      position:absolute; right:-72px; top:50%; transform:translateY(-50%);
-      display:flex; flex-direction:column; gap:5px;
-      transition:right .3s ease; z-index:5;
-    }
-    .thumbs.show { right:6px; }
-    .thumb {
-      width:52px; border-radius:5px; overflow:hidden;
-      border:1.5px solid rgba(255,255,255,.12);
-      background:rgba(0,0,0,.4); transition:border-color .2s;
-      flex-shrink:0;
-    }
-    .thumb.done { border-color:rgba(251,191,36,.5); }
-    .thumb img { width:100%; display:block; }
+    /* No cam */
+    .nocam{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;text-align:center;padding:24px;}
+    .nocam-ic{font-size:40px;opacity:.3;}
+    .nocam h3{font-size:13px;font-weight:700;color:rgba(255,255,255,.45);}
+    .nocam p{font-size:11px;color:rgba(255,255,255,.25);line-height:1.6;}
 
     /* ── BOTTOM CONTROLS ── */
-    .ctrls {
-      flex-shrink:0; position:relative; z-index:10;
-      display:flex; align-items:center; justify-content:space-between;
-      padding:10px 20px 16px;
+    .ctrls{
+      flex-shrink:0;position:relative;z-index:10;
+      display:flex;align-items:center;justify-content:space-between;
+      padding:10px 24px 14px;
       background:rgba(6,14,32,.92);
       border-top:1px solid rgba(255,255,255,.05);
       backdrop-filter:blur(24px);
       gap:10px;
     }
-
-    /* Shutter */
-    .shutter {
-      width:66px; height:66px; border-radius:50%; flex-shrink:0;
-      border:3px solid var(--gold); background:transparent;
-      cursor:pointer; position:relative; display:flex;
-      align-items:center; justify-content:center;
-      transition:transform .15s; outline:none;
+    .shutter{
+      width:64px;height:64px;border-radius:50%;flex-shrink:0;
+      border:3px solid var(--gold);background:transparent;
+      cursor:pointer;position:relative;display:flex;align-items:center;justify-content:center;
+      transition:transform .15s;outline:none;
     }
-    .shutter::after {
-      content:''; width:52px; height:52px; border-radius:50%;
-      background:linear-gradient(135deg, var(--gold-dk), var(--gold));
+    .shutter::after{
+      content:'';width:50px;height:50px;border-radius:50%;
+      background:linear-gradient(135deg,var(--gold-dk),var(--gold));
       transition:transform .15s;
     }
-    .shutter:active { transform:scale(.9); }
-    .shutter:active::after { transform:scale(.88); }
-    .shutter:disabled { opacity:.3; cursor:not-allowed; }
-    .shutter:focus-visible { box-shadow:0 0 0 3px rgba(251,191,36,.4); }
-
-    /* Side buttons */
-    .side-btns { display:flex; gap:8px; align-items:center; }
-    .icbtn {
-      width:44px; height:44px; border-radius:50%; flex-shrink:0;
+    .shutter:active{transform:scale(.9);}
+    .shutter:active::after{transform:scale(.88);}
+    .shutter:disabled{opacity:.3;cursor:not-allowed;}
+    .side-btns{display:flex;gap:8px;align-items:center;}
+    .icbtn{
+      width:44px;height:44px;border-radius:50%;flex-shrink:0;
       border:1.5px solid rgba(255,255,255,.12);
-      background:rgba(255,255,255,.06); cursor:pointer;
-      display:flex; align-items:center; justify-content:center;
-      color:rgba(255,255,255,.65); transition:all .2s;
-      outline:none; -webkit-tap-highlight-color:transparent;
+      background:rgba(255,255,255,.06);cursor:pointer;
+      display:flex;align-items:center;justify-content:center;
+      color:rgba(255,255,255,.65);transition:all .2s;outline:none;
+      -webkit-tap-highlight-color:transparent;
     }
-    .icbtn:hover { background:rgba(255,255,255,.12); border-color:rgba(255,255,255,.25); }
-    .icbtn:active { transform:scale(.92); }
-    .icbtn:focus-visible { box-shadow:0 0 0 3px rgba(251,191,36,.35); }
-    .icbtn svg { width:19px; height:19px; }
+    .icbtn:hover{background:rgba(255,255,255,.12);border-color:rgba(255,255,255,.25);}
+    .icbtn:active{transform:scale(.92);}
+    .icbtn.on{border-color:var(--gold);background:rgba(251,191,36,.15);color:var(--gold);}
+    .icbtn svg{width:19px;height:19px;}
+
+    /* ── FRAME SHEET (bottom sheet) ── */
+    .sheet-bg{
+      position:fixed;inset:0;z-index:500;
+      background:rgba(0,0,0,.6);backdrop-filter:blur(8px);
+      opacity:0;pointer-events:none;transition:opacity .3s;
+    }
+    .sheet-bg.on{opacity:1;pointer-events:all;}
+    .sheet{
+      position:fixed;bottom:0;left:0;right:0;z-index:501;
+      background:#0d1e40;
+      border-radius:20px 20px 0 0;
+      border-top:1px solid rgba(251,191,36,.15);
+      padding:0 0 32px;
+      transform:translateY(100%);
+      transition:transform .35s cubic-bezier(.34,1.1,.64,1);
+      max-height:65vh;overflow:hidden;display:flex;flex-direction:column;
+    }
+    .sheet.on{transform:translateY(0);}
+    .sheet-handle{width:36px;height:4px;background:rgba(255,255,255,.15);border-radius:999px;margin:12px auto 14px;}
+    .sheet-title{font-size:13px;font-weight:800;color:var(--gold);padding:0 18px 12px;flex-shrink:0;}
+    .sheet-list{overflow-y:auto;flex:1;padding:0 14px 4px;display:flex;flex-direction:column;gap:6px;}
+    .sheet-item{
+      display:flex;align-items:center;gap:12px;
+      padding:10px 12px;border-radius:var(--r-md);
+      background:rgba(255,255,255,.04);border:1.5px solid rgba(255,255,255,.08);
+      cursor:pointer;transition:all .2s;
+    }
+    .sheet-item:hover{background:rgba(251,191,36,.08);border-color:rgba(251,191,36,.2);}
+    .sheet-item.selected{background:rgba(251,191,36,.12);border-color:rgba(251,191,36,.35);}
+    .sheet-item-thumb{
+      width:36px;border-radius:5px;overflow:hidden;flex-shrink:0;border:1px solid rgba(255,255,255,.1);
+      background:#000;
+    }
+    .sheet-item-thumb img{width:100%;display:block;}
+    .sheet-item-name{font-size:12px;font-weight:700;color:rgba(255,255,255,.8);flex:1;}
+    .sheet-item-check{font-size:14px;opacity:0;transition:opacity .2s;}
+    .sheet-item.selected .sheet-item-check{opacity:1;}
+    .sheet-none{
+      display:flex;align-items:center;gap:12px;padding:10px 12px;
+      border-radius:var(--r-md);background:rgba(255,255,255,.04);border:1.5px solid rgba(255,255,255,.08);
+      cursor:pointer;transition:all .2s;
+    }
+    .sheet-none:hover{background:rgba(255,255,255,.08);}
+    .sheet-none.selected{background:rgba(251,191,36,.08);border-color:rgba(251,191,36,.2);}
+    .sheet-none-ic{width:36px;height:24px;display:flex;align-items:center;justify-content:center;font-size:16px;opacity:.4;}
+    .sheet-none-name{font-size:12px;font-weight:700;color:rgba(255,255,255,.5);}
 
     /* ── RESULT OVERLAY ── */
-    .result-ov {
-      position:fixed; inset:0; z-index:100;
-      background:rgba(0,0,0,.85); backdrop-filter:blur(18px);
-      display:flex; flex-direction:column;
-      align-items:center; justify-content:center;
-      padding:16px; gap:14px;
-      opacity:0; pointer-events:none; transition:opacity .3s;
+    .result-ov{
+      position:fixed;inset:0;z-index:100;
+      background:rgba(0,0,0,.88);backdrop-filter:blur(18px);
+      display:flex;flex-direction:column;align-items:center;justify-content:center;
+      padding:16px;gap:14px;
+      opacity:0;pointer-events:none;transition:opacity .3s;
     }
-    .result-ov.on { opacity:1; pointer-events:all; }
-    .result-wrap {
-      position:relative; border-radius:var(--r-lg); overflow:hidden;
-      box-shadow:0 0 0 1.5px rgba(251,191,36,.25), 0 28px 60px rgba(0,0,0,.6);
+    .result-ov.on{opacity:1;pointer-events:all;}
+    .result-wrap{
+      position:relative;border-radius:var(--r-lg);overflow:hidden;
+      box-shadow:0 0 0 1.5px rgba(251,191,36,.25),0 28px 60px rgba(0,0,0,.6);
       transform:scale(.88) translateY(16px);
       transition:transform .4s cubic-bezier(.34,1.2,.64,1);
     }
-    .result-ov.on .result-wrap { transform:none; }
-    #res-canvas { display:block; max-height:62vh; max-width:90vw; width:auto; height:auto; }
-
-    .result-btns { display:flex; gap:8px; width:100%; max-width:320px; }
-    .btn-save {
-      flex:1; padding:13px; border:none; border-radius:var(--r-lg);
-      background:linear-gradient(135deg, var(--gold-dk), var(--gold));
-      font-family:inherit; font-size:13px; font-weight:800; color:var(--navy);
-      cursor:pointer; display:flex; align-items:center; justify-content:center; gap:7px;
-      transition:transform .15s, opacity .15s; outline:none;
+    .result-ov.on .result-wrap{transform:none;}
+    #res-canvas{display:block;max-height:62vh;max-width:86vw;width:auto;height:auto;}
+    .result-btns{display:flex;gap:8px;width:100%;max-width:320px;}
+    .btn-save{
+      flex:1;padding:13px;border:none;border-radius:var(--r-lg);
+      background:linear-gradient(135deg,var(--gold-dk),var(--gold));
+      font-family:inherit;font-size:13px;font-weight:800;color:var(--navy);
+      cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;
+      transition:transform .15s,opacity .15s;outline:none;
     }
-    .btn-save:active { transform:scale(.97); }
-    .btn-save:disabled { opacity:.5; cursor:wait; }
-    .btn-save:focus-visible { box-shadow:0 0 0 3px rgba(251,191,36,.4); }
-    .save-spin {
-      width:15px; height:15px; border:2.5px solid rgba(13,30,64,.25);
-      border-top-color:var(--navy); border-radius:50%;
-      animation:spin .7s linear infinite; display:none;
+    .btn-save:active{transform:scale(.97);}
+    .btn-save:disabled{opacity:.5;cursor:wait;}
+    .save-spin{width:15px;height:15px;border:2.5px solid rgba(13,30,64,.25);border-top-color:var(--navy);border-radius:50%;animation:spin .7s linear infinite;display:none;}
+    .btn-save.loading .save-spin{display:block;}
+    .btn-save.loading .save-ic{display:none;}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .btn-redo{
+      padding:13px 18px;border-radius:var(--r-lg);
+      background:rgba(255,255,255,.07);border:1.5px solid rgba(255,255,255,.12);
+      font-family:inherit;font-size:13px;font-weight:700;color:rgba(255,255,255,.65);
+      cursor:pointer;transition:background .2s;outline:none;
     }
-    .btn-save.loading .save-spin { display:block; }
-    .btn-save.loading .save-ic { display:none; }
-    @keyframes spin { to{transform:rotate(360deg)} }
-
-    .btn-redo {
-      padding:13px 18px; border-radius:var(--r-lg);
-      background:rgba(255,255,255,.07); border:1.5px solid rgba(255,255,255,.12);
-      font-family:inherit; font-size:13px; font-weight:700; color:rgba(255,255,255,.65);
-      cursor:pointer; transition:background .2s; outline:none;
-      -webkit-tap-highlight-color:transparent;
-    }
-    .btn-redo:hover { background:rgba(255,255,255,.13); }
-    .btn-redo:active { transform:scale(.97); }
+    .btn-redo:hover{background:rgba(255,255,255,.13);}
+    .btn-redo:active{transform:scale(.97);}
 
     /* ── DOWNLOAD PROGRESS ── */
-    .dl-prog {
-      position:fixed; inset:0; z-index:200;
+    .dl-prog{
+      position:fixed;inset:0;z-index:200;
       background:rgba(6,14,32,.96);
-      display:flex; flex-direction:column;
-      align-items:center; justify-content:center; gap:14px;
-      opacity:0; pointer-events:none; transition:opacity .3s;
+      display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;
+      opacity:0;pointer-events:none;transition:opacity .3s;
     }
-    .dl-prog.on { opacity:1; pointer-events:all; }
-    .dl-ring-wrap { position:relative; width:76px; height:76px; }
-    .dl-ring-wrap svg { transform:rotate(-90deg); }
-    .dl-ring-wrap circle { fill:none; stroke-width:5; stroke-dasharray:207; stroke-dashoffset:207; stroke-linecap:round; }
-    .dl-rbg { stroke:rgba(255,255,255,.08); }
-    .dl-rfill { stroke:var(--gold); transition:stroke-dashoffset .25s ease; }
-    .dl-ic-center {
-      position:absolute; inset:0; display:flex;
-      align-items:center; justify-content:center; font-size:26px;
-    }
-    .dl-lbl { font-size:13px; font-weight:700; color:rgba(255,255,255,.7); }
-    .dl-sub { font-size:10px; color:rgba(255,255,255,.3); }
-
-    /* ── NO CAM ── */
-    .nocam {
-      display:flex; flex-direction:column; align-items:center;
-      justify-content:center; gap:10px; text-align:center; padding:24px;
-    }
-    .nocam-ic { font-size:44px; opacity:.35; }
-    .nocam h3 { font-size:14px; font-weight:700; color:rgba(255,255,255,.5); }
-    .nocam p  { font-size:12px; color:rgba(255,255,255,.3); line-height:1.6; }
+    .dl-prog.on{opacity:1;pointer-events:all;}
+    .dl-ring-wrap{position:relative;width:76px;height:76px;}
+    .dl-ring-wrap svg{transform:rotate(-90deg);}
+    .dl-ring-wrap circle{fill:none;stroke-width:5;stroke-dasharray:207;stroke-dashoffset:207;stroke-linecap:round;}
+    .dl-rbg{stroke:rgba(255,255,255,.08);}
+    .dl-rfill{stroke:var(--gold);transition:stroke-dashoffset .25s ease;}
+    .dl-ic-center{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:26px;}
+    .dl-lbl{font-size:13px;font-weight:700;color:rgba(255,255,255,.7);}
+    .dl-sub{font-size:10px;color:rgba(255,255,255,.3);}
 
     /* ── TOAST ── */
-    .toast {
-      position:fixed; top:64px; left:50%;
+    .toast{
+      position:fixed;top:64px;left:50%;
       transform:translateX(-50%) translateY(-8px);
-      background:rgba(13,30,64,.97); border:1px solid rgba(251,191,36,.25);
-      border-radius:var(--r-lg); padding:9px 18px;
-      font-size:12px; font-weight:700; white-space:nowrap;
-      z-index:9999; opacity:0; pointer-events:none;
-      transition:all .22s; max-width:90vw; text-align:center;
+      background:rgba(13,30,64,.97);border:1px solid rgba(251,191,36,.2);
+      border-radius:var(--r-lg);padding:9px 18px;
+      font-size:12px;font-weight:700;white-space:nowrap;
+      z-index:9999;opacity:0;pointer-events:none;transition:all .22s;
+      max-width:90vw;text-align:center;
     }
-    .toast.on { opacity:1; transform:translateX(-50%) translateY(0); }
+    .toast.on{opacity:1;transform:translateX(-50%) translateY(0);}
 
-    /* ── HIDDEN CANVAS ── */
-    #cap-canvas { display:none; }
+    #cap-canvas{display:none;}
+
+    /* orientation hint */
+    @media(orientation:landscape){
+      .strip-frame-panel{width:90px;}
+    }
   </style>
 </head>
 <body>
 
+<!-- SPLASH SCREEN -->
+<div class="splash" id="splash">
+  <div class="splash-glow"></div>
+  <div class="splash-inner">
+    <div class="splash-logo">
+      <img src="logoalwildan.png" alt="AL-WILDAN" onerror="this.style.display='none';this.parentNode.textContent='🎓'">
+    </div>
+    <div class="splash-title">
+      <h1>SnapBooth</h1>
+      <p>WISUDA AKBAR AL-WILDAN 2026</p>
+    </div>
+    <div class="splash-bar-wrap"><div class="splash-bar" id="splash-bar"></div></div>
+    <div class="splash-status" id="splash-status">Memuat...</div>
+  </div>
+</div>
+
 <!-- HEADER -->
-<header class="hdr" role="banner">
+<header class="hdr">
   <div class="hdr-brand">
     <div class="hdr-logo">
       <img src="logoalwildan.png" alt="AL-WILDAN" onerror="this.style.display='none';this.parentNode.textContent='🎓'">
     </div>
     <div>
       <div class="hdr-name">SNAPBOOTH WISUDA</div>
-      <div class="hdr-sub">AL-WILDAN ISLAMIC SCHOOL · 2026</div>
+      <div class="hdr-sub">AL-WILDAN · 2026</div>
     </div>
   </div>
-  <div class="hdr-right">
-    <div class="frame-pill" role="button" aria-label="Pilih frame">
-      <span class="frame-pill-ic">🖼️</span>
-      <span class="frame-pill-txt" id="frame-lbl">Tanpa Frame</span>
-      <select id="frame-sel" aria-label="Pilih frame foto">
-        <option value="">Tanpa Frame</option>
-      </select>
-    </div>
-  </div>
+  <button class="hdr-frame-btn" id="hdr-frame-btn" onclick="openSheet()" aria-label="Pilih frame">
+    <span class="hdr-frame-ic">🖼️</span>
+    <span class="hdr-frame-name" id="hdr-frame-name">Memuat...</span>
+  </button>
 </header>
 
 <!-- MODE BAR -->
-<nav class="modebar" role="tablist" aria-label="Mode foto">
-  <button class="mode-tab active" id="tab-single" role="tab" aria-selected="true"  onclick="setMode('single')" aria-controls="viewport">
-    📷 Single
-    <small>1 foto · portrait</small>
+<nav class="modebar">
+  <button class="mode-tab active" id="tab-single" onclick="setMode('single')">
+    📷 Single<small>1 foto · portrait</small>
   </button>
-  <button class="mode-tab" id="tab-strip"  role="tab" aria-selected="false" onclick="setMode('strip')"  aria-controls="viewport">
-    🎞️ Strip 3x
-    <small>3 foto · 1 frame</small>
+  <button class="mode-tab" id="tab-strip" onclick="setMode('strip')">
+    🎞️ Strip 3×<small>3 foto · 1 frame</small>
   </button>
 </nav>
 
 <!-- VIEWPORT -->
-<main class="viewport" id="viewport" role="main">
+<main class="viewport" id="viewport">
 
-  <!-- STAGE -->
-  <div class="stage" id="stage">
-    <video id="video" autoplay playsinline muted aria-label="Pratinjau kamera"></video>
-    <div class="frame-layer" id="frame-layer" aria-hidden="true"></div>
-
-    <!-- Countdown -->
-    <div class="cdown" id="cdown" role="status" aria-live="assertive">
-      <div class="cdown-n" id="cdown-n">3</div>
-      <div class="cdown-lbl" id="cdown-lbl">Bersiap...</div>
-    </div>
-    <div class="flash" id="flash" aria-hidden="true"></div>
-
-    <!-- Strip dots -->
-    <div class="strip-dots" id="strip-dots" aria-hidden="true">
-      <div class="sdot" id="sd0"></div>
-      <div class="sdot" id="sd1"></div>
-      <div class="sdot" id="sd2"></div>
-    </div>
-
-    <!-- No cam -->
-    <div class="nocam" id="nocam" style="display:none" role="alert">
-      <div class="nocam-ic">📷</div>
-      <h3>Kamera Tidak Tersedia</h3>
-      <p>Izinkan akses kamera<br>lalu refresh halaman</p>
+  <!-- SINGLE LAYOUT -->
+  <div class="layout-single" id="layout-single">
+    <div class="stage" id="stage-single">
+      <video id="video" autoplay playsinline muted></video>
+      <div class="frame-layer" id="fl-single"></div>
+      <div class="cdown" id="cdown-single"><div class="cdown-n" id="cdown-n-single">3</div><div class="cdown-lbl" id="cdown-lbl-single">Bersiap...</div></div>
+      <div class="flash" id="flash-single"></div>
+      <div class="nocam" id="nocam" style="display:none"><div class="nocam-ic">📷</div><h3>Kamera Tidak Tersedia</h3><p>Izinkan akses kamera<br>lalu refresh halaman</p></div>
     </div>
   </div>
 
-  <!-- Strip thumbs -->
-  <div class="thumbs" id="thumbs" aria-label="Foto strip" aria-hidden="true">
-    <div class="thumb" id="th0"></div>
-    <div class="thumb" id="th1"></div>
-    <div class="thumb" id="th2"></div>
+  <!-- STRIP LAYOUT -->
+  <div class="layout-strip" id="layout-strip" style="display:none">
+    <div class="strip-cam-area">
+      <div class="stage" id="stage-strip">
+        <video id="video-strip" autoplay playsinline muted></video>
+        <div class="cdown" id="cdown-strip"><div class="cdown-n" id="cdown-n-strip">3</div><div class="cdown-lbl" id="cdown-lbl-strip">Bersiap...</div></div>
+        <div class="flash" id="flash-strip"></div>
+      </div>
+    </div>
+    <div class="strip-frame-panel" id="strip-panel">
+      <div class="strip-frame-lbl">Frame</div>
+      <div class="strip-slot" id="ss0"><div class="strip-slot-num">1</div></div>
+      <div class="strip-slot" id="ss1"><div class="strip-slot-num">2</div></div>
+      <div class="strip-slot" id="ss2"><div class="strip-slot-num">3</div></div>
+    </div>
   </div>
 
 </main>
 
 <!-- CONTROLS -->
-<footer class="ctrls" role="toolbar" aria-label="Kontrol kamera">
-
+<footer class="ctrls">
   <div class="side-btns">
-    <!-- Flip camera -->
-    <button class="icbtn" id="btn-flip" onclick="flipCam()" aria-label="Ganti kamera depan/belakang">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <button class="icbtn" id="btn-flip" onclick="flipCam()" aria-label="Ganti kamera">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <path d="M1 4v6h6"/><path d="M23 20v-6h-6"/>
         <path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"/>
       </svg>
     </button>
-  </div>
-
-  <button class="shutter" id="shutter" onclick="startCapture()" aria-label="Ambil foto" aria-describedby="mode-hint"></button>
-
-  <div class="side-btns">
-    <!-- Info -->
-    <button class="icbtn" onclick="toast('⏱️ Countdown 3 detik · Strip: jeda 3 detik antar foto')" aria-label="Informasi penggunaan">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-        <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+    <button class="icbtn" id="btn-flash" onclick="toggleFlash()" aria-label="Toggle flash" style="display:none">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
       </svg>
     </button>
   </div>
 
+  <button class="shutter" id="shutter" onclick="startCapture()" aria-label="Ambil foto"></button>
+
+  <div class="side-btns">
+    <button class="icbtn" onclick="openSheet()" aria-label="Pilih frame">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="3" width="18" height="18" rx="2"/><rect x="7" y="7" width="10" height="10" rx="1"/>
+      </svg>
+    </button>
+  </div>
 </footer>
-<span id="mode-hint" class="sr-only">Mode saat ini: single shot</span>
+
+<!-- FRAME SHEET -->
+<div class="sheet-bg" id="sheet-bg" onclick="closeSheet()"></div>
+<div class="sheet" id="sheet">
+  <div class="sheet-handle"></div>
+  <div class="sheet-title" id="sheet-title">Pilih Frame</div>
+  <div class="sheet-list" id="sheet-list"></div>
+</div>
 
 <!-- RESULT -->
-<div class="result-ov" id="result-ov" role="dialog" aria-modal="true" aria-label="Hasil foto">
-  <div class="result-wrap">
-    <canvas id="res-canvas" aria-label="Hasil foto"></canvas>
-  </div>
+<div class="result-ov" id="result-ov">
+  <div class="result-wrap"><canvas id="res-canvas"></canvas></div>
   <div class="result-btns">
-    <button class="btn-save" id="btn-save" onclick="doDownload()" aria-label="Simpan foto ke perangkat">
+    <button class="btn-save" id="btn-save" onclick="doDownload()">
       <span class="save-ic">⬇ Simpan Foto</span>
-      <div class="dl-spin" aria-hidden="true"></div>
+      <div class="dl-spin"></div>
     </button>
-    <button class="btn-redo" onclick="retake()" aria-label="Ambil ulang foto">🔄 Ulang</button>
+    <button class="btn-redo" onclick="retake()">🔄 Ulang</button>
   </div>
 </div>
 
 <!-- DOWNLOAD PROGRESS -->
-<div class="dl-prog" id="dl-prog" role="status" aria-live="polite" aria-label="Menyimpan foto">
+<div class="dl-prog" id="dl-prog">
   <div class="dl-ring-wrap">
-    <svg width="76" height="76" viewBox="0 0 76 76" aria-hidden="true">
+    <svg width="76" height="76" viewBox="0 0 76 76">
       <circle class="dl-rbg" cx="38" cy="38" r="33"/>
       <circle class="dl-rfill" id="dl-rfill" cx="38" cy="38" r="33"/>
     </svg>
-    <div class="dl-ic-center" aria-hidden="true">📸</div>
+    <div class="dl-ic-center">📸</div>
   </div>
   <div class="dl-lbl" id="dl-lbl">Menyimpan foto...</div>
   <div class="dl-sub">Harap tunggu sebentar</div>
 </div>
 
 <!-- TOAST -->
-<div class="toast" id="toast-el" role="status" aria-live="polite"></div>
-
-<!-- HIDDEN CANVAS -->
-<canvas id="cap-canvas" aria-hidden="true"></canvas>
+<div class="toast" id="toast-el"></div>
+<canvas id="cap-canvas"></canvas>
 
 <script>
-// ══════════════════════════════════════════════
+// ══════════════════════════════════
 //  CONFIG
-// ══════════════════════════════════════════════
-const MANIFEST = 'frames/manifest.json';
-const FRAMES_BASE = 'frames/';
-const COUNTDOWN = 3;
-const STRIP_GAP = 3000; // ms
+// ══════════════════════════════════
+const MANIFEST='frames/manifest.json';
+const FB='frames/';
+const COUNTDOWN=3;
+// Single: 1080×1440 (3:4), area foto {x:97,y:92,w:890,h:1188}
+const S_FW=1080,S_FH=1440,S_AREA={x:97,y:92,w:890,h:1188};
+// Strip: frame 1080×1920, 3 slots landscape
+const T_FW=1080,T_FH=1920;
+const SLOTS=[{x:86,y:263,w:908,h:411},{x:86,y:709,w:908,h:411},{x:86,y:1155,w:908,h:411}];
 
-// Single: 3:4 portrait → 900x1200
-// Strip slot: landscape 908:411 → scale to fit
-const SINGLE_W = 900, SINGLE_H = 1200;
-const STRIP_FRAME_W = 1080, STRIP_FRAME_H = 1920;
-const STRIP_SLOTS = [
-  {x:86, y:263,  w:908, h:411},
-  {x:86, y:709,  w:908, h:411},
-  {x:86, y:1155, w:908, h:411}
-];
-
-// ══════════════════════════════════════════════
+// ══════════════════════════════════
 //  STATE
-// ══════════════════════════════════════════════
-let stream=null, facing='user', mode='single';
-let frames={single:[],strip:[]}, frameData=null;
-let capturing=false, stripPhotos=[];
-let toastTimer=null;
+// ══════════════════════════════════
+let stream=null,facing='user',mode='single';
+let frames={single:[],strip:[]};
+let selFrame=null; // {file,w,h,area/areas} or null
+let capturing=false,stripPhotos=[];
+let torchTrack=null,torchOn=false;
+let toastTmr=null;
 const $=id=>document.getElementById(id);
 
-// ══════════════════════════════════════════════
-//  AUDIO (Web Audio API — no files needed)
-// ══════════════════════════════════════════════
-let actx=null;
-function initAudio(){ if(!actx) actx=new(window.AudioContext||window.webkitAudioContext)(); }
+// ══════════════════════════════════
+//  SPLASH
+// ══════════════════════════════════
+function splashProgress(pct,msg){
+  $('splash-bar').style.width=pct+'%';
+  $('splash-status').textContent=msg;
+}
+function splashHide(){
+  setTimeout(()=>$('splash').classList.add('hide'),400);
+}
 
+// ══════════════════════════════════
+//  AUDIO
+// ══════════════════════════════════
+let actx=null;
+function initAudio(){if(!actx)actx=new(window.AudioContext||window.webkitAudioContext)();}
 function beepShutter(){
   try{
     initAudio();
     const sr=actx.currentTime;
     const buf=actx.createBuffer(1,actx.sampleRate*.1,actx.sampleRate);
     const d=buf.getChannelData(0);
-    for(let i=0;i<d.length;i++){
-      const t=i/actx.sampleRate;
-      d[i]=(Math.random()*2-1)*Math.exp(-t*55)*.7+Math.sin(2*Math.PI*900*t)*Math.exp(-t*35)*.3;
-    }
-    const s=actx.createBufferSource(); s.buffer=buf;
-    const g=actx.createGain(); g.gain.setValueAtTime(.9,sr); g.gain.exponentialRampToValueAtTime(.01,sr+.08);
-    s.connect(g); g.connect(actx.destination); s.start(sr);
+    for(let i=0;i<d.length;i++){const t=i/actx.sampleRate;d[i]=(Math.random()*2-1)*Math.exp(-t*55)*.7+Math.sin(2*Math.PI*900*t)*Math.exp(-t*35)*.3;}
+    const s=actx.createBufferSource();s.buffer=buf;
+    const g=actx.createGain();g.gain.setValueAtTime(.9,sr);g.gain.exponentialRampToValueAtTime(.01,sr+.08);
+    s.connect(g);g.connect(actx.destination);s.start(sr);
   }catch(e){}
 }
-
 function beepTick(freq=440){
   try{
     initAudio();
-    const o=actx.createOscillator(); o.frequency.value=freq; o.type='sine';
-    const g=actx.createGain(); g.gain.setValueAtTime(.18,actx.currentTime);
-    g.gain.exponentialRampToValueAtTime(.01,actx.currentTime+.12);
-    o.connect(g); g.connect(actx.destination); o.start(); o.stop(actx.currentTime+.12);
+    const o=actx.createOscillator();o.frequency.value=freq;o.type='sine';
+    const g=actx.createGain();g.gain.setValueAtTime(.15,actx.currentTime);g.gain.exponentialRampToValueAtTime(.01,actx.currentTime+.12);
+    o.connect(g);g.connect(actx.destination);o.start();o.stop(actx.currentTime+.12);
   }catch(e){}
 }
 
-// ══════════════════════════════════════════════
+// ══════════════════════════════════
 //  CAMERA
-// ══════════════════════════════════════════════
+// ══════════════════════════════════
 async function startCam(){
-  if(stream) stream.getTracks().forEach(t=>t.stop());
+  if(stream)stream.getTracks().forEach(t=>t.stop());
+  torchTrack=null;torchOn=false;$('btn-flash').classList.remove('on');
   try{
-    const ratio = mode==='strip' ? {ideal:908/411} : {ideal:3/4};
-    stream=await navigator.mediaDevices.getUserMedia({
-      video:{facingMode:facing, aspectRatio:ratio, width:{ideal:1920}},
-      audio:false
-    });
-    $('video').srcObject=stream;
-    $('video').className=facing==='environment'?'env':'';
+    const isStrip=mode==='strip';
+    const constraints={
+      video:{
+        facingMode:facing,
+        width:{ideal:1920},
+        aspectRatio:{ideal:isStrip?908/411:3/4}
+      },audio:false
+    };
+    stream=await navigator.mediaDevices.getUserMedia(constraints);
+    const vid=mode==='strip'?$('video-strip'):$('video');
+    vid.srcObject=stream;
+    // mirror
+    vid.className=facing==='environment'?'env':'';
     $('nocam').style.display='none';
     $('shutter').disabled=false;
+    // torch button only for back camera
+    const track=stream.getVideoTracks()[0];
+    if(facing==='environment'&&track&&track.getCapabilities&&track.getCapabilities().torch){
+      torchTrack=track;$('btn-flash').style.display='flex';
+    } else {
+      $('btn-flash').style.display='none';
+    }
   }catch(e){
     $('nocam').style.display='flex';
     $('shutter').disabled=true;
-    toast('❌ Gagal akses kamera: '+e.message);
+    toast('❌ Gagal akses kamera');
   }
 }
 
 async function flipCam(){
   facing=facing==='user'?'environment':'user';
-  $('btn-flip').style.transform='rotate(180deg)';
-  $('btn-flip').style.transition='transform .4s ease';
-  setTimeout(()=>{ $('btn-flip').style.transform=''; },400);
+  const btn=$('btn-flip');
+  btn.style.transform='rotate(180deg)';btn.style.transition='transform .4s';
+  setTimeout(()=>{btn.style.transform='';},400);
   await startCam();
 }
 
-// ══════════════════════════════════════════════
+async function toggleFlash(){
+  if(!torchTrack)return;
+  torchOn=!torchOn;
+  try{await torchTrack.applyConstraints({advanced:[{torch:torchOn}]});}catch(e){torchOn=false;}
+  $('btn-flash').classList.toggle('on',torchOn);
+}
+
+// ══════════════════════════════════
 //  MODE
-// ══════════════════════════════════════════════
+// ══════════════════════════════════
 function setMode(m){
   mode=m;
   $('tab-single').classList.toggle('active',m==='single');
   $('tab-strip').classList.toggle('active',m==='strip');
-  $('tab-single').setAttribute('aria-selected',m==='single');
-  $('tab-strip').setAttribute('aria-selected',m==='strip');
-  $('mode-hint').textContent='Mode saat ini: '+(m==='single'?'single shot':'strip 3 foto');
-  $('strip-dots').classList.toggle('on',m==='strip');
-  $('thumbs').classList.remove('show');
-  stripPhotos=[];
-  resetStripUI();
-  populateFrames();
+  $('layout-single').style.display=m==='single'?'flex':'none';
+  $('layout-strip').style.display=m==='strip'?'flex':'none';
+  stripPhotos=[];resetStripSlots();
+  buildSheet(); // rebuild sheet for mode
+  autoSelectFirstFrame();
   resizeStage();
   startCam();
 }
 
-// ══════════════════════════════════════════════
+// ══════════════════════════════════
 //  FRAMES
-// ══════════════════════════════════════════════
+// ══════════════════════════════════
 async function loadFrames(){
+  splashProgress(30,'Memuat frame...');
   try{
     const r=await fetch(MANIFEST);
-    if(!r.ok) throw 0;
+    if(!r.ok)throw 0;
     frames=await r.json();
-  }catch(e){ frames={single:[],strip:[]}; }
-  populateFrames();
-}
-
-function populateFrames(){
-  const sel=$('frame-sel');
-  const list=mode==='single'?(frames.single||[]):(frames.strip||[]);
-  sel.innerHTML='<option value="">Tanpa Frame</option>';
-  list.forEach(item=>{
-    const o=document.createElement('option');
-    // item bisa string atau {file,w,h,areas}
-    const file=typeof item==='string'?item:item.file;
-    o.value=JSON.stringify(item);
-    o.textContent=file.replace(/\.[^.]+$/,'').replace(/[-_]/g,' ');
-    sel.appendChild(o);
+  }catch(e){frames={single:[],strip:[]};}
+  // Normalize: items bisa string atau object
+  ['single','strip'].forEach(k=>{
+    frames[k]=(frames[k]||[]).map(f=>typeof f==='string'?{file:f}:f);
   });
-  sel.disabled=list.length===0;
-  onFrameChange();
+  splashProgress(60,'Memuat assets...');
+  // Preload thumbnail pertama
+  await preloadThumbs();
+  splashProgress(100,'Siap!');
 }
 
-function onFrameChange(){
-  const val=$('frame-sel').value;
-  if(!val){
-    frameData=null;
-    $('frame-layer').style.backgroundImage='';
-    $('frame-lbl').textContent='Tanpa Frame';
+async function preloadThumbs(){
+  const all=[...(frames.single||[]),...(frames.strip||[])];
+  await Promise.allSettled(all.map(f=>new Promise(res=>{
+    const img=new Image();img.onload=res;img.onerror=res;
+    img.src=`${FB}${f._mode||'single'}/${f.file}`;
+  })));
+}
+
+function autoSelectFirstFrame(){
+  const list=frames[mode]||[];
+  if(list.length>0){
+    selFrame=list[0];
+    updateFrameUI();
+  } else {
+    selFrame=null;
+    updateFrameUI();
+  }
+}
+
+function updateFrameUI(){
+  if(!selFrame){
+    $('hdr-frame-name').textContent='Tanpa Frame';
+    $('fl-single').style.backgroundImage='';
     return;
   }
-  try{ frameData=JSON.parse(val); }catch(e){ frameData={file:val}; }
-  const file=typeof frameData==='string'?frameData:frameData.file;
-  const url=`${FRAMES_BASE}${mode}/${file}`;
-  $('frame-layer').style.backgroundImage=`url('${url}')`;
-  $('frame-lbl').textContent=file.replace(/\.[^.]+$/,'').replace(/[-_]/g,' ');
+  $('hdr-frame-name').textContent=selFrame.file.replace(/\.[^.]+$/,'').replace(/[-_]/g,' ');
+  // Preview overlay di kamera single
+  if(mode==='single'){
+    $('fl-single').style.backgroundImage=`url('${FB}single/${selFrame.file}')`;
+  }
 }
 
-$('frame-sel').addEventListener('change',onFrameChange);
+// ══════════════════════════════════
+//  FRAME SHEET
+// ══════════════════════════════════
+function buildSheet(){
+  const list=frames[mode]||[];
+  $('sheet-title').textContent=`Pilih Frame ${mode==='single'?'Single':'Strip'}`;
+  const sl=$('sheet-list');
+  sl.innerHTML='';
+  // None option
+  const none=document.createElement('div');
+  none.className='sheet-none'+(selFrame===null?' selected':'');
+  none.innerHTML=`<div class="sheet-none-ic">⊘</div><div class="sheet-none-name">Tanpa Frame</div><span class="sheet-item-check">✓</span>`;
+  none.onclick=()=>pickFrame(null);
+  sl.appendChild(none);
+  list.forEach((f,i)=>{
+    const name=f.file.replace(/\.[^.]+$/,'').replace(/[-_]/g,' ');
+    const div=document.createElement('div');
+    div.className='sheet-item'+(selFrame&&selFrame.file===f.file?' selected':'');
+    div.innerHTML=`
+      <div class="sheet-item-thumb"><img src="${FB}${mode}/${f.file}" alt="${name}" loading="lazy"></div>
+      <span class="sheet-item-name">${name}</span>
+      <span class="sheet-item-check">✓</span>
+    `;
+    div.onclick=()=>pickFrame(f);
+    sl.appendChild(div);
+  });
+}
 
-// ══════════════════════════════════════════════
+function pickFrame(f){
+  selFrame=f;
+  updateFrameUI();
+  buildSheet();
+  closeSheet();
+}
+
+function openSheet(){buildSheet();$('sheet-bg').classList.add('on');$('sheet').classList.add('on');}
+function closeSheet(){$('sheet-bg').classList.remove('on');$('sheet').classList.remove('on');}
+
+// ══════════════════════════════════
 //  STAGE RESIZE
-// ══════════════════════════════════════════════
+// ══════════════════════════════════
 function resizeStage(){
   const vp=$('viewport');
-  const mw=vp.clientWidth-16, mh=vp.clientHeight-16;
-  const stage=$('stage');
+  const mw=vp.clientWidth,mh=vp.clientHeight;
 
   if(mode==='single'){
-    // 3:4 portrait
-    let h=mh, w=h*3/4;
-    if(w>mw){ w=mw; h=w*4/3; }
-    stage.style.width=w+'px'; stage.style.height=h+'px';
-    // thumb height
-    [$('th0'),$('th1'),$('th2')].forEach(t=>{ t.style.aspectRatio='3/4'; });
+    const PAD=12;
+    let h=mh-PAD,w=h*3/4;
+    if(w>mw-PAD){w=mw-PAD;h=w*4/3;}
+    const s=$('stage-single');
+    s.style.width=w+'px';s.style.height=h+'px';
   } else {
-    // Strip: tampilkan landscape preview, tapi frame canvas = 9:16
-    // Preview area menampilkan 1 slot pada satu waktu (landscape)
-    const slotRatio=908/411; // ~2.21
-    let w=mw*.65, h=w/slotRatio;
-    if(h>mh*.5){ h=mh*.5; w=h*slotRatio; }
-    stage.style.width=w+'px'; stage.style.height=h+'px';
-    [$('th0'),$('th1'),$('th2')].forEach(t=>{ t.style.aspectRatio=(908/411).toString(); });
+    // strip: kamera isi lebar area (mw - panel width)
+    const panel=$('strip-panel');
+    const pw=panel.offsetWidth||110;
+    const aw=mw-pw-8;
+    const slotR=908/411;
+    // tinggi = lebar / rasio slot (1 slot)
+    let w=aw,h=w/slotR;
+    if(h>mh-8){h=mh-8;w=h*slotR;}
+    const s=$('stage-strip');
+    s.style.width=w+'px';s.style.height=h+'px';
+    // slot thumb heights
+    const thumbW=panel.offsetWidth-16;
+    [$('ss0'),$('ss1'),$('ss2')].forEach(sl=>{
+      sl.style.width=thumbW+'px';
+    });
   }
 }
 window.addEventListener('resize',resizeStage);
+screen.orientation&&screen.orientation.addEventListener('change',()=>{setTimeout(resizeStage,200);});
 
-// ══════════════════════════════════════════════
+// ══════════════════════════════════
 //  COUNTDOWN
-// ══════════════════════════════════════════════
-function countdown(label='Bersiap...'){
+// ══════════════════════════════════
+function runCountdown(numId,lblId,cdId,label='Bersiap...'){
   return new Promise(res=>{
-    $('cdown').classList.add('on');
-    $('cdown-lbl').textContent=label;
+    $(cdId).classList.add('on');
+    $(lblId).textContent=label;
     let n=COUNTDOWN;
     const tick=()=>{
-      $('cdown-n').textContent=n;
-      $('cdown-n').style.animation='none';
-      void $('cdown-n').offsetHeight;
-      $('cdown-n').style.animation='';
+      $(numId).textContent=n;
+      $(numId).style.animation='none';
+      void $(numId).offsetHeight;
+      $(numId).style.animation='';
       beepTick(n===1?880:440);
-      if(n===0){ $('cdown').classList.remove('on'); res(); return; }
-      n--; setTimeout(tick,1000);
+      if(n===0){$(cdId).classList.remove('on');res();return;}
+      n--;setTimeout(tick,1000);
     };
     tick();
   });
 }
 
-// ══════════════════════════════════════════════
-//  CAPTURE ONE PHOTO
-// ══════════════════════════════════════════════
-async function captureOne(w,h){
-  const video=$('video');
+// ══════════════════════════════════
+//  CAPTURE ONE
+// ══════════════════════════════════
+async function captureOne(vid,fw,fh,flashId){
   const cap=$('cap-canvas');
-  cap.width=w; cap.height=h;
+  cap.width=fw;cap.height=fh;
   const ctx=cap.getContext('2d');
-
-  // Mirror kamera depan
-  if(facing==='user'){ ctx.translate(w,0); ctx.scale(-1,1); }
-
-  // Crop center sesuai rasio target
-  const vw=video.videoWidth, vh=video.videoHeight;
-  const tr=w/h;
+  if(facing==='user'){ctx.translate(fw,0);ctx.scale(-1,1);}
+  // Crop center
+  const vw=vid.videoWidth,vh=vid.videoHeight,tr=fw/fh;
   let sx,sy,sw,sh;
-  if(vw/vh>tr){ sh=vh; sw=vh*tr; sx=(vw-sw)/2; sy=0; }
-  else{ sw=vw; sh=vw/tr; sx=0; sy=(vh-sh)/2; }
-  ctx.drawImage(video,sx,sy,sw,sh,0,0,w,h);
+  if(vw/vh>tr){sh=vh;sw=vh*tr;sx=(vw-sw)/2;sy=0;}
+  else{sw=vw;sh=vw/tr;sx=0;sy=(vh-sh)/2;}
+  ctx.drawImage(vid,sx,sy,sw,sh,0,0,fw,fh);
   ctx.setTransform(1,0,0,1,0,0);
-
   // Flash
-  const fl=$('flash');
-  fl.style.opacity='.9';
-  setTimeout(()=>fl.style.opacity='0',120);
+  const fl=$(flashId);fl.style.opacity='.9';setTimeout(()=>fl.style.opacity='0',130);
   beepShutter();
-
-  // Clone canvas
-  const out=document.createElement('canvas');
-  out.width=w; out.height=h;
+  // Clone
+  const out=document.createElement('canvas');out.width=fw;out.height=fh;
   out.getContext('2d').drawImage(cap,0,0);
   return out;
 }
 
-// ══════════════════════════════════════════════
-//  LOAD IMAGE HELPER
-// ══════════════════════════════════════════════
+// ══════════════════════════════════
+//  LOAD IMAGE
+// ══════════════════════════════════
 function loadImg(src){
-  return new Promise(res=>{
-    const img=new Image(); img.crossOrigin='anonymous';
-    img.onload=()=>res(img); img.onerror=()=>res(null);
-    img.src=src;
-  });
+  return new Promise(res=>{const img=new Image();img.crossOrigin='anonymous';img.onload=()=>res(img);img.onerror=()=>res(null);img.src=src;});
 }
 
-// ══════════════════════════════════════════════
+// ══════════════════════════════════
 //  COMPOSE SINGLE
-// ══════════════════════════════════════════════
+// ══════════════════════════════════
 async function composeSingle(photo){
-  // Apply frame overlay kalau ada
-  if(!frameData) return photo;
-  const file=typeof frameData==='string'?frameData:frameData.file;
-  const url=`${FRAMES_BASE}single/${file}`;
-
-  // Frame single: area foto di X=97, Y=91, W=890, H=1188 dalam 1080x1920
-  // Scale foto ke area tersebut
-  const FW=1080, FH=1920;
-  const AREA={x:97,y:92,w:890,h:1188};
-
-  const canvas=document.createElement('canvas');
-  canvas.width=FW; canvas.height=FH;
-  const ctx=canvas.getContext('2d');
-
-  // Gambar foto di area
-  ctx.drawImage(photo, AREA.x, AREA.y, AREA.w, AREA.h);
-
-  // Overlay frame
-  const fimg=await loadImg(url);
-  if(fimg) ctx.drawImage(fimg,0,0,FW,FH);
-
-  return canvas;
-}
-
-// ══════════════════════════════════════════════
-//  COMPOSE STRIP
-// ══════════════════════════════════════════════
-async function composeStrip(photos){
-  const FW=STRIP_FRAME_W, FH=STRIP_FRAME_H;
-  const canvas=document.createElement('canvas');
-  canvas.width=FW; canvas.height=FH;
-  const ctx=canvas.getContext('2d');
-
-  // Background navy
-  ctx.fillStyle='#0d1e40';
-  ctx.fillRect(0,0,FW,FH);
-
-  // Gambar 3 foto ke slot masing-masing
-  photos.forEach((p,i)=>{
-    const slot=STRIP_SLOTS[i];
-    ctx.drawImage(p, slot.x, slot.y, slot.w, slot.h);
-  });
-
-  // Overlay frame kalau ada
-  if(frameData){
-    const file=typeof frameData==='string'?frameData:frameData.file;
-    const fimg=await loadImg(`${FRAMES_BASE}strip/${file}`);
-    if(fimg) ctx.drawImage(fimg,0,0,FW,FH);
+  if(!selFrame){
+    // No frame: just return photo as-is (1080x1440 crop)
+    return photo;
   }
-
+  const canvas=document.createElement('canvas');
+  canvas.width=S_FW;canvas.height=S_FH;
+  const ctx=canvas.getContext('2d');
+  // Place photo in area
+  ctx.drawImage(photo,S_AREA.x,S_AREA.y,S_AREA.w,S_AREA.h);
+  // Frame overlay
+  const fi=await loadImg(`${FB}single/${selFrame.file}`);
+  if(fi)ctx.drawImage(fi,0,0,S_FW,S_FH);
   return canvas;
 }
 
-// ══════════════════════════════════════════════
+// ══════════════════════════════════
+//  COMPOSE STRIP
+// ══════════════════════════════════
+async function composeStrip(photos){
+  const canvas=document.createElement('canvas');
+  canvas.width=T_FW;canvas.height=T_FH;
+  const ctx=canvas.getContext('2d');
+  ctx.fillStyle='#0d1e40';
+  ctx.fillRect(0,0,T_FW,T_FH);
+  photos.forEach((p,i)=>{
+    const s=SLOTS[i];ctx.drawImage(p,s.x,s.y,s.w,s.h);
+  });
+  if(selFrame){
+    const fi=await loadImg(`${FB}strip/${selFrame.file}`);
+    if(fi)ctx.drawImage(fi,0,0,T_FW,T_FH);
+  }
+  return canvas;
+}
+
+// ══════════════════════════════════
 //  MAIN CAPTURE
-// ══════════════════════════════════════════════
+// ══════════════════════════════════
 async function startCapture(){
-  if(capturing) return;
-  capturing=true;
-  $('shutter').disabled=true;
+  if(capturing)return;
+  capturing=true;$('shutter').disabled=true;
   initAudio();
 
   if(mode==='single'){
-    await countdown('Bersiap...');
-    const photo=await captureOne(SINGLE_W,SINGLE_H);
+    await runCountdown('cdown-n-single','cdown-lbl-single','cdown-single','Bersiap...');
+    const vid=$('video');
+    const photo=await captureOne(vid,S_AREA.w,S_AREA.h,'flash-single');
     const result=await composeSingle(photo);
     showResult(result);
-
   } else {
-    // Strip: 3 foto landscape
     stripPhotos=[];
-    $('thumbs').classList.add('show');
-    const sw=908, sh=411;
-
+    const vid=$('video-strip');
     for(let i=0;i<3;i++){
-      if(i>0){ $('sd'+(i-1)).classList.remove('cur'); $('sd'+(i-1)).classList.add('done'); }
-      $('sd'+i).classList.add('cur');
-      await countdown(`Foto ${i+1} dari 3`);
-      const p=await captureOne(sw,sh);
+      // Activate slot
+      if(i>0){$('ss'+(i-1)).classList.remove('active');}
+      $('ss'+i).classList.add('active');
+      const lbl=`Foto ${i+1} dari 3`;
+      await runCountdown('cdown-n-strip','cdown-lbl-strip','cdown-strip',lbl);
+      const p=await captureOne(vid,SLOTS[i].w,SLOTS[i].h,'flash-strip');
       stripPhotos.push(p);
-
-      // Thumb
-      const th=$('th'+i);
+      // Fly-in to slot
+      const slot=$('ss'+i);
+      slot.classList.remove('active');slot.classList.add('done','fly');
       const img=document.createElement('img');
-      img.src=p.toDataURL('image/jpeg',.75);
+      img.src=p.toDataURL('image/jpeg',.8);
       img.alt='Foto '+(i+1);
-      th.innerHTML=''; th.appendChild(img); th.classList.add('done');
-
-      if(i<2) await sleep(STRIP_GAP);
+      slot.querySelector('.strip-slot-num').remove();
+      slot.appendChild(img);
+      setTimeout(()=>slot.classList.remove('fly'),500);
+      // No extra delay — next countdown starts immediately
     }
-    $('sd2').classList.remove('cur'); $('sd2').classList.add('done');
-
     const result=await composeStrip(stripPhotos);
     showResult(result);
   }
 }
 
-// ══════════════════════════════════════════════
+// ══════════════════════════════════
 //  SHOW RESULT
-// ══════════════════════════════════════════════
+// ══════════════════════════════════
 function showResult(canvas){
-  const rc=$('res-canvas');
-  rc.width=canvas.width; rc.height=canvas.height;
+  const rc=$('res-canvas');rc.width=canvas.width;rc.height=canvas.height;
   rc.getContext('2d').drawImage(canvas,0,0);
   $('result-ov').classList.add('on');
-  capturing=false;
-  $('shutter').disabled=false;
+  capturing=false;$('shutter').disabled=false;
 }
 
-// ══════════════════════════════════════════════
-//  DOWNLOAD WITH ANIMATION
-// ══════════════════════════════════════════════
+// ══════════════════════════════════
+//  DOWNLOAD
+// ══════════════════════════════════
 async function doDownload(){
   const rc=$('res-canvas');
-  const prog=$('dl-prog');
-  const ring=$('dl-rfill');
-  const lbl=$('dl-lbl');
-  const C=207; // circumference r=33
-
-  prog.classList.add('on');
-  let pct=0;
-  ring.style.strokeDashoffset=C;
-
-  const animTo=(target,label,ms=350)=>new Promise(res=>{
-    lbl.textContent=label;
-    const start=pct;
-    const t0=performance.now();
-    const step=now=>{
-      const p=Math.min((now-t0)/ms,1);
-      pct=start+(target-start)*p;
-      ring.style.strokeDashoffset=C*(1-pct/100);
-      if(p<1) requestAnimationFrame(step); else res();
-    };
-    requestAnimationFrame(step);
+  const prog=$('dl-prog'),ring=$('dl-rfill'),lbl=$('dl-lbl');
+  const C=207;prog.classList.add('on');let pct=0;ring.style.strokeDashoffset=C;
+  const animTo=(target,label,ms=300)=>new Promise(res=>{
+    lbl.textContent=label;const start=pct;const t0=performance.now();
+    const s=now=>{const p=Math.min((now-t0)/ms,1);pct=start+(target-start)*p;
+      ring.style.strokeDashoffset=C*(1-pct/100);if(p<1)requestAnimationFrame(s);else res();};
+    requestAnimationFrame(s);
   });
-
-  await animTo(35,'Memproses foto...');
-  await sleep(200);
-  await animTo(75,'Menyiapkan file...');
-
-  // Download
+  await animTo(40,'Memproses foto...');await sleep(200);
+  await animTo(80,'Menyiapkan file...');
   const ts=new Date().toISOString().slice(0,19).replace(/[-:T]/g,'');
-  const name=`snapbooth-wisuda-alwildan-${mode}-${ts}.jpg`;
   rc.toBlob(blob=>{
-    const a=document.createElement('a');
-    a.href=URL.createObjectURL(blob); a.download=name; a.click();
+    const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+    a.download=`snapbooth-wisuda-${mode}-${ts}.jpg`;a.click();
     setTimeout(()=>URL.revokeObjectURL(a.href),1000);
   },'image/jpeg',.95);
-
-  await animTo(100,'✅ Tersimpan!',300);
-  await sleep(700);
-  prog.classList.remove('on');
-  pct=0;
+  await animTo(100,'✅ Tersimpan!',250);await sleep(700);
+  prog.classList.remove('on');pct=0;
   toast('✅ Foto berhasil disimpan!');
 }
 
-// ══════════════════════════════════════════════
+// ══════════════════════════════════
 //  RETAKE
-// ══════════════════════════════════════════════
+// ══════════════════════════════════
 function retake(){
   $('result-ov').classList.remove('on');
-  stripPhotos=[];
-  $('thumbs').classList.remove('show');
-  resetStripUI();
-  capturing=false;
-  $('shutter').disabled=false;
+  stripPhotos=[];resetStripSlots();
+  capturing=false;$('shutter').disabled=false;
 }
 
-function resetStripUI(){
-  ['sd0','sd1','sd2'].forEach(id=>{ $(id).className='sdot'; });
-  ['th0','th1','th2'].forEach(id=>{ $(id).innerHTML=''; $(id).classList.remove('done'); });
+function resetStripSlots(){
+  [0,1,2].forEach(i=>{
+    const s=$('ss'+i);
+    s.className='strip-slot';
+    s.innerHTML=`<div class="strip-slot-num">${i+1}</div>`;
+  });
 }
 
-// ══════════════════════════════════════════════
+// ══════════════════════════════════
 //  UTILS
-// ══════════════════════════════════════════════
+// ══════════════════════════════════
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
-
+let toastT=null;
 function toast(msg,dur=3000){
-  const el=$('toast-el');
-  el.textContent=msg; el.classList.add('on');
-  clearTimeout(toastTimer);
-  toastTimer=setTimeout(()=>el.classList.remove('on'),dur);
+  const el=$('toast-el');el.textContent=msg;el.classList.add('on');
+  clearTimeout(toastT);toastT=setTimeout(()=>el.classList.remove('on'),dur);
 }
-
-// Keyboard: Space = shutter, Escape = retake
 document.addEventListener('keydown',e=>{
-  if(e.key===' '&&!capturing){ e.preventDefault(); startCapture(); }
-  if(e.key==='Escape'&&$('result-ov').classList.contains('on')) retake();
+  if(e.key===' '&&!capturing){e.preventDefault();startCapture();}
+  if(e.key==='Escape'){
+    if($('result-ov').classList.contains('on'))retake();
+    if($('sheet').classList.contains('on'))closeSheet();
+  }
 });
 
-// ══════════════════════════════════════════════
+// ══════════════════════════════════
 //  INIT
-// ══════════════════════════════════════════════
+// ══════════════════════════════════
 async function init(){
-  await startCam();
+  splashProgress(10,'Memulai...');
+  await sleep(300);
+  splashProgress(20,'Mengakses kamera...');
+  // Load frames dulu
   await loadFrames();
+  splashProgress(70,'Menginisialisasi kamera...');
+  // Assign mode defaults
+  ['single','strip'].forEach(m=>{
+    if(frames[m])frames[m].forEach(f=>f._mode=m);
+  });
+  await startCam();
+  splashProgress(90,'Mempersiapkan UI...');
   resizeStage();
+  autoSelectFirstFrame();
+  buildSheet();
+  await sleep(300);
+  splashProgress(100,'Siap!');
+  await sleep(500);
+  splashHide();
 }
 init();
 </script>
