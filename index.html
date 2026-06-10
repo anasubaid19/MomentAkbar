@@ -55,7 +55,6 @@
       background-size:100% 100%;
       background-repeat:no-repeat;
       pointer-events:none;
-      box-shadow:0 0 0 9999px rgba(0,0,0,.55);
       display:none;
     }
 
@@ -63,8 +62,7 @@
     /* Hanya muncul saat tidak ada frame */
     .crop-guide{
       position:absolute;z-index:4;pointer-events:none;
-      border:2px solid rgba(255,255,255,.5);
-      box-shadow:0 0 0 9999px rgba(0,0,0,.45);
+      border:2px solid rgba(255,255,255,.35);
       border-radius:4px;
       transition:all .3s;
     }
@@ -118,7 +116,7 @@
 
     /* ══ TOP BAR (float di atas kamera) ══ */
     .top-bar{
-      position:absolute;top:0;left:0;right:0;z-index:10;
+      position:absolute;top:0;left:0;right:0;z-index:30;
       display:flex;align-items:center;justify-content:space-between;
       padding:max(env(safe-area-inset-top),12px) 14px 10px;
       background:linear-gradient(to bottom,rgba(0,0,0,.65) 0%,transparent 100%);
@@ -140,7 +138,7 @@
 
     /* ══ MODE TABS (float di bawah top bar) ══ */
     .mode-tabs{
-      position:absolute;top:60px;left:50%;transform:translateX(-50%);z-index:10;
+      position:absolute;top:60px;left:50%;transform:translateX(-50%);z-index:30;
       display:flex;gap:6px;
       background:rgba(0,0,0,.45);backdrop-filter:blur(12px);
       border:1px solid rgba(255,255,255,.12);
@@ -156,7 +154,7 @@
 
     /* ══ BOTTOM CONTROLS (float di atas kamera) ══ */
     .bot-bar{
-      position:absolute;bottom:0;left:0;right:0;z-index:10;
+      position:absolute;bottom:0;left:0;right:0;z-index:30;
       display:flex;align-items:center;justify-content:space-between;
       padding:14px 28px max(env(safe-area-inset-bottom),18px);
       background:linear-gradient(to top,rgba(0,0,0,.7) 0%,transparent 100%);
@@ -534,13 +532,17 @@ async function toggleTorch(){
 // ══════════════════════════════════
 let capRects={ single:null, slots:[null,null,null] };
 
-// Hitung box "contain" untuk aspect ratio dalam layar
-function containBox(arW,arH,maxWFrac=0.94,maxHFrac=0.86){
+// Hitung box "contain" untuk aspect ratio dalam safe area layar
+// Safe area: hindari top-bar (70px) dan bot-bar (90px)
+const UI_TOP=72, UI_BOT=92;
+function containBox(arW,arH,padH=16){
   const vw=window.innerWidth, vh=window.innerHeight;
+  const safeH=vh-UI_TOP-UI_BOT-padH;
+  const safeW=vw-padH;
   const ar=arW/arH;
-  let h=vh*maxHFrac, w=h*ar;
-  if(w>vw*maxWFrac){ w=vw*maxWFrac; h=w/ar; }
-  return { x:(vw-w)/2, y:(vh-h)/2, w, h };
+  let h=safeH, w=h*ar;
+  if(w>safeW){ w=safeW; h=w/ar; }
+  return { x:(vw-w)/2, y:UI_TOP+(safeH-h)/2, w, h };
 }
 
 function updateGuide(){
@@ -568,8 +570,8 @@ function updateGuide(){
     } else {
       ff.style.display='none';
       guide.classList.remove('hide');
-      // Guide 3:4 di tengah layar
-      const gb=containBox(S_AREA.w,S_AREA.h,0.9,0.82);
+      // Guide 3:4 dalam safe area
+      const gb=containBox(S_AREA.w,S_AREA.h,8);
       guide.style.left=gb.x+'px'; guide.style.top=gb.y+'px';
       guide.style.width=gb.w+'px'; guide.style.height=gb.h+'px';
       capRects.single={...gb};
@@ -597,14 +599,16 @@ function updateGuide(){
       });
     } else {
       ff.style.display='none';
-      // 3 slot landscape stacked di tengah layar
-      const vw=window.innerWidth, vh=window.innerHeight;
+      // 3 slot landscape stacked dalam safe area
+      const GAP=8;
       const slotR=908/411;
-      const PAD=12, GAP=8;
-      let sw=vw-PAD*2, sh=sw/slotR;
-      const totalH=()=>sh*3+GAP*2;
-      if(totalH()>vh*0.82){ sh=(vh*0.82-GAP*2)/3; sw=sh*slotR; }
-      const sx=(vw-sw)/2, sy=(vh-(sh*3+GAP*2))/2;
+      const safeH=window.innerHeight-UI_TOP-UI_BOT-16;
+      const safeW=window.innerWidth-16;
+      let sh=(safeH-GAP*2)/3, sw=sh*slotR;
+      if(sw>safeW){ sw=safeW; sh=sw/slotR; }
+      const sx=(window.innerWidth-sw)/2;
+      const totalH=sh*3+GAP*2;
+      const sy=UI_TOP+(safeH-totalH)/2;
       [0,1,2].forEach(i=>{
         const r={ x:sx, y:sy+i*(sh+GAP), w:sw, h:sh };
         capRects.slots[i]=r;
