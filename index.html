@@ -49,12 +49,14 @@
     }
     #video.env{transform:scaleX(1);}
 
-    /* Frame overlay fullscreen di atas video */
+    /* Frame overlay — diposisikan JS sesuai aspect ratio, dim di luar area */
     .frame-fs{
-      position:absolute;inset:0;z-index:3;
+      position:absolute;z-index:3;
       background-size:100% 100%;
       background-repeat:no-repeat;
       pointer-events:none;
+      box-shadow:0 0 0 9999px rgba(0,0,0,.55);
+      display:none;
     }
 
     /* Guide overlay — kotak crop area yang akan di-capture */
@@ -90,7 +92,7 @@
       border-radius:3px;
       display:flex;align-items:center;justify-content:center;
     }
-    .slot-guide-num{
+    .strip-slot-num{
       font-size:18px;font-weight:900;
       color:rgba(255,255,255,.25);
     }
@@ -492,6 +494,7 @@ async function startCam(){
     });
     $('video').srcObject=stream;
     $('video').className=facing==='environment'?'env':'';
+    $('video').onloadedmetadata=()=>updateGuide();
     $('nocam').style.display='none';
     $('shutter').disabled=false;
     // Torch
@@ -524,97 +527,92 @@ async function toggleTorch(){
 }
 
 // ══════════════════════════════════
-//  GUIDE POSITIONING
-// Hitung posisi & ukuran crop guide di layar
+//  GUIDE POSITIONING — WYSIWYG
+//  capRects menyimpan screen-rect area capture.
+//  Capture memetakan rect layar → koordinat video,
+//  sehingga hasil = persis yang terlihat user.
 // ══════════════════════════════════
-function getScreenCropRect(fw,fh){
-  // Video mengisi layar penuh (object-fit:cover)
-  // Hitung area video yang terlihat di layar
+let capRects={ single:null, slots:[null,null,null] };
+
+// Hitung box "contain" untuk aspect ratio dalam layar
+function containBox(arW,arH,maxWFrac=0.94,maxHFrac=0.86){
   const vw=window.innerWidth, vh=window.innerHeight;
-  const vid=$('video');
-  const nw=vid.videoWidth||1920, nh=vid.videoHeight||1080;
-
-  // Cover scaling
-  const scale=Math.max(vw/nw, vh/nh);
-  const rw=nw*scale, rh=nh*scale;
-  const ox=(vw-rw)/2, oy=(vh-rh)/2; // offset
-
-  // Rasio crop target vs full frame
-  const scaleX=rw/fw, scaleY=rh/fh;
-  // Offset karena cover crop di sisi
-  const cropX=fw*(facing==='user'?1:0); // untuk mirror
-
-  // Area crop dalam koordinat layar
-  // Karena video fullscreen dengan cover, titik tengah video = tengah layar
-  // Area foto (S_AREA/SLOTS) relatif terhadap canvas output (fw x fh)
-
-  const cx=ox + (fw/2 - fw/2)*scaleX + (fw-fw)*scaleX/2;
-
-  // Pendekatan lebih simple: proporsi area terhadap output
-  const px=fw/2, py=fh/2; // pusat output
-
-  return null; // akan dihitung di updateGuide
+  const ar=arW/arH;
+  let h=vh*maxHFrac, w=h*ar;
+  if(w>vw*maxWFrac){ w=vw*maxWFrac; h=w/ar; }
+  return { x:(vw-w)/2, y:(vh-h)/2, w, h };
 }
 
 function updateGuide(){
-  const vw=window.innerWidth, vh=window.innerHeight;
+  const guide=$('crop-guide');
+  const ff=$('frame-fs');
 
   if(mode==='single'){
     $('strip-guides').classList.remove('on');
-    const guide=$('crop-guide');
 
     if(selFrame){
-      // Saat ada frame: frame mengisi layar penuh, area foto sudah jelas dari frame itu sendiri
+      // Frame ditampilkan contain (aspect 1080:1440), tidak distorsi
+      const fb=containBox(S_FW,S_FH);
+      ff.style.display='block';
+      ff.style.left=fb.x+'px'; ff.style.top=fb.y+'px';
+      ff.style.width=fb.w+'px'; ff.style.height=fb.h+'px';
       guide.classList.add('hide');
-      return;
+      // Area foto dalam frame box (proporsional)
+      const k=fb.w/S_FW;
+      capRects.single={
+        x: fb.x + S_AREA.x*k,
+        y: fb.y + S_AREA.y*k,
+        w: S_AREA.w*k,
+        h: S_AREA.h*k
+      };
+    } else {
+      ff.style.display='none';
+      guide.classList.remove('hide');
+      // Guide 3:4 di tengah layar
+      const gb=containBox(S_AREA.w,S_AREA.h,0.9,0.82);
+      guide.style.left=gb.x+'px'; guide.style.top=gb.y+'px';
+      guide.style.width=gb.w+'px'; guide.style.height=gb.h+'px';
+      capRects.single={...gb};
     }
-    guide.classList.remove('hide');
-
-    // Hitung posisi area crop di layar
-    // Video cover: skala dan posisi area foto (S_AREA dalam canvas 1080x1440)
-    const vid=$('video');
-    const nw=vid.videoWidth||1280, nh=vid.videoHeight||720;
-
-    // Canvas output 1080x1440 (3:4)
-    // Layar bisa berbeda rasio
-    // Kita tampilkan guide proporsional dengan layar
-    // Rasio area foto = 890:1188 ≈ 3:4
-    const aR=S_AREA.w/S_AREA.h; // ≈0.749
-    let gw, gh;
-    // Guide mengisi sebagian besar layar vertikal
-    gh=vh*0.82; gw=gh*aR;
-    if(gw>vw*0.9){gw=vw*0.9; gh=gw/aR;}
-    const gl=(vw-gw)/2, gt=(vh-gh)/2;
-
-    guide.style.left=gl+'px'; guide.style.top=gt+'px';
-    guide.style.width=gw+'px'; guide.style.height=gh+'px';
 
   } else {
-    // Strip mode: 3 slot guides
-    $('crop-guide').classList.add('hide');
-    $('strip-guides').classList.on;
+    // ── STRIP ──
+    guide.classList.add('hide');
     $('strip-guides').classList.add('on');
 
-    // Slot rasio: 908:411 ≈ 2.21:1 (landscape)
-    const slotR=908/411;
-    // Tampilkan 3 slot secara vertikal di tengah layar
-    const PAD=12, GAP=8;
-    let sw=vw-PAD*2; let sh=sw/slotR;
-    const totalH=sh*3+GAP*2;
-    if(totalH>vh*0.88){
-      const maxH=(vh*0.88-GAP*2)/3;
-      sh=maxH; sw=sh*slotR;
+    if(selFrame){
+      // Frame strip 1080x1920 contain, slot guides di posisi SLOTS dalam frame box
+      const fb=containBox(T_FW,T_FH);
+      ff.style.display='block';
+      ff.style.left=fb.x+'px'; ff.style.top=fb.y+'px';
+      ff.style.width=fb.w+'px'; ff.style.height=fb.h+'px';
+      const k=fb.w/T_FW;
+      [0,1,2].forEach(i=>{
+        const s=SLOTS[i];
+        const r={ x:fb.x+s.x*k, y:fb.y+s.y*k, w:s.w*k, h:s.h*k };
+        capRects.slots[i]=r;
+        const sg=$('sg'+i);
+        sg.style.left=r.x+'px'; sg.style.top=r.y+'px';
+        sg.style.width=r.w+'px'; sg.style.height=r.h+'px';
+      });
+    } else {
+      ff.style.display='none';
+      // 3 slot landscape stacked di tengah layar
+      const vw=window.innerWidth, vh=window.innerHeight;
+      const slotR=908/411;
+      const PAD=12, GAP=8;
+      let sw=vw-PAD*2, sh=sw/slotR;
+      const totalH=()=>sh*3+GAP*2;
+      if(totalH()>vh*0.82){ sh=(vh*0.82-GAP*2)/3; sw=sh*slotR; }
+      const sx=(vw-sw)/2, sy=(vh-(sh*3+GAP*2))/2;
+      [0,1,2].forEach(i=>{
+        const r={ x:sx, y:sy+i*(sh+GAP), w:sw, h:sh };
+        capRects.slots[i]=r;
+        const sg=$('sg'+i);
+        sg.style.left=r.x+'px'; sg.style.top=r.y+'px';
+        sg.style.width=r.w+'px'; sg.style.height=r.h+'px';
+      });
     }
-    const sx=(vw-sw)/2;
-    const sy=(vh-totalH)/2;
-
-    [0,1,2].forEach(i=>{
-      const sg=$('sg'+i);
-      sg.style.left=sx+'px';
-      sg.style.top=(sy+i*(sh+GAP))+'px';
-      sg.style.width=sw+'px';
-      sg.style.height=sh+'px';
-    });
   }
 }
 
@@ -729,25 +727,38 @@ function runCountdown(label='Bersiap...'){
 }
 
 // ══════════════════════════════════
-//  CAPTURE ONE PHOTO
-// Capture area sesuai rasio target dari video fullscreen
+//  CAPTURE — WYSIWYG
+//  Memetakan screen rect → koordinat video stream,
+//  hasil capture = persis area yang dilihat user.
 // ══════════════════════════════════
-async function captureOne(fw,fh){
+async function captureOne(rect,outW,outH){
   const vid=$('video');
   const cap=$('cap-canvas');
-  cap.width=fw; cap.height=fh;
+  cap.width=outW; cap.height=outH;
   const ctx=cap.getContext('2d');
 
-  // Mirror jika kamera depan
-  if(facing==='user'){ ctx.translate(fw,0); ctx.scale(-1,1); }
+  const vw=window.innerWidth, vh=window.innerHeight;
+  const nw=vid.videoWidth, nh=vid.videoHeight;
 
-  // Crop center dari video stream
-  const vw=vid.videoWidth, vh=vid.videoHeight;
-  const tr=fw/fh;
-  let sx,sy,sw,sh;
-  if(vw/vh>tr){ sh=vh; sw=vh*tr; sx=(vw-sw)/2; sy=0; }
-  else{ sw=vw; sh=vw/tr; sx=0; sy=(vh-sh)/2; }
-  ctx.drawImage(vid,sx,sy,sw,sh,0,0,fw,fh);
+  // Video ditampilkan object-fit:cover → hitung skala & offset
+  const scale=Math.max(vw/nw, vh/nh);
+  const dispW=nw*scale, dispH=nh*scale;
+  const offX=(vw-dispW)/2, offY=(vh-dispH)/2;
+
+  // Screen rect → koordinat video source
+  let srcX=(rect.x-offX)/scale;
+  const srcY=(rect.y-offY)/scale;
+  const srcW=rect.w/scale;
+  const srcH=rect.h/scale;
+
+  // Kamera depan: preview di-mirror CSS, jadi unmirror koordinat source
+  if(facing==='user'){
+    srcX = nw - srcX - srcW;
+    // Gambar dengan flip agar hasil = preview (mirrored)
+    ctx.translate(outW,0); ctx.scale(-1,1);
+  }
+
+  ctx.drawImage(vid, srcX, srcY, srcW, srcH, 0, 0, outW, outH);
   ctx.setTransform(1,0,0,1,0,0);
 
   // Flash
@@ -755,7 +766,7 @@ async function captureOne(fw,fh){
   beepShutter();
 
   const out=document.createElement('canvas');
-  out.width=fw; out.height=fh;
+  out.width=outW; out.height=outH;
   out.getContext('2d').drawImage(cap,0,0);
   return out;
 }
@@ -809,10 +820,11 @@ async function startCapture(){
   if(capturing) return;
   capturing=true; $('shutter').disabled=true;
   initAudio();
+  updateGuide(); // pastikan rect terkini
 
   if(mode==='single'){
     await runCountdown('Bersiap...');
-    const photo=await captureOne(S_AREA.w, S_AREA.h);
+    const photo=await captureOne(capRects.single, S_AREA.w, S_AREA.h);
     const result=await composeSingle(photo);
     showResult(result);
 
@@ -823,9 +835,9 @@ async function startCapture(){
       if(i>0) $('sg'+(i-1)).classList.remove('active');
       $('sg'+i).classList.add('active');
       await runCountdown(`Foto ${i+1} dari 3`);
-      const p=await captureOne(SLOTS[i].w, SLOTS[i].h);
+      const p=await captureOne(capRects.slots[i], SLOTS[i].w, SLOTS[i].h);
       stripPhotos.push(p);
-      // Fly-in thumbnail ke slot guide
+      // Thumbnail masuk slot guide
       const sg=$('sg'+i);
       sg.classList.remove('active'); sg.classList.add('done');
       sg.querySelector('.strip-slot-num')?.remove();
