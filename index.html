@@ -126,7 +126,7 @@
     }
     .strip-cam-area{flex:1;display:flex;align-items:center;justify-content:center;position:relative;}
     .strip-frame-panel{
-      width:110px;flex-shrink:0;
+      width:90px;flex-shrink:0;
       background:rgba(255,255,255,.03);
       border-left:1px solid rgba(255,255,255,.06);
       display:flex;flex-direction:column;align-items:center;
@@ -161,9 +161,9 @@
       position:relative;border-radius:var(--r-lg);overflow:hidden;
       box-shadow:0 0 0 1.5px rgba(251,191,36,.15),0 16px 48px rgba(0,0,0,.5);
     }
-    #video{width:100%;height:100%;object-fit:contain;display:block;background:#000;transform:scaleX(-1);}
+    #video{width:100%;height:100%;object-fit:cover;display:block;background:#000;transform:scaleX(-1);}
     #video.env{transform:scaleX(1);}
-    #video-strip{width:100%;height:100%;object-fit:contain;display:block;background:#000;transform:scaleX(-1);}
+    #video-strip{width:100%;height:100%;object-fit:cover;display:block;background:#000;transform:scaleX(-1);}
     #video-strip.env{transform:scaleX(1);}
     .frame-layer{position:absolute;inset:0;pointer-events:none;z-index:3;background-size:100% 100%;background-repeat:no-repeat;}
 
@@ -725,34 +725,40 @@ function closeSheet(){$('sheet-bg').classList.remove('on');$('sheet').classList.
 // ══════════════════════════════════
 function resizeStage(){
   const vp=$('viewport');
-  const mw=vp.clientWidth,mh=vp.clientHeight;
+  const mw=vp.clientWidth, mh=vp.clientHeight;
+  const isLandscape=mw>mh;
 
   if(mode==='single'){
-    const PAD=12;
-    let h=mh-PAD,w=h*3/4;
-    if(w>mw-PAD){w=mw-PAD;h=w*4/3;}
+    // Single: isi penuh viewport, pertahankan 3:4
+    const PAD=8;
+    let h=mh-PAD, w=h*3/4;
+    if(w>mw-PAD){ w=mw-PAD; h=w*4/3; }
     const s=$('stage-single');
-    s.style.width=w+'px';s.style.height=h+'px';
+    s.style.width=w+'px'; s.style.height=h+'px';
   } else {
-    // strip: kamera isi lebar area (mw - panel width)
-    const panel=$('strip-panel');
-    const pw=panel.offsetWidth||110;
-    const aw=mw-pw-8;
-    const slotR=908/411;
-    // tinggi = lebar / rasio slot (1 slot)
-    let w=aw,h=w/slotR;
-    if(h>mh-8){h=mh-8;w=h*slotR;}
+    // Strip: panel kanan 90px, kamera isi sisa lebar
+    const PANEL_W=90;
+    const aw=mw-PANEL_W-4;
+    const slotR=908/411; // ~2.21 landscape
+
+    // Kamera stage: isi lebar penuh area kamera
+    let w=aw, h=w/slotR;
+    const maxH=isLandscape ? mh-8 : mh*0.45; // portrait: max 45% tinggi, landscape: penuh
+    if(h>maxH){ h=maxH; w=h*slotR; }
+
     const s=$('stage-strip');
-    s.style.width=w+'px';s.style.height=h+'px';
-    // slot thumb heights
-    const thumbW=panel.offsetWidth-16;
-    [$('ss0'),$('ss1'),$('ss2')].forEach(sl=>{
-      sl.style.width=thumbW+'px';
-    });
+    s.style.width=w+'px'; s.style.height=h+'px';
+
+    // Panel strip: isi sisa tinggi
+    const panel=$('strip-panel');
+    panel.style.width=PANEL_W+'px';
+    const thumbW=PANEL_W-12;
+    [$('ss0'),$('ss1'),$('ss2')].forEach(sl=>{ sl.style.width=thumbW+'px'; });
   }
 }
 window.addEventListener('resize',resizeStage);
-screen.orientation&&screen.orientation.addEventListener('change',()=>{setTimeout(resizeStage,200);});
+window.addEventListener('orientationchange',()=>{ setTimeout(()=>{ resizeStage(); if(mode==='strip') startCam(); },350); });
+screen.orientation&&screen.orientation.addEventListener('change',()=>{ setTimeout(()=>{ resizeStage(); if(mode==='strip') startCam(); },350); });
 
 // ══════════════════════════════════
 //  COUNTDOWN
