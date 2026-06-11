@@ -46,8 +46,21 @@
       width:100%;height:100%;
       object-fit:cover;
       transform:scaleX(-1); /* mirror kamera depan */
+      transition:transform .3s;
     }
     #video.env{transform:scaleX(1);}
+
+    /* Strip mode: rotate video 90° agar portrait kamera → terlihat landscape */
+    /* User tetap pegang HP portrait, preview tampak landscape */
+    #video.strip-front{
+      /* Portrait video, diputar -90deg, lalu mirror horizontal */
+      transform-origin:center center;
+      transform:rotate(-90deg) scaleY(-1);
+    }
+    #video.strip-env{
+      transform-origin:center center;
+      transform:rotate(-90deg);
+    }
 
     /* Frame overlay — diposisikan JS sesuai aspect ratio, dim di luar area */
     .frame-fs{
@@ -57,6 +70,29 @@
       pointer-events:none;
       display:none;
     }
+
+    /* Strip frame: container dengan overflow hidden + scroll animasi */
+    .strip-frame-wrap{
+      position:absolute;z-index:3;
+      overflow:hidden;
+      pointer-events:none;
+      display:none;
+    }
+    .strip-frame-inner{
+      position:absolute;left:0;top:0;
+      width:100%;
+      background-size:100% auto;
+      background-repeat:no-repeat;
+      transition:top .5s cubic-bezier(.4,0,.2,1);
+    }
+
+    /* Dim area di luar frame (4 panel solid) */
+    .dim-panel{
+      position:absolute;z-index:2;pointer-events:none;
+      background:#000;opacity:.55;
+      transition:all .3s;
+    }
+    .dim-panel.hide{opacity:0;}
 
     /* Guide overlay — kotak crop area yang akan di-capture */
     /* Hanya muncul saat tidak ada frame */
@@ -328,8 +364,19 @@
   <!-- Video stream -->
   <video id="video" autoplay playsinline muted></video>
 
-  <!-- Frame PNG overlay fullscreen -->
+  <!-- Frame PNG overlay fullscreen (single mode) -->
   <div class="frame-fs" id="frame-fs"></div>
+
+  <!-- Strip frame scroll container -->
+  <div class="strip-frame-wrap" id="strip-frame-wrap">
+    <div class="strip-frame-inner" id="strip-frame-inner"></div>
+  </div>
+
+  <!-- Dim panels: tutup area di luar frame (4 sisi) -->
+  <div class="dim-panel" id="dim-top"    style="left:0;right:0;top:0"></div>
+  <div class="dim-panel" id="dim-bottom" style="left:0;right:0;bottom:0"></div>
+  <div class="dim-panel" id="dim-left"   style="top:0;bottom:0;left:0"></div>
+  <div class="dim-panel" id="dim-right"  style="top:0;bottom:0;right:0"></div>
 
   <!-- Crop guide (tampil saat tanpa frame) -->
   <div class="crop-guide" id="crop-guide"></div>
@@ -536,16 +583,14 @@ async function startCam(){
   if(stream) stream.getTracks().forEach(t=>t.stop());
   torchTrack=null; torchOn=false; $('btn-torch').classList.remove('on');
   try{
-    // Strip landscape: request video dengan lebar > tinggi
-    const vidConstraints = mode==='strip'
-      ? {facingMode:facing, width:{ideal:1920}, height:{ideal:1080}}
-      : {facingMode:facing, width:{ideal:1080}, height:{ideal:1920}};
+    // Biarkan kamera pakai resolusi natural, jangan paksa aspect ratio
     stream=await navigator.mediaDevices.getUserMedia({
-      video:vidConstraints, audio:false
+      video:{facingMode:facing, width:{ideal:1920}},
+      audio:false
     });
     $('video').srcObject=stream;
-    $('video').className=facing==='environment'?'env':'';
     $('video').onloadedmetadata=()=>updateGuide();
+    applyStripVideoClass();
     $('nocam').style.display='none';
     $('shutter').disabled=false;
     // Torch
@@ -603,21 +648,71 @@ function containBox(arW,arH,padH=20){
   return { x:(vw-w)/2, y:UI_TOP+Math.max(0,(safeH-h)/2), w, h };
 }
 
+// Dimensi video yang sudah di-rotate 90° untuk strip
+// Video portrait (h>w) setelah rotate 90° → terlihat landscape
+function getRotatedVideoDims(){
+  const vid=$('video');
+  const nw=vid.videoWidth||720, nh=vid.videoHeight||1280;
+  // Setelah rotate -90deg, lebar visual = tinggi video, tinggi visual = lebar video
+  return {w:nh, h:nw};
+}
+
+// State scroll frame strip
+let stripScrollIdx=0;
+
+function applyStripVideoClass(){
+  const vid=$('video');
+  if(mode==='strip'){
+    vid.className=facing==='environment'?'strip-env':'strip-front';
+  } else {
+    vid.className=facing==='environment'?'env':'';
+  }
+}
+
+function updateDimPanels(fb){
+  // Tutup area di luar frame box dengan 4 panel hitam
+  const vw=window.innerWidth, vh=window.innerHeight;
+  const panels=['dim-top','dim-bottom','dim-left','dim-right'];
+  panels.forEach(id=>{
+    const el=$(id);
+    if(!el) return;
+    el.classList.remove('hide');
+  });
+  // Top
+  $('dim-top').style.cssText   =`left:0;right:0;top:0;height:${fb.y}px;`;
+  // Bottom
+  $('dim-bottom').style.cssText=`left:0;right:0;bottom:0;height:${vh-fb.y-fb.h}px;`;
+  // Left
+  $('dim-left').style.cssText  =`top:${fb.y}px;bottom:${vh-fb.y-fb.h}px;left:0;width:${fb.x}px;`;
+  // Right
+  $('dim-right').style.cssText =`top:${fb.y}px;bottom:${vh-fb.y-fb.h}px;right:0;width:${vw-fb.x-fb.w}px;`;
+}
+
+function hideDimPanels(){
+  ['dim-top','dim-bottom','dim-left','dim-right'].forEach(id=>{
+    const el=$(id); if(el) el.classList.add('hide');
+  });
+}
+
 function updateGuide(){
   const guide=$('crop-guide');
   const ff=$('frame-fs');
+  const sfw=$('strip-frame-wrap');
+  const sfi=$('strip-frame-inner');
 
   if(mode==='single'){
     $('strip-guides').classList.remove('on');
+    sfw.style.display='none';
+    // Video class normal
+    applyStripVideoClass();
 
     if(selFrame){
-      // Frame ditampilkan contain (aspect 1080:1440), tidak distorsi
       const fb=containBox(S_FW,S_FH);
       ff.style.display='block';
       ff.style.left=fb.x+'px'; ff.style.top=fb.y+'px';
       ff.style.width=fb.w+'px'; ff.style.height=fb.h+'px';
       guide.classList.add('hide');
-      // Area foto dalam frame box (proporsional)
+      updateDimPanels(fb);
       const k=fb.w/S_FW;
       capRects.single={
         x: fb.x + S_AREA.x*k,
@@ -628,36 +723,78 @@ function updateGuide(){
     } else {
       ff.style.display='none';
       guide.classList.remove('hide');
-      // Guide 3:4 dalam safe area
       const gb=containBox(S_AREA.w,S_AREA.h,8);
       guide.style.left=gb.x+'px'; guide.style.top=gb.y+'px';
       guide.style.width=gb.w+'px'; guide.style.height=gb.h+'px';
+      updateDimPanels(gb);
       capRects.single={...gb};
     }
 
   } else {
     // ── STRIP ──
     guide.classList.add('hide');
+    ff.style.display='none';
     $('strip-guides').classList.add('on');
+    applyStripVideoClass(); // rotate video
+    stripScrollIdx=0;
 
     if(selFrame){
-      // Frame strip 1080x1920 contain, slot guides di posisi SLOTS dalam frame box
+      // Frame 9:16 contain dalam safe area
+      // Viewport saat strip: HP portrait, tapi kita simulasi landscape via rotate
+      // Safe area: seluruh layar minus top/bot bar
+      const vw=window.innerWidth, vh=window.innerHeight;
+      const safeH=vh-UI_TOP-UI_BOT-16;
+      const safeW=vw-16;
+
+      // Frame 1080:1920 → tampilkan contain dalam safe area
       const fb=containBox(T_FW,T_FH);
-      ff.style.display='block';
-      ff.style.left=fb.x+'px'; ff.style.top=fb.y+'px';
-      ff.style.width=fb.w+'px'; ff.style.height=fb.h+'px';
+
+      // Setup strip-frame-wrap: window kecil yang hanya menampilkan 1 slot pada satu waktu
+      // Tinggi window = tinggi 1 slot dalam skala frame
       const k=fb.w/T_FW;
+      const slot0=SLOTS[0];
+      const slotH=slot0.h*k; // tinggi 1 slot di layar
+      const slotY0=fb.y+slot0.y*k; // posisi Y slot pertama di layar
+
+      // Window height = slotH (hanya tampilkan 1 slot)
+      sfw.style.display='block';
+      sfw.style.left=fb.x+'px';
+      sfw.style.top=slotY0+'px';
+      sfw.style.width=fb.w+'px';
+      sfw.style.height=slotH+'px';
+
+      // Frame inner: gambar full frame, offset atas = -slot0.y*k (slot pertama di atas)
+      const totalFrameH=fb.h;
+      sfi.style.backgroundImage=`url('${FB}strip/${selFrame.file}')`;
+      sfi.style.width=fb.w+'px';
+      sfi.style.height=totalFrameH+'px';
+      sfi.style.top=(-slot0.y*k)+'px'; // slot pertama visible
+
+      // Slot guides: hanya tampilkan slot yg sedang active (di center window)
       [0,1,2].forEach(i=>{
         const s=SLOTS[i];
-        const r={ x:fb.x+s.x*k, y:fb.y+s.y*k, w:s.w*k, h:s.h*k };
+        // Posisi slot dalam frame inner (relatif terhadap window)
+        const slotInFrameY=(s.y-slot0.y)*k;
+        const r={
+          x: fb.x+s.x*k,
+          y: slotY0+slotInFrameY,
+          w: s.w*k,
+          h: s.h*k
+        };
         capRects.slots[i]=r;
         const sg=$('sg'+i);
         sg.style.left=r.x+'px'; sg.style.top=r.y+'px';
         sg.style.width=r.w+'px'; sg.style.height=r.h+'px';
       });
+
+      // Dim: tutup area di luar window slot
+      updateDimPanels({x:fb.x, y:slotY0, w:fb.w, h:slotH});
+
     } else {
+      sfw.style.display='none';
       ff.style.display='none';
-      // 3 slot landscape stacked dalam safe area
+      hideDimPanels();
+      // 3 slot guides tanpa frame
       const GAP=8;
       const slotR=908/411;
       const safeH=window.innerHeight-UI_TOP-UI_BOT-20;
@@ -678,6 +815,23 @@ function updateGuide(){
   }
 }
 
+// Scroll frame strip ke slot berikutnya
+function scrollStripToSlot(slotIdx){
+  if(!selFrame) return;
+  const sfi=$('strip-frame-inner');
+  const fb=containBox(T_FW,T_FH);
+  const k=fb.w/T_FW;
+  const slot0=SLOTS[0];
+  const targetSlot=SLOTS[slotIdx];
+  // Geser frame inner ke atas agar slot[slotIdx] menjadi visible
+  const offsetY=-(targetSlot.y-slot0.y)*k;
+  sfi.style.top=offsetY+'px';
+  // Update dim panels ke posisi slot baru
+  const slotH=slot0.h*k;
+  const slotY0=fb.y+slot0.y*k;
+  updateDimPanels({x:fb.x, y:slotY0, w:fb.w, h:slotH});
+}
+
 // ══════════════════════════════════
 //  MODE
 // ══════════════════════════════════
@@ -694,8 +848,10 @@ function setMode(m){
     updateGuide();
     startCam();
   } else {
-    // Strip: cek orientasi dulu
-    checkStripOrientation();
+    // Strip: CSS rotate, tidak perlu cek orientasi
+    $('ls-hint').classList.remove('on');
+    $('shutter').disabled=false;
+    updateGuide();
     startCam();
   }
 }
@@ -810,26 +966,69 @@ async function captureOne(rect,outW,outH){
   const vw=window.innerWidth, vh=window.innerHeight;
   const nw=vid.videoWidth, nh=vid.videoHeight;
 
-  // Video ditampilkan object-fit:cover → hitung skala & offset
-  const scale=Math.max(vw/nw, vh/nh);
-  const dispW=nw*scale, dispH=nh*scale;
-  const offX=(vw-dispW)/2, offY=(vh-dispH)/2;
+  if(mode==='strip'){
+    // Video di-rotate 90° → video portrait (nw<nh) tampak landscape
+    // Visual display: lebar visual=nh, tinggi visual=nw
+    // object-fit:cover pada rotated element:
+    // skala berdasarkan dimensi visual
+    const dispScale=Math.max(vw/nh, vh/nw);
+    const dispW=nh*dispScale, dispH=nw*dispScale;
+    const offX=(vw-dispW)/2, offY=(vh-dispH)/2;
 
-  // Screen rect → koordinat video source
-  let srcX=(rect.x-offX)/scale;
-  const srcY=(rect.y-offY)/scale;
-  const srcW=rect.w/scale;
-  const srcH=rect.h/scale;
+    // Screen rect → rotated video koordinat
+    // Dalam rotated space: x layar → mapped ke Y video, y layar → mapped ke X video
+    const rxInDisplay=(rect.x-offX)/dispScale; // x dalam video-height space
+    const ryInDisplay=(rect.y-offY)/dispScale; // y dalam video-width space
+    const rwInDisplay=rect.w/dispScale;
+    const rhInDisplay=rect.h/dispScale;
 
-  // Kamera depan: preview di-mirror CSS, jadi unmirror koordinat source
-  if(facing==='user'){
-    srcX = nw - srcX - srcW;
-    // Gambar dengan flip agar hasil = preview (mirrored)
-    ctx.translate(outW,0); ctx.scale(-1,1);
+    // rotate-90: screen_x → video_y, screen_y → video_x (dari bawah)
+    let srcX=nh-rxInDisplay-rwInDisplay; // mapped to video height
+    let srcY=ryInDisplay;
+    let srcW=rwInDisplay;
+    let srcH=rhInDisplay;
+
+    // Untuk kamera depan yang di-mirror (strip-front: rotate -90 scaleY(-1))
+    if(facing==='user'){
+      srcY=nw-ryInDisplay-rhInDisplay;
+    }
+
+    // Clamp
+    srcX=Math.max(0,Math.min(srcX,nh-srcW));
+    srcY=Math.max(0,Math.min(srcY,nw-srcH));
+
+    // Draw dari video portrait ke canvas landscape
+    // Video portrait: dimensi nw(lebar)×nh(tinggi), kita ambil area srcX,srcY,srcW,srcH
+    // Tapi srcX,srcY mengacu ke "after rotate" space (nh×nw)
+    // Translate: dalam video asli, setelah rotate -90:
+    //   video_x = nh - srcX - srcW  (sudah di atas)
+    //   video_y = srcY
+    // Ambil dari video asli: x=nw-srcY-srcH, y=srcX, w=srcH, h=srcW (swap karena 90°)
+    const vSrcX=nw-srcY-srcH;
+    const vSrcY=nh-srcX-srcW;
+    const vSrcW=srcH;
+    const vSrcH=srcW;
+
+    ctx.drawImage(vid, vSrcY, vSrcX, vSrcW, vSrcH, 0, 0, outW, outH);
+
+  } else {
+    // Single: video portrait normal, object-fit:cover
+    const scale=Math.max(vw/nw, vh/nh);
+    const dispW=nw*scale, dispH=nh*scale;
+    const offX=(vw-dispW)/2, offY=(vh-dispH)/2;
+
+    let srcX=(rect.x-offX)/scale;
+    const srcY=(rect.y-offY)/scale;
+    const srcW=rect.w/scale;
+    const srcH=rect.h/scale;
+
+    if(facing==='user'){
+      srcX = nw - srcX - srcW;
+      ctx.translate(outW,0); ctx.scale(-1,1);
+    }
+    ctx.drawImage(vid, srcX, srcY, srcW, srcH, 0, 0, outW, outH);
+    ctx.setTransform(1,0,0,1,0,0);
   }
-
-  ctx.drawImage(vid, srcX, srcY, srcW, srcH, 0, 0, outW, outH);
-  ctx.setTransform(1,0,0,1,0,0);
 
   // Flash
   const fl=$('flash'); fl.style.opacity='.9'; setTimeout(()=>fl.style.opacity='0',130);
@@ -888,11 +1087,6 @@ async function composeStrip(photos){
 // ══════════════════════════════════
 async function startCapture(){
   if(capturing) return;
-  // Guard: strip harus landscape
-  if(mode==='strip' && !isLandscape()){
-    toast('⚠️ Miringkan HP ke landscape terlebih dahulu!');
-    return;
-  }
   capturing=true; $('shutter').disabled=true;
   initAudio();
   updateGuide(); // pastikan rect terkini
@@ -904,14 +1098,22 @@ async function startCapture(){
     showResult(result);
 
   } else {
-    // Strip: 3 foto landscape
+    // Strip: 3 foto
     stripPhotos=[];
     for(let i=0;i<3;i++){
+      // Scroll frame ke slot i
+      if(i>0){
+        scrollStripToSlot(i);
+        await sleep(550); // tunggu animasi scroll selesai
+      }
+      // Aktifkan slot guide
       if(i>0) $('sg'+(i-1)).classList.remove('active');
       $('sg'+i).classList.add('active');
+
       await runCountdown(`Foto ${i+1} dari 3`);
       const p=await captureOne(capRects.slots[i], SLOTS[i].w, SLOTS[i].h);
       stripPhotos.push(p);
+
       // Thumbnail masuk slot guide
       const sg=$('sg'+i);
       sg.classList.remove('active'); sg.classList.add('done');
@@ -971,6 +1173,15 @@ async function doDownload(){
 function retake(){
   $('result-ov').classList.remove('on');
   stripPhotos=[]; resetSlotGuides();
+  // Reset frame scroll ke slot 0
+  if(mode==='strip' && selFrame){
+    const sfi=$('strip-frame-inner');
+    const fb=containBox(T_FW,T_FH);
+    const k=fb.w/T_FW;
+    const slot0=SLOTS[0];
+    sfi.style.top=(-slot0.y*k)+'px';
+    updateDimPanels({x:fb.x, y:fb.y+slot0.y*k, w:fb.w, h:slot0.h*k});
+  }
   capturing=false; $('shutter').disabled=false;
 }
 
