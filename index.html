@@ -534,15 +534,20 @@ let capRects={ single:null, slots:[null,null,null] };
 
 // Hitung box "contain" untuk aspect ratio dalam safe area layar
 // Safe area: hindari top-bar (70px) dan bot-bar (90px)
-const UI_TOP=72, UI_BOT=92;
-function containBox(arW,arH,padH=16){
-  const vw=window.innerWidth, vh=window.innerHeight;
+// Safe area: top-bar 72px + extra padding, bot-bar + Safari address bar
+// window.innerHeight di iOS Safari sudah exclude address bar atas,
+// tapi bottom bar browser masih perlu dihitung manual
+const UI_TOP=80, UI_BOT=110;
+function containBox(arW,arH,padH=20){
+  // visualViewport lebih akurat di iOS Safari
+  const vw=window.visualViewport?window.visualViewport.width:window.innerWidth;
+  const vh=window.visualViewport?window.visualViewport.height:window.innerHeight;
   const safeH=vh-UI_TOP-UI_BOT-padH;
-  const safeW=vw-padH;
+  const safeW=vw-padH*2;
   const ar=arW/arH;
   let h=safeH, w=h*ar;
   if(w>safeW){ w=safeW; h=w/ar; }
-  return { x:(vw-w)/2, y:UI_TOP+(safeH-h)/2, w, h };
+  return { x:(vw-w)/2, y:UI_TOP+Math.max(0,(safeH-h)/2), w, h };
 }
 
 function updateGuide(){
@@ -602,13 +607,13 @@ function updateGuide(){
       // 3 slot landscape stacked dalam safe area
       const GAP=8;
       const slotR=908/411;
-      const safeH=window.innerHeight-UI_TOP-UI_BOT-16;
-      const safeW=window.innerWidth-16;
+      const safeH=window.innerHeight-UI_TOP-UI_BOT-20;
+      const safeW=window.innerWidth-40;
       let sh=(safeH-GAP*2)/3, sw=sh*slotR;
       if(sw>safeW){ sw=safeW; sh=sw/slotR; }
       const sx=(window.innerWidth-sw)/2;
       const totalH=sh*3+GAP*2;
-      const sy=UI_TOP+(safeH-totalH)/2;
+      const sy=UI_TOP+Math.max(0,(safeH-totalH)/2);
       [0,1,2].forEach(i=>{
         const r={ x:sx, y:sy+i*(sh+GAP), w:sw, h:sh };
         capRects.slots[i]=r;
@@ -927,6 +932,7 @@ document.addEventListener('keydown',e=>{
   }
 });
 window.addEventListener('resize',()=>updateGuide());
+window.visualViewport?.addEventListener('resize',()=>updateGuide());
 screen.orientation?.addEventListener('change',()=>{ setTimeout(()=>{updateGuide();startCam();},350); });
 window.addEventListener('orientationchange',()=>{ setTimeout(()=>{updateGuide();startCam();},350); });
 
