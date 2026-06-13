@@ -36,18 +36,35 @@ html,body{height:100%;overflow:hidden;background:#000;font-family:'Plus Jakarta 
 
 /* ══ TOP BAR ══ */
 .top-bar{position:relative;z-index:30;flex-shrink:0;display:flex;align-items:center;justify-content:space-between;padding:max(env(safe-area-inset-top),12px) 14px 10px;background:linear-gradient(to bottom,rgba(6,14,32,.98) 0%,rgba(6,14,32,.85) 100%);border-bottom:1px solid rgba(251,191,36,.1);}
+.top-left{display:flex;align-items:center;gap:8px;}
+.btn-back{background:none;border:none;cursor:pointer;display:flex;align-items:center;gap:3px;color:rgba(255,255,255,.65);font-family:inherit;font-size:11px;font-weight:700;padding:4px 2px;transition:color .2s;outline:none;-webkit-tap-highlight-color:transparent;flex-shrink:0;}
+.btn-back:hover{color:#fff;}
+.btn-back svg{width:15px;height:15px;}
 .top-brand{display:flex;align-items:center;gap:8px;}
 .top-logo{width:28px;height:28px;border-radius:50%;overflow:hidden;border:1px solid rgba(251,191,36,.3);background:rgba(251,191,36,.08);display:flex;align-items:center;justify-content:center;font-size:13px;}
 .top-logo img{width:100%;height:100%;object-fit:contain;}
 .top-name{font-size:11px;font-weight:800;color:var(--gold);}
 .top-sub{font-size:8.5px;color:rgba(255,255,255,.4);font-weight:500;}
-.top-frame-btn{display:flex;align-items:center;gap:5px;background:rgba(0,0,0,.4);border:1px solid rgba(255,255,255,.2);backdrop-filter:blur(8px);border-radius:999px;padding:5px 10px;cursor:pointer;transition:all .2s;}
+.top-frame-btn{display:flex;align-items:center;gap:5px;background:rgba(0,0,0,.4);border:1px solid rgba(255,255,255,.2);backdrop-filter:blur(8px);border-radius:999px;padding:5px 10px;cursor:pointer;transition:all .2s;outline:none;}
 .top-frame-btn:hover{border-color:rgba(251,191,36,.4);background:rgba(251,191,36,.12);}
 .top-frame-ic{font-size:12px;}
 .top-frame-name{font-size:11px;font-weight:700;color:rgba(255,255,255,.75);max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 
+/* ══ MODE SELECT (State 0) ══ */
+.mode-select{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;gap:28px;}
+.mode-select-title{font-size:18px;font-weight:800;color:#fff;text-align:center;}
+.mode-select-sub{font-size:12px;color:rgba(255,255,255,.4);text-align:center;margin-top:-20px;}
+.mode-cards{display:flex;gap:14px;width:100%;max-width:340px;}
+.mode-card{flex:1;display:flex;flex-direction:column;align-items:center;gap:8px;padding:28px 12px;border:1.5px solid rgba(255,255,255,.1);border-radius:18px;background:rgba(255,255,255,.03);cursor:pointer;transition:all .18s;font-family:inherit;color:#fff;outline:none;-webkit-tap-highlight-color:transparent;}
+.mode-card:hover{border-color:rgba(251,191,36,.35);background:rgba(251,191,36,.06);}
+.mode-card:active{transform:scale(.96);}
+.mode-card-icon{font-size:38px;line-height:1;}
+.mode-card-label{font-size:15px;font-weight:800;}
+.mode-card-sub{font-size:10px;color:rgba(255,255,255,.38);font-weight:600;}
+
 /* ══ UPLOAD ZONE (State A) ══ */
-.upload-zone{flex:1;display:flex;align-items:center;justify-content:center;padding:24px;}
+.upload-zone{flex:1;display:flex;align-items:center;justify-content:center;padding:20px;}
+.upload-single-wrap{display:flex;align-items:center;justify-content:center;width:100%;height:100%;}
 .upload-inner{display:flex;flex-direction:column;align-items:center;gap:12px;border:2px dashed rgba(251,191,36,.25);border-radius:20px;padding:48px 32px;background:rgba(251,191,36,.03);text-align:center;transition:all .2s;width:100%;max-width:360px;cursor:pointer;}
 .upload-inner.drag-over{border-color:var(--gold);background:rgba(251,191,36,.08);}
 .upload-icon{font-size:52px;line-height:1;}
@@ -55,6 +72,19 @@ html,body{height:100%;overflow:hidden;background:#000;font-family:'Plus Jakarta 
 .upload-hint{font-size:12px;color:rgba(255,255,255,.4);font-weight:500;}
 .btn-pick-photo{margin-top:8px;padding:12px 28px;background:linear-gradient(135deg,var(--gold-dk),var(--gold));border:none;border-radius:999px;font-family:inherit;font-size:13px;font-weight:800;color:var(--navy);cursor:pointer;transition:transform .15s;outline:none;}
 .btn-pick-photo:active{transform:scale(.97);}
+
+/* ══ STRIP UPLOAD (State A – strip) ══ */
+.upload-strip-wrap{display:flex;flex-direction:column;align-items:center;gap:16px;width:100%;}
+.strip-upload-title{font-size:13px;font-weight:700;color:rgba(255,255,255,.6);text-align:center;}
+.strip-slots-row{display:flex;gap:10px;width:100%;max-width:380px;}
+.strip-slot-upload{flex:1;aspect-ratio:9/4;border:2px dashed rgba(251,191,36,.22);border-radius:12px;background:rgba(251,191,36,.025);display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;transition:all .18s;overflow:hidden;position:relative;-webkit-tap-highlight-color:transparent;}
+.strip-slot-upload:active{transform:scale(.96);}
+.strip-slot-upload.has-photo{border-color:rgba(251,191,36,.45);background:rgba(251,191,36,.06);}
+.strip-slot-upload .slot-upload-ic{font-size:20px;line-height:1;}
+.strip-slot-upload .slot-upload-lbl{font-size:9px;color:rgba(255,255,255,.45);font-weight:700;margin-top:4px;}
+.strip-slot-upload .slot-thumb-img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0;}
+.strip-slot-upload .slot-done-label{position:absolute;bottom:0;left:0;right:0;text-align:center;font-size:8.5px;font-weight:800;color:var(--gold);background:rgba(6,14,32,.75);padding:2px 0;}
+.strip-upload-counter{font-size:11px;color:rgba(255,255,255,.38);font-weight:600;}
 
 /* ══ CANVAS WRAP (State B) ══ */
 .canvas-wrap{flex:1;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden;background:#000;}
@@ -66,11 +96,11 @@ html,body{height:100%;overflow:hidden;background:#000;font-family:'Plus Jakarta 
 
 /* ══ BOTTOM BAR ══ */
 .bot-bar{position:relative;z-index:30;flex-shrink:0;padding:12px 24px max(env(safe-area-inset-bottom),16px);background:linear-gradient(to top,rgba(6,14,32,.98) 0%,rgba(6,14,32,.85) 100%);border-top:1px solid rgba(255,255,255,.06);}
-.bot-state-a{display:flex;justify-content:center;}
-.bot-state-b{display:flex;align-items:center;justify-content:space-between;gap:12px;}
+.bot-state{display:flex;align-items:center;justify-content:center;}
+.bot-state-preview{justify-content:space-between;gap:12px;}
 .btn-download{flex:1;padding:14px;background:linear-gradient(135deg,var(--gold-dk),var(--gold));border:none;border-radius:var(--r-lg);font-family:inherit;font-size:14px;font-weight:800;color:var(--navy);cursor:pointer;transition:transform .15s;outline:none;display:flex;align-items:center;justify-content:center;gap:7px;}
 .btn-download:active{transform:scale(.97);}
-.btn-download:disabled{opacity:.5;cursor:wait;}
+.btn-download:disabled{opacity:.4;cursor:not-allowed;}
 .btn-pick-center{flex:none;padding:14px 36px;border-radius:999px;}
 .icbtn{width:46px;height:46px;border-radius:50%;flex-shrink:0;border:1.5px solid rgba(255,255,255,.25);background:rgba(255,255,255,.07);cursor:pointer;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.8);transition:all .2s;outline:none;-webkit-tap-highlight-color:transparent;}
 .icbtn:active{transform:scale(.88);}
@@ -98,10 +128,10 @@ html,body{height:100%;overflow:hidden;background:#000;font-family:'Plus Jakarta 
 .share-btns{display:flex;flex-direction:column;gap:10px;}
 .share-btn{display:flex;align-items:center;gap:10px;padding:14px 18px;border-radius:var(--r-lg);border:none;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;transition:transform .15s;outline:none;}
 .share-btn:active{transform:scale(.97);}
-.share-ig{background:linear-gradient(135deg,#833ab4,#fd1d1d,#fcb045);color:#fff;}
-.share-tt{background:#000;border:1px solid rgba(255,255,255,.15);color:#fff;}
-.share-copy{background:rgba(251,191,36,.15);border:1px solid rgba(251,191,36,.3);color:var(--gold);}
-.share-dismiss{width:100%;margin-top:12px;padding:12px;border:none;background:transparent;font-family:inherit;font-size:13px;color:rgba(255,255,255,.4);cursor:pointer;border-radius:var(--r-md);transition:background .2s;}
+.share-main{background:linear-gradient(135deg,var(--gold-dk),var(--gold));color:var(--navy);}
+.share-copy{background:rgba(251,191,36,.12);border:1px solid rgba(251,191,36,.25);color:var(--gold);}
+.share-hint{font-size:11px;color:rgba(255,255,255,.38);text-align:center;margin-top:10px;line-height:1.5;}
+.share-dismiss{width:100%;margin-top:8px;padding:12px;border:none;background:transparent;font-family:inherit;font-size:13px;color:rgba(255,255,255,.4);cursor:pointer;border-radius:var(--r-md);transition:background .2s;}
 .share-dismiss:hover{background:rgba(255,255,255,.05);}
 
 /* ══ FRAME SHEET ══ */
@@ -119,7 +149,7 @@ html,body{height:100%;overflow:hidden;background:#000;font-family:'Plus Jakarta 
 .sheet-item-thumb img{width:100%;display:block;}
 .sheet-item-name{font-size:12px;font-weight:700;color:rgba(255,255,255,.8);flex:1;}
 .sheet-check{font-size:14px;opacity:0;transition:opacity .2s;}
-.sheet-item.selected .sheet-check{opacity:1;}
+.sheet-item.selected .sheet-check,.sheet-none.selected .sheet-check{opacity:1;}
 .sheet-none{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:var(--r-md);background:rgba(255,255,255,.04);border:1.5px solid rgba(255,255,255,.08);cursor:pointer;transition:all .2s;}
 .sheet-none.selected{background:rgba(251,191,36,.08);border-color:rgba(251,191,36,.2);}
 .sheet-none-ic{width:40px;height:28px;display:flex;align-items:center;justify-content:center;font-size:18px;opacity:.35;}
@@ -153,32 +183,78 @@ html,body{height:100%;overflow:hidden;background:#000;font-family:'Plus Jakarta 
 
   <!-- TOP BAR -->
   <div class="top-bar">
-    <div class="top-brand">
-      <div class="top-logo">
-        <img src="logoalwildan.png" alt="" onerror="this.style.display='none';this.parentNode.textContent='🎓'">
-      </div>
-      <div>
-        <div class="top-name">MOMENAKBAR</div>
-        <div class="top-sub">WISUDA AKBAR 2026</div>
+    <div class="top-left">
+      <button class="btn-back" id="btn-back" onclick="goBack()" style="display:none" aria-label="Kembali">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+        Kembali
+      </button>
+      <div class="top-brand">
+        <div class="top-logo">
+          <img src="logoalwildan.png" alt="" onerror="this.style.display='none';this.parentNode.textContent='🎓'">
+        </div>
+        <div>
+          <div class="top-name">MOMENAKBAR</div>
+          <div class="top-sub">WISUDA AKBAR 2026</div>
+        </div>
       </div>
     </div>
-    <button class="top-frame-btn" onclick="openSheet()" aria-label="Pilih frame">
+    <button class="top-frame-btn" id="top-frame-btn" onclick="openSheet()" aria-label="Pilih frame" style="display:none">
       <span class="top-frame-ic">🖼️</span>
-      <span class="top-frame-name" id="top-frame-name">Memuat...</span>
+      <span class="top-frame-name" id="top-frame-name">Frame</span>
     </button>
   </div>
 
-  <!-- STATE A: Upload Zone -->
-  <div class="upload-zone" id="upload-zone">
-    <div class="upload-inner" id="upload-drop-area">
-      <div class="upload-icon">📷</div>
-      <div class="upload-title">Pilih foto dari galeri</div>
-      <div class="upload-hint">atau drag & drop foto ke sini</div>
-      <button class="btn-pick-photo" onclick="triggerFileInput()">Pilih Foto</button>
+  <!-- STATE 0: MODE SELECT -->
+  <div class="mode-select" id="mode-select">
+    <div class="mode-select-title">Pilih Mode Foto</div>
+    <div class="mode-select-sub">Sesuaikan dengan frame yang dipilih</div>
+    <div class="mode-cards">
+      <button class="mode-card" onclick="setMode('single')">
+        <div class="mode-card-icon">🖼️</div>
+        <div class="mode-card-label">1 Foto</div>
+        <div class="mode-card-sub">Single Portrait</div>
+      </button>
+      <button class="mode-card" onclick="setMode('strip')">
+        <div class="mode-card-icon">🎞️</div>
+        <div class="mode-card-label">3 Foto</div>
+        <div class="mode-card-sub">Strip 3×</div>
+      </button>
     </div>
   </div>
 
-  <!-- STATE B: Canvas Preview -->
+  <!-- STATE A: UPLOAD ZONE -->
+  <div class="upload-zone" id="upload-zone" style="display:none">
+    <!-- Single upload -->
+    <div class="upload-single-wrap" id="upload-zone-single" style="display:none">
+      <div class="upload-inner" id="upload-drop-area">
+        <div class="upload-icon">📷</div>
+        <div class="upload-title">Pilih foto dari galeri</div>
+        <div class="upload-hint">atau drag & drop foto ke sini</div>
+        <button class="btn-pick-photo" onclick="triggerFileInput(null)">Pilih Foto</button>
+      </div>
+    </div>
+    <!-- Strip upload -->
+    <div class="upload-strip-wrap" id="upload-zone-strip" style="display:none">
+      <div class="strip-upload-title">Upload 3 Foto untuk Strip</div>
+      <div class="strip-slots-row">
+        <div class="strip-slot-upload" id="slot-upload-0" onclick="triggerFileInput(0)">
+          <div class="slot-upload-ic">📷</div>
+          <div class="slot-upload-lbl">Foto 1</div>
+        </div>
+        <div class="strip-slot-upload" id="slot-upload-1" onclick="triggerFileInput(1)">
+          <div class="slot-upload-ic">📷</div>
+          <div class="slot-upload-lbl">Foto 2</div>
+        </div>
+        <div class="strip-slot-upload" id="slot-upload-2" onclick="triggerFileInput(2)">
+          <div class="slot-upload-ic">📷</div>
+          <div class="slot-upload-lbl">Foto 3</div>
+        </div>
+      </div>
+      <div class="strip-upload-counter" id="strip-upload-counter">0 / 3 foto dipilih</div>
+    </div>
+  </div>
+
+  <!-- STATE B: CANVAS PREVIEW -->
   <div class="canvas-wrap" id="canvas-wrap" style="display:none">
     <div class="dim-panel" id="dim-top"></div>
     <div class="dim-panel" id="dim-bottom"></div>
@@ -189,11 +265,19 @@ html,body{height:100%;overflow:hidden;background:#000;font-family:'Plus Jakarta 
 
   <!-- BOTTOM BAR -->
   <div class="bot-bar">
-    <div class="bot-state-a" id="bot-state-a">
-      <button class="btn-download btn-pick-center" onclick="triggerFileInput()">📷 Pilih Foto</button>
+    <!-- Mode select: empty spacer -->
+    <div class="bot-state" id="bot-mode" style="display:none;min-height:48px;"></div>
+    <!-- Upload single -->
+    <div class="bot-state" id="bot-upload-single" style="display:none">
+      <button class="btn-download btn-pick-center" onclick="triggerFileInput(null)">📷 Pilih Foto</button>
     </div>
-    <div class="bot-state-b" id="bot-state-b" style="display:none">
-      <button class="icbtn" onclick="triggerFileInput()" aria-label="Ganti foto" title="Ganti Foto">
+    <!-- Upload strip -->
+    <div class="bot-state" id="bot-upload-strip" style="display:none">
+      <button class="btn-download" id="btn-preview-strip" onclick="showPreview()" disabled>👁️ Lihat Preview</button>
+    </div>
+    <!-- Preview -->
+    <div class="bot-state bot-state-preview" id="bot-preview" style="display:none">
+      <button class="icbtn" onclick="triggerReplacePhoto()" aria-label="Ganti foto" title="Ganti Foto">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
           <polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
@@ -239,17 +323,15 @@ html,body{height:100%;overflow:hidden;background:#000;font-family:'Plus Jakarta 
 <div class="share-modal" id="share-modal">
   <div class="share-handle"></div>
   <div class="share-title">Bagikan Momenmu! 🎓</div>
-  <div class="share-btns">
-    <button class="share-btn share-ig" onclick="window.open('https://www.instagram.com/stories/create','_blank')">
-      <span>📸</span> Instagram Story
-    </button>
-    <button class="share-btn share-tt" onclick="window.open('https://www.tiktok.com/upload','_blank')">
-      <span>🎵</span> TikTok
+  <div class="share-btns" id="share-btns">
+    <button class="share-btn share-main" id="btn-share-main" onclick="doShare()">
+      <span>📤</span> Bagikan Foto
     </button>
     <button class="share-btn share-copy" onclick="copyCaption()">
       <span>📋</span> Salin Caption
     </button>
   </div>
+  <p class="share-hint" id="share-hint"></p>
   <button class="share-dismiss" onclick="closeShare()">Nanti saja</button>
 </div>
 
@@ -262,22 +344,40 @@ html,body{height:100%;overflow:hidden;background:#000;font-family:'Plus Jakarta 
 const MANIFEST = 'frames/manifest.json';
 const FB = 'frames/';
 const CAPTION = '#WisudaAkbar2026 #ALWILDANIslamicSchool #WisudaAkbar #BestMemories';
-const DEFAULT_W = 1080, DEFAULT_H = 1440;
+const DEFAULT_SINGLE_W = 1080, DEFAULT_SINGLE_H = 1440;
+const DEFAULT_STRIP_W  = 1080, DEFAULT_STRIP_H  = 1920;
+// Fallback slot coordinates for strip if no frame is selected
+const DEFAULT_SLOTS = [
+  {x:86, y:263,  w:908, h:411},
+  {x:86, y:709,  w:908, h:411},
+  {x:86, y:1155, w:908, h:411}
+];
 
 // ══════════════════════════════════
 //  STATE
 // ══════════════════════════════════
-let frames = [];
+let currentMode = null; // 'single' | 'strip'
+let appPage = 'mode';   // 'mode' | 'upload' | 'preview'
+
+// Single photo state
+let photoImg = null;
+let zoom = 1, panX = 0, panY = 0;
+
+// Strip photo state (3 slots)
+let photoImgs = [null, null, null];
+let zooms  = [1, 1, 1];
+let panXs  = [0, 0, 0];
+let panYs  = [0, 0, 0];
+let activeSlot = 0; // currently selected strip slot for pan/zoom
+
+// Shared
+let hasPhoto = false; // single: 1 photo ready; strip: all 3 photos ready
+let frames   = { single: [], strip: [] };
 let selFrame = null;
 let frameImg = null;
-let photoImg = null;
-let zoom = 1;
-let panX = 0, panY = 0;
-let isDragging = false;
-let lastX = 0, lastY = 0;
-let pinchDist = 0;
-let toastTmr = null;
-let hasPhoto = false;
+let isDragging = false, lastX = 0, lastY = 0, pinchDist = 0;
+let toastTmr  = null;
+let pendingSlot = null; // which slot the next file-input pick targets
 
 const $ = id => document.getElementById(id);
 
@@ -321,6 +421,36 @@ function splashP(pct, msg) { $('splash-bar').style.width = pct + '%'; $('splash-
 function splashHide() { setTimeout(() => $('splash').classList.add('hide'), 400); }
 
 // ══════════════════════════════════
+//  PAGE NAVIGATION
+// ══════════════════════════════════
+function showPage(page) {
+  appPage = page;
+
+  $('mode-select').style.display = page === 'mode' ? 'flex' : 'none';
+
+  $('upload-zone').style.display = page === 'upload' ? 'flex' : 'none';
+  if (page === 'upload') {
+    $('upload-zone-single').style.display = currentMode === 'single' ? 'flex' : 'none';
+    $('upload-zone-strip').style.display  = currentMode === 'strip'  ? 'flex' : 'none';
+  }
+
+  $('canvas-wrap').style.display = page === 'preview' ? 'flex' : 'none';
+
+  $('bot-mode').style.display          = page === 'mode'    ? 'flex' : 'none';
+  $('bot-upload-single').style.display = (page === 'upload' && currentMode === 'single') ? 'flex' : 'none';
+  $('bot-upload-strip').style.display  = (page === 'upload' && currentMode === 'strip')  ? 'flex' : 'none';
+  $('bot-preview').style.display       = page === 'preview' ? 'flex' : 'none';
+
+  $('btn-back').style.display      = page !== 'mode' ? 'flex' : 'none';
+  $('top-frame-btn').style.display = page === 'preview' ? 'flex' : 'none';
+}
+
+function goBack() {
+  if (appPage === 'preview') showPage('upload');
+  else if (appPage === 'upload') showPage('mode');
+}
+
+// ══════════════════════════════════
 //  FRAME SYSTEM
 // ══════════════════════════════════
 async function loadFrames() {
@@ -329,19 +459,30 @@ async function loadFrames() {
     const r = await fetch(MANIFEST);
     if (!r.ok) throw 0;
     const raw = await r.json();
-    frames = (raw.frames || []).map(f =>
+    frames.single = (raw.single || []).map(f =>
       typeof f === 'string'
-        ? { file: f, name: f.replace(/\.[^.]+$/, ''), w: DEFAULT_W, h: DEFAULT_H, photoArea: { x: 0, y: 0, w: DEFAULT_W, h: DEFAULT_H } }
+        ? { file: f, name: f.replace(/\.[^.]+$/, ''), w: DEFAULT_SINGLE_W, h: DEFAULT_SINGLE_H, area: { x: 0, y: 0, w: DEFAULT_SINGLE_W, h: DEFAULT_SINGLE_H } }
         : f
     );
-  } catch (e) { frames = []; }
+    frames.strip = (raw.strip || []).map(f =>
+      typeof f === 'string'
+        ? { file: f, name: f.replace(/\.[^.]+$/, ''), w: DEFAULT_STRIP_W, h: DEFAULT_STRIP_H, areas: DEFAULT_SLOTS }
+        : f
+    );
+  } catch (e) { frames = { single: [], strip: [] }; }
   splashP(60, 'Preload aset...');
-  await Promise.allSettled(frames.map(f => loadImg(`${FB}${f.file}`)));
+  const allSrcs = [
+    ...frames.single.map(f => `${FB}single/${f.file}`),
+    ...frames.strip.map(f  => `${FB}strip/${f.file}`)
+  ];
+  await Promise.allSettled(allSrcs.map(src => loadImg(src)));
   splashP(90, 'Hampir selesai...');
 }
 
 function autoSelectFirstFrame() {
-  selFrame = frames.length > 0 ? frames[0] : null;
+  if (!currentMode) return;
+  const list = frames[currentMode] || [];
+  selFrame = list.length > 0 ? list[0] : null;
   updateFrameUI();
 }
 
@@ -351,22 +492,27 @@ function updateFrameUI() {
     : 'Tanpa Frame';
 }
 
+function getFrameUrl(f) {
+  return `${FB}${currentMode}/${f.file}`;
+}
+
 // ══════════════════════════════════
 //  FRAME SHEET
 // ══════════════════════════════════
 function buildSheet() {
-  $('sheet-title').textContent = 'Pilih Frame';
+  $('sheet-title').textContent = currentMode === 'strip' ? 'Pilih Frame Strip 3×' : 'Pilih Frame Single';
   const sl = $('sheet-list'); sl.innerHTML = '';
   const none = document.createElement('div');
   none.className = 'sheet-none' + (selFrame === null ? ' selected' : '');
   none.innerHTML = `<div class="sheet-none-ic">⊘</div><div class="sheet-none-name">Tanpa Frame</div><span class="sheet-check">✓</span>`;
   none.onclick = () => pickFrame(null);
   sl.appendChild(none);
-  frames.forEach(f => {
+  const list = frames[currentMode] || [];
+  list.forEach(f => {
     const name = f.name || f.file.replace(/\.[^.]+$/, '').replace(/[-_]/g, ' ');
     const div = document.createElement('div');
     div.className = 'sheet-item' + (selFrame && selFrame.file === f.file ? ' selected' : '');
-    div.innerHTML = `<div class="sheet-item-thumb"><img src="${FB}${f.file}" loading="lazy"></div><span class="sheet-item-name">${name}</span><span class="sheet-check">✓</span>`;
+    div.innerHTML = `<div class="sheet-item-thumb"><img src="${getFrameUrl(f)}" loading="lazy"></div><span class="sheet-item-name">${name}</span><span class="sheet-check">✓</span>`;
     div.onclick = () => pickFrame(f);
     sl.appendChild(div);
   });
@@ -374,18 +520,50 @@ function buildSheet() {
 
 async function pickFrame(f) {
   selFrame = f;
-  frameImg = f ? await loadImg(`${FB}${f.file}`) : null;
+  frameImg = f ? await loadImg(getFrameUrl(f)) : null;
   updateFrameUI(); buildSheet(); closeSheet();
-  if (hasPhoto) { resizeCanvas(); fitPhotoToArea(); renderPreview(); updateDimPanels(); }
+  if (appPage === 'preview') {
+    resizeCanvas();
+    refitAllPhotos();
+    renderPreview();
+    requestAnimationFrame(() => updateDimPanels());
+  }
 }
 
 function openSheet() { buildSheet(); $('sheet-bg').classList.add('on'); $('sheet').classList.add('on'); }
 function closeSheet() { $('sheet-bg').classList.remove('on'); $('sheet').classList.remove('on'); }
 
 // ══════════════════════════════════
+//  MODE SELECTION
+// ══════════════════════════════════
+async function setMode(mode) {
+  currentMode = mode;
+  // Reset photo state
+  photoImg = null; zoom = 1; panX = 0; panY = 0;
+  photoImgs = [null, null, null]; zooms = [1, 1, 1]; panXs = [0, 0, 0]; panYs = [0, 0, 0];
+  activeSlot = 0; hasPhoto = false;
+  if (mode === 'strip') { [0, 1, 2].forEach(i => updateStripSlotUI(i)); updateStripCounter(); }
+  // Select first frame and preload it
+  autoSelectFirstFrame();
+  buildSheet();
+  frameImg = selFrame ? await loadImg(getFrameUrl(selFrame)) : null;
+  resizeCanvas();
+  showPage('upload');
+}
+
+// ══════════════════════════════════
 //  UPLOAD
 // ══════════════════════════════════
-function triggerFileInput() { initAudio(); $('file-input').click(); }
+function triggerFileInput(slot) {
+  initAudio();
+  pendingSlot = slot; // null = single mode (or strip replace via preview)
+  $('file-input').click();
+}
+
+function triggerReplacePhoto() {
+  // In preview: for strip replace the active slot, for single replace the one photo
+  triggerFileInput(currentMode === 'strip' ? activeSlot : null);
+}
 
 $('file-input').addEventListener('change', e => {
   const file = e.target.files[0];
@@ -393,6 +571,7 @@ $('file-input').addEventListener('change', e => {
   e.target.value = '';
 });
 
+// Drag & drop (single mode upload zone only)
 const dropArea = $('upload-drop-area');
 dropArea.addEventListener('dragover', e => { e.preventDefault(); dropArea.classList.add('drag-over'); });
 dropArea.addEventListener('dragleave', () => dropArea.classList.remove('drag-over'));
@@ -408,13 +587,25 @@ function handleFile(file) {
   const img = new Image();
   img.onload = () => {
     URL.revokeObjectURL(url);
-    photoImg = resizeIfNeeded(img, 1920);
-    hasPhoto = true;
-    switchToStateB();
-    resizeCanvas();
-    fitPhotoToArea();
-    renderPreview();
-    requestAnimationFrame(() => updateDimPanels());
+    const resized = resizeIfNeeded(img, 1920);
+    if (currentMode === 'single') {
+      photoImg = resized; hasPhoto = true;
+      resizeCanvas(); fitSinglePhoto();
+      showPreview();
+    } else {
+      const slot = pendingSlot !== null && pendingSlot !== undefined ? pendingSlot : 0;
+      photoImgs[slot] = resized;
+      zooms[slot] = 1; panXs[slot] = 0; panYs[slot] = 0;
+      fitStripSlot(slot);
+      updateStripSlotUI(slot);
+      updateStripCounter();
+      if (appPage === 'preview') {
+        renderPreview();
+      } else if (photoImgs.every(p => p !== null)) {
+        hasPhoto = true;
+        setTimeout(() => showPreview(), 200);
+      }
+    }
   };
   img.onerror = () => { URL.revokeObjectURL(url); toast('❌ Gagal memuat foto'); };
   img.src = url;
@@ -425,80 +616,138 @@ function resizeIfNeeded(img, maxPx) {
   if (long <= maxPx) return img;
   const scale = maxPx / long;
   const c = document.createElement('canvas');
-  c.width = Math.round(img.width * scale);
-  c.height = Math.round(img.height * scale);
+  c.width = Math.round(img.width * scale); c.height = Math.round(img.height * scale);
   c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
   return c;
 }
 
-function switchToStateA() {
-  $('upload-zone').style.display = '';
-  $('canvas-wrap').style.display = 'none';
-  $('bot-state-a').style.display = 'flex';
-  $('bot-state-b').style.display = 'none';
-  hasPhoto = false; photoImg = null;
+function showPreview() {
+  if (currentMode === 'strip') hasPhoto = photoImgs.every(p => p !== null);
+  resizeCanvas(); renderPreview();
+  showPage('preview');
+  requestAnimationFrame(() => updateDimPanels());
 }
 
-function switchToStateB() {
-  $('upload-zone').style.display = 'none';
-  $('canvas-wrap').style.display = 'flex';
-  $('bot-state-a').style.display = 'none';
-  $('bot-state-b').style.display = 'flex';
+function updateStripSlotUI(i) {
+  const el = $(`slot-upload-${i}`);
+  const img = photoImgs[i];
+  if (img) {
+    const c = document.createElement('canvas');
+    const ratio = img.width / img.height; c.height = 80; c.width = Math.round(80 * ratio);
+    c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+    el.innerHTML = `<img src="${c.toDataURL('image/jpeg', .7)}" class="slot-thumb-img"><div class="slot-done-label">Foto ${i + 1} ✓</div>`;
+    el.classList.add('has-photo');
+  } else {
+    el.innerHTML = `<div class="slot-upload-ic">📷</div><div class="slot-upload-lbl">Foto ${i + 1}</div>`;
+    el.classList.remove('has-photo');
+  }
+}
+
+function updateStripCounter() {
+  const count = photoImgs.filter(p => p !== null).length;
+  $('strip-upload-counter').textContent = `${count} / 3 foto dipilih`;
+  $('btn-preview-strip').disabled = count < 3;
 }
 
 // ══════════════════════════════════
 //  CANVAS & RENDER
 // ══════════════════════════════════
 function getCanvasDims() {
-  return selFrame ? { w: selFrame.w, h: selFrame.h } : { w: DEFAULT_W, h: DEFAULT_H };
+  if (selFrame) return { w: selFrame.w, h: selFrame.h };
+  return currentMode === 'strip'
+    ? { w: DEFAULT_STRIP_W,  h: DEFAULT_STRIP_H  }
+    : { w: DEFAULT_SINGLE_W, h: DEFAULT_SINGLE_H };
 }
 
-function getPhotoArea() {
-  return selFrame?.photoArea ?? { x: 0, y: 0, w: DEFAULT_W, h: DEFAULT_H };
+function getPhotoArea(slot) {
+  if (currentMode === 'single') {
+    const d = getCanvasDims();
+    return selFrame?.area ?? { x: 0, y: 0, w: d.w, h: d.h };
+  }
+  const areas = selFrame?.areas ?? DEFAULT_SLOTS;
+  return areas[slot] ?? DEFAULT_SLOTS[slot];
 }
 
 function resizeCanvas() {
   const canvas = $('preview-canvas');
   const d = getCanvasDims();
-  canvas.width = d.w;
-  canvas.height = d.h;
+  canvas.width = d.w; canvas.height = d.h;
 }
 
-function fitPhotoToArea() {
+function fitSinglePhoto() {
   if (!photoImg) return;
-  const pa = getPhotoArea();
+  const pa = getPhotoArea(0);
   zoom = Math.max(pa.w / photoImg.width, pa.h / photoImg.height);
   panX = 0; panY = 0;
 }
 
-function clampPan() {
-  if (!photoImg) return;
-  const pa = getPhotoArea();
-  const maxPx = Math.max(0, (photoImg.width * zoom - pa.w) / 2);
-  const maxPy = Math.max(0, (photoImg.height * zoom - pa.h) / 2);
-  panX = Math.max(-maxPx, Math.min(maxPx, panX));
-  panY = Math.max(-maxPy, Math.min(maxPy, panY));
+function fitStripSlot(i) {
+  const img = photoImgs[i]; if (!img) return;
+  const pa = getPhotoArea(i);
+  zooms[i] = Math.max(pa.w / img.width, pa.h / img.height);
+  panXs[i] = 0; panYs[i] = 0;
+}
+
+function refitAllPhotos() {
+  if (currentMode === 'single') { fitSinglePhoto(); }
+  else { [0, 1, 2].forEach(i => { if (photoImgs[i]) fitStripSlot(i); }); }
+}
+
+function clampPan(slot) {
+  if (currentMode === 'single') {
+    if (!photoImg) return;
+    const pa = getPhotoArea(0);
+    const maxPx = Math.max(0, (photoImg.width  * zoom - pa.w) / 2);
+    const maxPy = Math.max(0, (photoImg.height * zoom - pa.h) / 2);
+    panX = Math.max(-maxPx, Math.min(maxPx, panX));
+    panY = Math.max(-maxPy, Math.min(maxPy, panY));
+  } else {
+    const img = photoImgs[slot]; if (!img) return;
+    const pa = getPhotoArea(slot);
+    const z  = zooms[slot];
+    const maxPx = Math.max(0, (img.width  * z - pa.w) / 2);
+    const maxPy = Math.max(0, (img.height * z - pa.h) / 2);
+    panXs[slot] = Math.max(-maxPx, Math.min(maxPx, panXs[slot]));
+    panYs[slot] = Math.max(-maxPy, Math.min(maxPy, panYs[slot]));
+  }
 }
 
 function renderPreview() {
   const canvas = $('preview-canvas');
-  const ctx = canvas.getContext('2d');
-  const d = getCanvasDims();
-  const pa = getPhotoArea();
-
+  const ctx    = canvas.getContext('2d');
+  const d      = getCanvasDims();
   ctx.clearRect(0, 0, d.w, d.h);
-  ctx.fillStyle = '#060e20';
-  ctx.fillRect(0, 0, d.w, d.h);
+  ctx.fillStyle = '#060e20'; ctx.fillRect(0, 0, d.w, d.h);
 
-  if (photoImg) {
-    ctx.save();
-    ctx.beginPath();
-    ctx.rect(pa.x, pa.y, pa.w, pa.h);
-    ctx.clip();
-    ctx.translate(pa.x + pa.w / 2 + panX, pa.y + pa.h / 2 + panY);
-    ctx.scale(zoom, zoom);
-    ctx.drawImage(photoImg, -photoImg.width / 2, -photoImg.height / 2);
-    ctx.restore();
+  if (currentMode === 'single') {
+    if (photoImg) {
+      const pa = getPhotoArea(0);
+      ctx.save();
+      ctx.beginPath(); ctx.rect(pa.x, pa.y, pa.w, pa.h); ctx.clip();
+      ctx.translate(pa.x + pa.w / 2 + panX, pa.y + pa.h / 2 + panY);
+      ctx.scale(zoom, zoom);
+      ctx.drawImage(photoImg, -photoImg.width / 2, -photoImg.height / 2);
+      ctx.restore();
+    }
+  } else {
+    for (let i = 0; i < 3; i++) {
+      const pa  = getPhotoArea(i);
+      const img = photoImgs[i];
+      if (img) {
+        ctx.save();
+        ctx.beginPath(); ctx.rect(pa.x, pa.y, pa.w, pa.h); ctx.clip();
+        ctx.translate(pa.x + pa.w / 2 + panXs[i], pa.y + pa.h / 2 + panYs[i]);
+        ctx.scale(zooms[i], zooms[i]);
+        ctx.drawImage(img, -img.width / 2, -img.height / 2);
+        ctx.restore();
+      }
+      // Gold border on active slot
+      ctx.save();
+      ctx.strokeStyle = i === activeSlot ? 'rgba(251,191,36,.65)' : 'rgba(255,255,255,.08)';
+      ctx.lineWidth   = i === activeSlot ? 5 : 2;
+      ctx.strokeRect(pa.x + 2, pa.y + 2, pa.w - 4, pa.h - 4);
+      ctx.restore();
+    }
   }
 
   if (frameImg) ctx.drawImage(frameImg, 0, 0, d.w, d.h);
@@ -508,17 +757,30 @@ function renderPreview() {
 //  DIM PANELS
 // ══════════════════════════════════
 function updateDimPanels() {
-  if (!hasPhoto) return;
+  if (appPage !== 'preview') return;
   const canvas = $('preview-canvas');
-  const rect = canvas.getBoundingClientRect();
-  const pa = getPhotoArea();
-  const d = getCanvasDims();
-  const sx = rect.width / d.w;
-  const sy = rect.height / d.h;
-  const left   = rect.left   + pa.x * sx;
-  const top    = rect.top    + pa.y * sy;
-  const right  = rect.left   + (pa.x + pa.w) * sx;
-  const bottom = rect.top    + (pa.y + pa.h) * sy;
+  const rect   = canvas.getBoundingClientRect();
+  const d      = getCanvasDims();
+  const sx     = rect.width  / d.w;
+  const sy     = rect.height / d.h;
+
+  let minX, minY, maxX, maxY;
+  if (currentMode === 'single') {
+    const pa = getPhotoArea(0);
+    minX = pa.x; minY = pa.y; maxX = pa.x + pa.w; maxY = pa.y + pa.h;
+  } else {
+    const areas = selFrame?.areas ?? DEFAULT_SLOTS;
+    minX = Math.min(...areas.map(a => a.x));
+    minY = Math.min(...areas.map(a => a.y));
+    maxX = Math.max(...areas.map(a => a.x + a.w));
+    maxY = Math.max(...areas.map(a => a.y + a.h));
+  }
+
+  const left   = rect.left + minX * sx;
+  const top    = rect.top  + minY * sy;
+  const right  = rect.left + maxX * sx;
+  const bottom = rect.top  + maxY * sy;
+
   $('dim-top').style.cssText    = `top:0;left:0;right:0;height:${top}px;`;
   $('dim-bottom').style.cssText = `bottom:0;left:0;right:0;height:${window.innerHeight - bottom}px;`;
   $('dim-left').style.cssText   = `top:${top}px;left:0;width:${left}px;height:${bottom - top}px;`;
@@ -530,55 +792,96 @@ function updateDimPanels() {
 // ══════════════════════════════════
 function screenToCanvas(dScreen) {
   const canvas = $('preview-canvas');
-  const rect = canvas.getBoundingClientRect();
+  const rect   = canvas.getBoundingClientRect();
   return dScreen * (getCanvasDims().w / rect.width);
+}
+
+function getSlotAtPoint(clientX, clientY) {
+  if (currentMode !== 'strip') return 0;
+  const canvas = $('preview-canvas');
+  const rect   = canvas.getBoundingClientRect();
+  const d      = getCanvasDims();
+  const cx     = (clientX - rect.left) * (d.w / rect.width);
+  const cy     = (clientY - rect.top)  * (d.h / rect.height);
+  const areas  = selFrame?.areas ?? DEFAULT_SLOTS;
+  for (let i = 0; i < areas.length; i++) {
+    const a = areas[i];
+    if (cx >= a.x && cx <= a.x + a.w && cy >= a.y && cy <= a.y + a.h) return i;
+  }
+  return activeSlot;
 }
 
 const previewCanvas = $('preview-canvas');
 
 previewCanvas.addEventListener('mousedown', e => {
-  if (!hasPhoto) return;
+  if (appPage !== 'preview') return;
+  const slot = getSlotAtPoint(e.clientX, e.clientY);
+  if (currentMode === 'strip' && slot !== activeSlot) { activeSlot = slot; renderPreview(); }
   isDragging = true; lastX = e.clientX; lastY = e.clientY;
   e.preventDefault();
 });
 window.addEventListener('mousemove', e => {
   if (!isDragging) return;
-  panX += screenToCanvas(e.clientX - lastX);
-  panY += screenToCanvas(e.clientY - lastY);
+  const dx = screenToCanvas(e.clientX - lastX);
+  const dy = screenToCanvas(e.clientY - lastY);
   lastX = e.clientX; lastY = e.clientY;
-  clampPan(); renderPreview();
+  if (currentMode === 'single') { panX += dx; panY += dy; clampPan(0); }
+  else { panXs[activeSlot] += dx; panYs[activeSlot] += dy; clampPan(activeSlot); }
+  renderPreview();
 });
 window.addEventListener('mouseup', () => { isDragging = false; });
 
 previewCanvas.addEventListener('wheel', e => {
-  if (!hasPhoto) return;
+  if (appPage !== 'preview') return;
   e.preventDefault();
-  zoom = Math.max(0.5, Math.min(5, zoom + (e.deltaY > 0 ? -0.1 : 0.1)));
-  clampPan(); renderPreview();
+  const delta = e.deltaY > 0 ? -0.1 : 0.1;
+  if (currentMode === 'single') {
+    zoom = Math.max(0.5, Math.min(5, zoom + delta));
+    clampPan(0);
+  } else {
+    zooms[activeSlot] = Math.max(0.5, Math.min(5, zooms[activeSlot] + delta));
+    clampPan(activeSlot);
+  }
+  renderPreview();
 }, { passive: false });
 
 previewCanvas.addEventListener('touchstart', e => {
-  if (!hasPhoto) return;
+  if (appPage !== 'preview') return;
   e.preventDefault();
   if (e.touches.length === 1) {
+    const slot = getSlotAtPoint(e.touches[0].clientX, e.touches[0].clientY);
+    if (currentMode === 'strip' && slot !== activeSlot) { activeSlot = slot; renderPreview(); }
     isDragging = true; lastX = e.touches[0].clientX; lastY = e.touches[0].clientY;
   } else if (e.touches.length === 2) {
     isDragging = false;
-    pinchDist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+    pinchDist = Math.hypot(
+      e.touches[0].clientX - e.touches[1].clientX,
+      e.touches[0].clientY - e.touches[1].clientY
+    );
   }
 }, { passive: false });
 
 previewCanvas.addEventListener('touchmove', e => {
-  if (!hasPhoto) return;
+  if (appPage !== 'preview') return;
   e.preventDefault();
   if (e.touches.length === 1 && isDragging) {
-    panX += screenToCanvas(e.touches[0].clientX - lastX);
-    panY += screenToCanvas(e.touches[0].clientY - lastY);
+    const dx = screenToCanvas(e.touches[0].clientX - lastX);
+    const dy = screenToCanvas(e.touches[0].clientY - lastY);
     lastX = e.touches[0].clientX; lastY = e.touches[0].clientY;
-    clampPan(); renderPreview();
+    if (currentMode === 'single') { panX += dx; panY += dy; clampPan(0); }
+    else { panXs[activeSlot] += dx; panYs[activeSlot] += dy; clampPan(activeSlot); }
+    renderPreview();
   } else if (e.touches.length === 2) {
-    const dist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
-    if (pinchDist > 0) { zoom = Math.max(0.5, Math.min(5, zoom * (dist / pinchDist))); clampPan(); renderPreview(); }
+    const dist = Math.hypot(
+      e.touches[0].clientX - e.touches[1].clientX,
+      e.touches[0].clientY - e.touches[1].clientY
+    );
+    if (pinchDist > 0) {
+      const ratio = dist / pinchDist;
+      if (currentMode === 'single') { zoom = Math.max(0.5, Math.min(5, zoom * ratio)); clampPan(0); }
+      else { zooms[activeSlot] = Math.max(0.5, Math.min(5, zooms[activeSlot] * ratio)); clampPan(activeSlot); }
+      renderPreview();
+    }
     pinchDist = dist;
   }
 }, { passive: false });
@@ -625,22 +928,35 @@ async function doDownload() {
 
 function composeFinal() {
   const d = getCanvasDims();
-  const pa = getPhotoArea();
-  const c = document.createElement('canvas');
-  c.width = d.w; c.height = d.h;
+  const c = document.createElement('canvas'); c.width = d.w; c.height = d.h;
   const ctx = c.getContext('2d');
-  ctx.fillStyle = '#060e20';
-  ctx.fillRect(0, 0, d.w, d.h);
-  if (photoImg) {
-    ctx.save();
-    ctx.beginPath();
-    ctx.rect(pa.x, pa.y, pa.w, pa.h);
-    ctx.clip();
-    ctx.translate(pa.x + pa.w / 2 + panX, pa.y + pa.h / 2 + panY);
-    ctx.scale(zoom, zoom);
-    ctx.drawImage(photoImg, -photoImg.width / 2, -photoImg.height / 2);
-    ctx.restore();
+  ctx.fillStyle = '#060e20'; ctx.fillRect(0, 0, d.w, d.h);
+
+  if (currentMode === 'single') {
+    if (photoImg) {
+      const pa = getPhotoArea(0);
+      ctx.save();
+      ctx.beginPath(); ctx.rect(pa.x, pa.y, pa.w, pa.h); ctx.clip();
+      ctx.translate(pa.x + pa.w / 2 + panX, pa.y + pa.h / 2 + panY);
+      ctx.scale(zoom, zoom);
+      ctx.drawImage(photoImg, -photoImg.width / 2, -photoImg.height / 2);
+      ctx.restore();
+    }
+  } else {
+    for (let i = 0; i < 3; i++) {
+      const pa  = getPhotoArea(i);
+      const img = photoImgs[i];
+      if (img) {
+        ctx.save();
+        ctx.beginPath(); ctx.rect(pa.x, pa.y, pa.w, pa.h); ctx.clip();
+        ctx.translate(pa.x + pa.w / 2 + panXs[i], pa.y + pa.h / 2 + panYs[i]);
+        ctx.scale(zooms[i], zooms[i]);
+        ctx.drawImage(img, -img.width / 2, -img.height / 2);
+        ctx.restore();
+      }
+    }
   }
+
   if (frameImg) ctx.drawImage(frameImg, 0, 0, d.w, d.h);
   return c;
 }
@@ -648,12 +964,44 @@ function composeFinal() {
 // ══════════════════════════════════
 //  SHARE MODAL
 // ══════════════════════════════════
-function openShare() { $('share-bg').classList.add('on'); $('share-modal').classList.add('on'); }
-function closeShare() { $('share-bg').classList.remove('on'); $('share-modal').classList.remove('on'); }
-async function copyCaption() {
+function openShare() {
+  const hint    = $('share-hint');
+  const btnMain = $('btn-share-main');
+  if (navigator.share) {
+    btnMain.style.display = '';
+    hint.textContent = '';
+  } else {
+    btnMain.style.display = 'none';
+    hint.textContent = 'Simpan foto, lalu buka Instagram atau TikTok dari galeri untuk dibagikan.';
+  }
+  $('share-bg').classList.add('on');
+  $('share-modal').classList.add('on');
+}
+function closeShare() {
+  $('share-bg').classList.remove('on');
+  $('share-modal').classList.remove('on');
+}
+
+async function doShare() {
   try {
-    await navigator.clipboard.writeText(CAPTION);
-  } catch {
+    const canvas = composeFinal();
+    const blob   = await new Promise(res => canvas.toBlob(res, 'image/jpeg', 0.95));
+    const file   = new File([blob], 'wisuda-akbar-2026.jpg', { type: 'image/jpeg' });
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      await navigator.share({ files: [file], title: 'MomenAkbar', text: CAPTION });
+      toast('✅ Berhasil dibagikan!');
+    } else if (navigator.share) {
+      await navigator.share({ title: 'MomenAkbar — Wisuda Akbar 2026', text: CAPTION });
+      toast('✅ Dibagikan!');
+    }
+  } catch (e) {
+    if (e.name !== 'AbortError') copyCaption();
+  }
+}
+
+async function copyCaption() {
+  try { await navigator.clipboard.writeText(CAPTION); }
+  catch {
     const ta = document.createElement('textarea');
     ta.value = CAPTION; ta.style.position = 'fixed'; ta.style.opacity = '0';
     document.body.appendChild(ta); ta.select(); document.execCommand('copy');
@@ -663,19 +1011,16 @@ async function copyCaption() {
 }
 
 // ══════════════════════════════════
-//  RESIZE
+//  RESIZE + KEYBOARD
 // ══════════════════════════════════
-function onResize() { if (hasPhoto) updateDimPanels(); }
+function onResize() { if (appPage === 'preview') updateDimPanels(); }
 window.addEventListener('resize', onResize);
 window.visualViewport?.addEventListener('resize', onResize);
 
-// ══════════════════════════════════
-//  KEYBOARD
-// ══════════════════════════════════
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape') {
     if ($('sheet').classList.contains('on')) closeSheet();
-    if ($('share-modal').classList.contains('on')) closeShare();
+    else if ($('share-modal').classList.contains('on')) closeShare();
   }
 });
 
@@ -687,11 +1032,8 @@ async function init() {
   await sleep(200);
   await loadFrames();
   splashP(95, 'Siap!');
-  autoSelectFirstFrame();
-  buildSheet();
-  if (selFrame) frameImg = await loadImg(`${FB}${selFrame.file}`);
-  resizeCanvas();
   await sleep(300);
+  showPage('mode');
   splashP(100, 'Selamat datang!');
   await sleep(400);
   splashHide();
