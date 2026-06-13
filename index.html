@@ -3,341 +3,131 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>SnapBooth — Wisuda Akbar AL-WILDAN 2026</title>
+  <title>MomenAkbar — Wisuda Akbar AL-WILDAN 2026</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <style>
-    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-    :root{
-      --bg:#060e20;--navy:#0d1e40;
-      --gold:#fbbf24;--gold-dk:#b45309;
-      --r-lg:14px;--r-md:10px;--r-sm:7px;
-    }
-    html,body{height:100%;overflow:hidden;background:#000;font-family:'Plus Jakarta Sans',sans-serif;color:#fff;}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#060e20;--navy:#0d1e40;
+  --gold:#fbbf24;--gold-dk:#b45309;
+  --r-lg:14px;--r-md:10px;--r-sm:7px;
+}
+html,body{height:100%;overflow:hidden;background:#000;font-family:'Plus Jakarta Sans',sans-serif;color:#fff;}
 
-    /* ══ SPLASH ══ */
-    .splash{
-      position:fixed;inset:0;z-index:9999;background:var(--bg);
-      display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;
-      transition:opacity .5s,visibility .5s;
-    }
-    .splash.hide{opacity:0;visibility:hidden;pointer-events:none;}
-    .splash-glow{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse 70% 50% at 50% 40%,rgba(251,191,36,.1) 0%,transparent 60%);}
-    .splash-inner{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:20px;padding:0 32px;width:100%;max-width:300px;}
-    .splash-logo{width:72px;height:72px;border-radius:50%;border:2px solid rgba(251,191,36,.3);background:rgba(251,191,36,.08);display:flex;align-items:center;justify-content:center;overflow:hidden;box-shadow:0 0 32px rgba(251,191,36,.15);animation:sLogo .6s ease both;}
-    .splash-logo img{width:100%;height:100%;object-fit:contain;}
-    @keyframes sLogo{from{transform:scale(.7);opacity:0}to{transform:scale(1);opacity:1}}
-    .splash-title{text-align:center;animation:sUp .5s .15s ease both;}
-    .splash-title h1{font-size:26px;font-weight:900;color:var(--gold);line-height:1.1;}
-    .splash-title p{font-size:11px;color:rgba(255,255,255,.4);font-weight:500;margin-top:4px;letter-spacing:.5px;}
-    @keyframes sUp{from{transform:translateY(14px);opacity:0}to{transform:none;opacity:1}}
-    .splash-bar-wrap{width:100%;background:rgba(255,255,255,.07);border-radius:999px;height:4px;overflow:hidden;animation:sUp .5s .25s ease both;}
-    .splash-bar{height:100%;width:0%;background:linear-gradient(90deg,var(--gold-dk),var(--gold));border-radius:999px;transition:width .3s ease;}
-    .splash-status{font-size:11px;color:rgba(255,255,255,.35);font-weight:600;min-height:16px;animation:sUp .5s .3s ease both;}
+/* ══ SPLASH ══ */
+.splash{position:fixed;inset:0;z-index:9999;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;transition:opacity .5s,visibility .5s;}
+.splash.hide{opacity:0;visibility:hidden;pointer-events:none;}
+.splash-glow{position:absolute;inset:0;pointer-events:none;background:radial-gradient(ellipse 70% 50% at 50% 40%,rgba(251,191,36,.1) 0%,transparent 60%);}
+.splash-inner{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:20px;padding:0 32px;width:100%;max-width:300px;}
+.splash-logo{width:72px;height:72px;border-radius:50%;border:2px solid rgba(251,191,36,.3);background:rgba(251,191,36,.08);display:flex;align-items:center;justify-content:center;overflow:hidden;box-shadow:0 0 32px rgba(251,191,36,.15);animation:sLogo .6s ease both;}
+.splash-logo img{width:100%;height:100%;object-fit:contain;}
+@keyframes sLogo{from{transform:scale(.7);opacity:0}to{transform:scale(1);opacity:1}}
+.splash-title{text-align:center;animation:sUp .5s .15s ease both;}
+.splash-title h1{font-size:26px;font-weight:900;color:var(--gold);line-height:1.1;}
+.splash-title p{font-size:11px;color:rgba(255,255,255,.4);font-weight:500;margin-top:4px;letter-spacing:.5px;}
+@keyframes sUp{from{transform:translateY(14px);opacity:0}to{transform:none;opacity:1}}
+.splash-bar-wrap{width:100%;background:rgba(255,255,255,.07);border-radius:999px;height:4px;overflow:hidden;animation:sUp .5s .25s ease both;}
+.splash-bar{height:100%;width:0%;background:linear-gradient(90deg,var(--gold-dk),var(--gold));border-radius:999px;transition:width .3s ease;}
+.splash-status{font-size:11px;color:rgba(255,255,255,.35);font-weight:600;min-height:16px;animation:sUp .5s .3s ease both;}
 
-    /* ══ FULLSCREEN CAMERA WRAPPER ══ */
-    /* Video mengisi SELURUH layar — seperti funcam.id */
-    .cam-fs{
-      position:fixed;inset:0;z-index:1;
-      background:#000;
-    }
-    #video{
-      position:absolute;inset:0;
-      width:100%;height:100%;
-      object-fit:cover;
-      transform:scaleX(-1); /* mirror kamera depan */
-      transition:transform .3s;
-    }
-    #video.env{transform:scaleX(1);}
+/* ══ MAIN WRAP ══ */
+.main-wrap{position:fixed;inset:0;display:flex;flex-direction:column;background:var(--bg);}
 
-    /* Strip mode: rotate video 90° agar portrait kamera → terlihat landscape */
-    /* User tetap pegang HP portrait, preview tampak landscape */
-    #video.strip-front{
-      /* Portrait video, diputar -90deg, lalu mirror horizontal */
-      transform-origin:center center;
-      transform:rotate(-90deg) scaleY(-1);
-    }
-    #video.strip-env{
-      transform-origin:center center;
-      transform:rotate(-90deg);
-    }
+/* ══ TOP BAR ══ */
+.top-bar{position:relative;z-index:30;flex-shrink:0;display:flex;align-items:center;justify-content:space-between;padding:max(env(safe-area-inset-top),12px) 14px 10px;background:linear-gradient(to bottom,rgba(6,14,32,.98) 0%,rgba(6,14,32,.85) 100%);border-bottom:1px solid rgba(251,191,36,.1);}
+.top-brand{display:flex;align-items:center;gap:8px;}
+.top-logo{width:28px;height:28px;border-radius:50%;overflow:hidden;border:1px solid rgba(251,191,36,.3);background:rgba(251,191,36,.08);display:flex;align-items:center;justify-content:center;font-size:13px;}
+.top-logo img{width:100%;height:100%;object-fit:contain;}
+.top-name{font-size:11px;font-weight:800;color:var(--gold);}
+.top-sub{font-size:8.5px;color:rgba(255,255,255,.4);font-weight:500;}
+.top-frame-btn{display:flex;align-items:center;gap:5px;background:rgba(0,0,0,.4);border:1px solid rgba(255,255,255,.2);backdrop-filter:blur(8px);border-radius:999px;padding:5px 10px;cursor:pointer;transition:all .2s;}
+.top-frame-btn:hover{border-color:rgba(251,191,36,.4);background:rgba(251,191,36,.12);}
+.top-frame-ic{font-size:12px;}
+.top-frame-name{font-size:11px;font-weight:700;color:rgba(255,255,255,.75);max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 
-    /* Frame overlay — diposisikan JS sesuai aspect ratio, dim di luar area */
-    .frame-fs{
-      position:absolute;z-index:3;
-      background-size:100% 100%;
-      background-repeat:no-repeat;
-      pointer-events:none;
-      display:none;
-    }
+/* ══ UPLOAD ZONE (State A) ══ */
+.upload-zone{flex:1;display:flex;align-items:center;justify-content:center;padding:24px;}
+.upload-inner{display:flex;flex-direction:column;align-items:center;gap:12px;border:2px dashed rgba(251,191,36,.25);border-radius:20px;padding:48px 32px;background:rgba(251,191,36,.03);text-align:center;transition:all .2s;width:100%;max-width:360px;cursor:pointer;}
+.upload-inner.drag-over{border-color:var(--gold);background:rgba(251,191,36,.08);}
+.upload-icon{font-size:52px;line-height:1;}
+.upload-title{font-size:16px;font-weight:800;color:#fff;}
+.upload-hint{font-size:12px;color:rgba(255,255,255,.4);font-weight:500;}
+.btn-pick-photo{margin-top:8px;padding:12px 28px;background:linear-gradient(135deg,var(--gold-dk),var(--gold));border:none;border-radius:999px;font-family:inherit;font-size:13px;font-weight:800;color:var(--navy);cursor:pointer;transition:transform .15s;outline:none;}
+.btn-pick-photo:active{transform:scale(.97);}
 
-    /* Strip frame: container dengan overflow hidden + scroll animasi */
-    .strip-frame-wrap{
-      position:absolute;z-index:3;
-      overflow:hidden;
-      pointer-events:none;
-      display:none;
-    }
-    .strip-frame-inner{
-      position:absolute;left:0;top:0;
-      width:100%;
-      background-size:100% auto;
-      background-repeat:no-repeat;
-      transition:top .5s cubic-bezier(.4,0,.2,1);
-    }
+/* ══ CANVAS WRAP (State B) ══ */
+.canvas-wrap{flex:1;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden;background:#000;}
+#preview-canvas{display:block;max-width:100%;max-height:100%;object-fit:contain;cursor:grab;touch-action:none;}
+#preview-canvas:active{cursor:grabbing;}
 
-    /* Dim area di luar frame (4 panel solid) */
-    .dim-panel{
-      position:absolute;z-index:2;pointer-events:none;
-      background:#000;opacity:.55;
-      transition:all .3s;
-    }
-    .dim-panel.hide{opacity:0;}
+/* ══ DIM PANELS ══ */
+.dim-panel{position:fixed;z-index:2;pointer-events:none;background:#000;opacity:.6;}
 
-    /* Guide overlay — kotak crop area yang akan di-capture */
-    /* Hanya muncul saat tidak ada frame */
-    .crop-guide{
-      position:absolute;z-index:4;pointer-events:none;
-      border:2px solid rgba(255,255,255,.35);
-      border-radius:4px;
-      transition:all .3s;
-    }
-    .crop-guide.hide{opacity:0;}
+/* ══ BOTTOM BAR ══ */
+.bot-bar{position:relative;z-index:30;flex-shrink:0;padding:12px 24px max(env(safe-area-inset-bottom),16px);background:linear-gradient(to top,rgba(6,14,32,.98) 0%,rgba(6,14,32,.85) 100%);border-top:1px solid rgba(255,255,255,.06);}
+.bot-state-a{display:flex;justify-content:center;}
+.bot-state-b{display:flex;align-items:center;justify-content:space-between;gap:12px;}
+.btn-download{flex:1;padding:14px;background:linear-gradient(135deg,var(--gold-dk),var(--gold));border:none;border-radius:var(--r-lg);font-family:inherit;font-size:14px;font-weight:800;color:var(--navy);cursor:pointer;transition:transform .15s;outline:none;display:flex;align-items:center;justify-content:center;gap:7px;}
+.btn-download:active{transform:scale(.97);}
+.btn-download:disabled{opacity:.5;cursor:wait;}
+.btn-pick-center{flex:none;padding:14px 36px;border-radius:999px;}
+.icbtn{width:46px;height:46px;border-radius:50%;flex-shrink:0;border:1.5px solid rgba(255,255,255,.25);background:rgba(255,255,255,.07);cursor:pointer;display:flex;align-items:center;justify-content:center;color:rgba(255,255,255,.8);transition:all .2s;outline:none;-webkit-tap-highlight-color:transparent;}
+.icbtn:active{transform:scale(.88);}
+.icbtn svg{width:20px;height:20px;}
 
-    /* Corner accents di crop guide */
-    .crop-guide::before,.crop-guide::after{
-      content:'';position:absolute;
-      width:16px;height:16px;
-      border-color:var(--gold);border-style:solid;
-    }
-    .crop-guide::before{top:-2px;left:-2px;border-width:3px 0 0 3px;border-radius:3px 0 0 3px;}
-    .crop-guide::after{bottom:-2px;right:-2px;border-width:0 3px 3px 0;border-radius:0 0 3px 0;}
+/* ══ DL PROGRESS ══ */
+.dl-prog{position:fixed;inset:0;z-index:200;background:rgba(6,14,32,.96);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;opacity:0;pointer-events:none;transition:opacity .3s;}
+.dl-prog.on{opacity:1;pointer-events:all;}
+.dl-ring-wrap{position:relative;width:76px;height:76px;}
+.dl-ring-wrap svg{transform:rotate(-90deg);}
+.dl-ring-wrap circle{fill:none;stroke-width:5;stroke-dasharray:207;stroke-dashoffset:207;stroke-linecap:round;}
+.dl-rbg{stroke:rgba(255,255,255,.08);}
+.dl-rfill{stroke:var(--gold);transition:stroke-dashoffset .25s ease;}
+.dl-ic-center{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:26px;}
+.dl-lbl{font-size:13px;font-weight:700;color:rgba(255,255,255,.7);}
+.dl-sub{font-size:10px;color:rgba(255,255,255,.3);}
 
-    /* ══ STRIP SLOTS GUIDE ══ */
-    /* 3 kotak guide untuk mode strip, di atas video */
-    .strip-guides{
-      position:absolute;inset:0;z-index:4;pointer-events:none;
-      display:none;
-    }
-    .strip-guides.on{display:block;}
-    .slot-guide{
-      position:absolute;
-      border:1.5px solid rgba(255,255,255,.35);
-      border-radius:3px;
-      display:flex;align-items:center;justify-content:center;
-    }
-    .strip-slot-num{
-      font-size:18px;font-weight:900;
-      color:rgba(255,255,255,.25);
-    }
-    .slot-guide.active{border-color:var(--gold);border-width:2px;box-shadow:0 0 0 1px rgba(251,191,36,.3);}
-    .slot-guide.done{border-color:rgba(251,191,36,.5);}
-    .slot-guide img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.8;}
+/* ══ SHARE MODAL ══ */
+.share-bg{position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.6);backdrop-filter:blur(8px);opacity:0;pointer-events:none;transition:opacity .3s;}
+.share-bg.on{opacity:1;pointer-events:all;}
+.share-modal{position:fixed;bottom:0;left:0;right:0;z-index:501;background:var(--navy);border-radius:20px 20px 0 0;border-top:1px solid rgba(251,191,36,.2);padding:0 20px max(env(safe-area-inset-bottom),28px);transform:translateY(100%);transition:transform .35s cubic-bezier(.34,1.1,.64,1);}
+.share-modal.on{transform:none;}
+.share-handle{width:36px;height:4px;background:rgba(255,255,255,.15);border-radius:999px;margin:12px auto 16px;}
+.share-title{font-size:16px;font-weight:800;color:var(--gold);text-align:center;margin-bottom:20px;}
+.share-btns{display:flex;flex-direction:column;gap:10px;}
+.share-btn{display:flex;align-items:center;gap:10px;padding:14px 18px;border-radius:var(--r-lg);border:none;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;transition:transform .15s;outline:none;}
+.share-btn:active{transform:scale(.97);}
+.share-ig{background:linear-gradient(135deg,#833ab4,#fd1d1d,#fcb045);color:#fff;}
+.share-tt{background:#000;border:1px solid rgba(255,255,255,.15);color:#fff;}
+.share-copy{background:rgba(251,191,36,.15);border:1px solid rgba(251,191,36,.3);color:var(--gold);}
+.share-dismiss{width:100%;margin-top:12px;padding:12px;border:none;background:transparent;font-family:inherit;font-size:13px;color:rgba(255,255,255,.4);cursor:pointer;border-radius:var(--r-md);transition:background .2s;}
+.share-dismiss:hover{background:rgba(255,255,255,.05);}
 
-    /* ══ COUNTDOWN ══ */
-    .cdown{
-      position:absolute;inset:0;z-index:15;
-      display:none;flex-direction:column;align-items:center;justify-content:center;
-      background:rgba(0,0,0,.35);backdrop-filter:blur(2px);
-    }
-    .cdown.on{display:flex;}
-    .cdown-n{
-      font-size:96px;font-weight:900;color:var(--gold);line-height:1;
-      text-shadow:0 0 48px rgba(251,191,36,.6),0 0 96px rgba(251,191,36,.3);
-      animation:cpop .35s cubic-bezier(.34,1.56,.64,1) both;
-    }
-    @keyframes cpop{from{transform:scale(1.5);opacity:0}to{transform:scale(1);opacity:1}}
-    .cdown-lbl{font-size:13px;color:rgba(255,255,255,.6);font-weight:700;margin-top:8px;letter-spacing:.5px;}
-    .flash{position:absolute;inset:0;z-index:20;background:#fff;opacity:0;pointer-events:none;transition:opacity .08s;}
+/* ══ FRAME SHEET ══ */
+.sheet-bg{position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.6);backdrop-filter:blur(8px);opacity:0;pointer-events:none;transition:opacity .3s;}
+.sheet-bg.on{opacity:1;pointer-events:all;}
+.sheet{position:fixed;bottom:0;left:0;right:0;z-index:501;background:#0d1e40;border-radius:20px 20px 0 0;border-top:1px solid rgba(251,191,36,.15);padding:0 0 32px;transform:translateY(100%);transition:transform .35s cubic-bezier(.34,1.1,.64,1);max-height:65vh;overflow:hidden;display:flex;flex-direction:column;}
+.sheet.on{transform:none;}
+.sheet-handle{width:36px;height:4px;background:rgba(255,255,255,.15);border-radius:999px;margin:12px auto 14px;}
+.sheet-title{font-size:13px;font-weight:800;color:var(--gold);padding:0 18px 12px;flex-shrink:0;}
+.sheet-list{overflow-y:auto;flex:1;padding:0 14px 4px;display:flex;flex-direction:column;gap:6px;}
+.sheet-item{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:var(--r-md);background:rgba(255,255,255,.04);border:1.5px solid rgba(255,255,255,.08);cursor:pointer;transition:all .2s;}
+.sheet-item:hover{background:rgba(251,191,36,.08);border-color:rgba(251,191,36,.2);}
+.sheet-item.selected{background:rgba(251,191,36,.12);border-color:rgba(251,191,36,.35);}
+.sheet-item-thumb{width:40px;border-radius:5px;overflow:hidden;flex-shrink:0;border:1px solid rgba(255,255,255,.1);background:#000;}
+.sheet-item-thumb img{width:100%;display:block;}
+.sheet-item-name{font-size:12px;font-weight:700;color:rgba(255,255,255,.8);flex:1;}
+.sheet-check{font-size:14px;opacity:0;transition:opacity .2s;}
+.sheet-item.selected .sheet-check{opacity:1;}
+.sheet-none{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:var(--r-md);background:rgba(255,255,255,.04);border:1.5px solid rgba(255,255,255,.08);cursor:pointer;transition:all .2s;}
+.sheet-none.selected{background:rgba(251,191,36,.08);border-color:rgba(251,191,36,.2);}
+.sheet-none-ic{width:40px;height:28px;display:flex;align-items:center;justify-content:center;font-size:18px;opacity:.35;}
+.sheet-none-name{font-size:12px;font-weight:700;color:rgba(255,255,255,.45);flex:1;}
 
-    /* ══ TOP BAR (float di atas kamera) ══ */
-    .top-bar{
-      position:absolute;top:0;left:0;right:0;z-index:30;
-      display:flex;align-items:center;justify-content:space-between;
-      padding:max(env(safe-area-inset-top),12px) 14px 10px;
-      background:linear-gradient(to bottom,rgba(0,0,0,.65) 0%,transparent 100%);
-    }
-    .top-brand{display:flex;align-items:center;gap:8px;}
-    .top-logo{width:28px;height:28px;border-radius:50%;overflow:hidden;border:1px solid rgba(251,191,36,.3);background:rgba(251,191,36,.08);display:flex;align-items:center;justify-content:center;font-size:13px;}
-    .top-logo img{width:100%;height:100%;object-fit:contain;}
-    .top-name{font-size:11px;font-weight:800;color:var(--gold);}
-    .top-sub{font-size:8.5px;color:rgba(255,255,255,.4);font-weight:500;}
-    .top-frame-btn{
-      display:flex;align-items:center;gap:5px;
-      background:rgba(0,0,0,.5);border:1px solid rgba(255,255,255,.2);
-      backdrop-filter:blur(8px);
-      border-radius:999px;padding:5px 10px;cursor:pointer;transition:all .2s;
-    }
-    .top-frame-btn:hover{border-color:rgba(251,191,36,.4);background:rgba(251,191,36,.12);}
-    .top-frame-ic{font-size:12px;}
-    .top-frame-name{font-size:11px;font-weight:700;color:rgba(255,255,255,.75);max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-
-    /* ══ MODE TABS (float di bawah top bar) ══ */
-    .mode-tabs{
-      position:absolute;top:60px;left:50%;transform:translateX(-50%);z-index:30;
-      display:flex;gap:6px;
-      background:rgba(0,0,0,.45);backdrop-filter:blur(12px);
-      border:1px solid rgba(255,255,255,.12);
-      border-radius:999px;padding:4px;
-    }
-    .mode-tab{
-      padding:6px 14px;border-radius:999px;border:none;
-      background:transparent;color:rgba(255,255,255,.45);
-      font-family:inherit;font-size:11px;font-weight:700;cursor:pointer;transition:all .2s;
-      white-space:nowrap;
-    }
-    .mode-tab.active{background:rgba(251,191,36,.18);color:var(--gold);border:1px solid rgba(251,191,36,.35);}
-
-    /* ══ BOTTOM CONTROLS (float di atas kamera) ══ */
-    .bot-bar{
-      position:absolute;bottom:0;left:0;right:0;z-index:30;
-      display:flex;align-items:center;justify-content:space-between;
-      padding:14px 28px max(env(safe-area-inset-bottom),18px);
-      background:linear-gradient(to top,rgba(0,0,0,.7) 0%,transparent 100%);
-      gap:16px;
-    }
-    .side-btns{display:flex;gap:10px;align-items:center;}
-    .icbtn{
-      width:46px;height:46px;border-radius:50%;
-      border:1.5px solid rgba(255,255,255,.25);
-      background:rgba(0,0,0,.4);backdrop-filter:blur(8px);
-      cursor:pointer;display:flex;align-items:center;justify-content:center;
-      color:rgba(255,255,255,.8);transition:all .2s;outline:none;
-      -webkit-tap-highlight-color:transparent;
-    }
-    .icbtn:active{transform:scale(.88);}
-    .icbtn.on{border-color:var(--gold);background:rgba(251,191,36,.2);color:var(--gold);}
-    .icbtn svg{width:20px;height:20px;}
-    .shutter{
-      width:72px;height:72px;border-radius:50%;flex-shrink:0;
-      border:4px solid rgba(255,255,255,.9);
-      background:transparent;cursor:pointer;
-      position:relative;display:flex;align-items:center;justify-content:center;
-      transition:transform .15s;outline:none;
-    }
-    .shutter::after{
-      content:'';width:56px;height:56px;border-radius:50%;
-      background:#fff;transition:transform .15s, background .15s;
-    }
-    .shutter:active{transform:scale(.9);}
-    .shutter:active::after{transform:scale(.88);background:#e2e8f0;}
-    .shutter:disabled{opacity:.35;cursor:not-allowed;}
-
-    /* ══ FRAME SHEET ══ */
-    .sheet-bg{position:fixed;inset:0;z-index:500;background:rgba(0,0,0,.6);backdrop-filter:blur(8px);opacity:0;pointer-events:none;transition:opacity .3s;}
-    .sheet-bg.on{opacity:1;pointer-events:all;}
-    .sheet{
-      position:fixed;bottom:0;left:0;right:0;z-index:501;
-      background:#0d1e40;border-radius:20px 20px 0 0;
-      border-top:1px solid rgba(251,191,36,.15);
-      padding:0 0 32px;
-      transform:translateY(100%);
-      transition:transform .35s cubic-bezier(.34,1.1,.64,1);
-      max-height:65vh;overflow:hidden;display:flex;flex-direction:column;
-    }
-    .sheet.on{transform:none;}
-    .sheet-handle{width:36px;height:4px;background:rgba(255,255,255,.15);border-radius:999px;margin:12px auto 14px;}
-    .sheet-title{font-size:13px;font-weight:800;color:var(--gold);padding:0 18px 12px;flex-shrink:0;}
-    .sheet-list{overflow-y:auto;flex:1;padding:0 14px 4px;display:flex;flex-direction:column;gap:6px;}
-    .sheet-item{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:var(--r-md);background:rgba(255,255,255,.04);border:1.5px solid rgba(255,255,255,.08);cursor:pointer;transition:all .2s;}
-    .sheet-item:hover{background:rgba(251,191,36,.08);border-color:rgba(251,191,36,.2);}
-    .sheet-item.selected{background:rgba(251,191,36,.12);border-color:rgba(251,191,36,.35);}
-    .sheet-item-thumb{width:40px;border-radius:5px;overflow:hidden;flex-shrink:0;border:1px solid rgba(255,255,255,.1);background:#000;}
-    .sheet-item-thumb img{width:100%;display:block;}
-    .sheet-item-name{font-size:12px;font-weight:700;color:rgba(255,255,255,.8);flex:1;}
-    .sheet-check{font-size:14px;opacity:0;transition:opacity .2s;}
-    .sheet-item.selected .sheet-check{opacity:1;}
-    .sheet-none{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:var(--r-md);background:rgba(255,255,255,.04);border:1.5px solid rgba(255,255,255,.08);cursor:pointer;transition:all .2s;}
-    .sheet-none:hover{background:rgba(255,255,255,.08);}
-    .sheet-none.selected{background:rgba(251,191,36,.08);border-color:rgba(251,191,36,.2);}
-    .sheet-none-ic{width:40px;height:28px;display:flex;align-items:center;justify-content:center;font-size:18px;opacity:.35;}
-    .sheet-none-name{font-size:12px;font-weight:700;color:rgba(255,255,255,.45);flex:1;}
-
-    /* ══ RESULT OVERLAY ══ */
-    .result-ov{
-      position:fixed;inset:0;z-index:100;
-      background:rgba(0,0,0,.9);backdrop-filter:blur(20px);
-      display:flex;flex-direction:column;align-items:center;justify-content:center;
-      padding:16px;gap:14px;
-      opacity:0;pointer-events:none;transition:opacity .3s;
-    }
-    .result-ov.on{opacity:1;pointer-events:all;}
-    .result-wrap{
-      position:relative;border-radius:var(--r-lg);overflow:hidden;
-      box-shadow:0 0 0 1.5px rgba(251,191,36,.25),0 28px 60px rgba(0,0,0,.6);
-      transform:scale(.88) translateY(16px);
-      transition:transform .4s cubic-bezier(.34,1.2,.64,1);
-    }
-    .result-ov.on .result-wrap{transform:none;}
-    #res-canvas{display:block;max-height:65vh;max-width:88vw;width:auto;height:auto;}
-    .result-btns{display:flex;gap:8px;width:100%;max-width:320px;}
-    .btn-save{
-      flex:1;padding:13px;border:none;border-radius:var(--r-lg);
-      background:linear-gradient(135deg,var(--gold-dk),var(--gold));
-      font-family:inherit;font-size:13px;font-weight:800;color:var(--navy);
-      cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;
-      transition:transform .15s;outline:none;
-    }
-    .btn-save:active{transform:scale(.97);}
-    .btn-save:disabled{opacity:.5;cursor:wait;}
-    .save-spin{width:15px;height:15px;border:2.5px solid rgba(13,30,64,.25);border-top-color:var(--navy);border-radius:50%;animation:spin .7s linear infinite;display:none;}
-    .btn-save.loading .save-spin{display:block;}
-    .btn-save.loading .save-ic{display:none;}
-    @keyframes spin{to{transform:rotate(360deg)}}
-    .btn-redo{padding:13px 18px;border-radius:var(--r-lg);background:rgba(255,255,255,.07);border:1.5px solid rgba(255,255,255,.15);font-family:inherit;font-size:13px;font-weight:700;color:rgba(255,255,255,.7);cursor:pointer;transition:background .2s;outline:none;}
-    .btn-redo:active{transform:scale(.97);}
-
-    /* ══ DL PROGRESS ══ */
-    .dl-prog{position:fixed;inset:0;z-index:200;background:rgba(6,14,32,.96);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;opacity:0;pointer-events:none;transition:opacity .3s;}
-    .dl-prog.on{opacity:1;pointer-events:all;}
-    .dl-ring-wrap{position:relative;width:76px;height:76px;}
-    .dl-ring-wrap svg{transform:rotate(-90deg);}
-    .dl-ring-wrap circle{fill:none;stroke-width:5;stroke-dasharray:207;stroke-dashoffset:207;stroke-linecap:round;}
-    .dl-rbg{stroke:rgba(255,255,255,.08);}
-    .dl-rfill{stroke:var(--gold);transition:stroke-dashoffset .25s ease;}
-    .dl-ic-center{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:26px;}
-    .dl-lbl{font-size:13px;font-weight:700;color:rgba(255,255,255,.7);}
-    .dl-sub{font-size:10px;color:rgba(255,255,255,.3);}
-
-    /* ══ NO CAM ══ */
-    .nocam{position:absolute;inset:0;z-index:5;display:none;flex-direction:column;align-items:center;justify-content:center;gap:10px;text-align:center;padding:24px;background:var(--bg);}
-    .nocam-ic{font-size:44px;opacity:.3;}
-    .nocam h3{font-size:14px;font-weight:700;color:rgba(255,255,255,.5);}
-    .nocam p{font-size:12px;color:rgba(255,255,255,.3);line-height:1.6;}
-
-    /* ══ TOAST ══ */
-    .toast{position:fixed;top:72px;left:50%;transform:translateX(-50%) translateY(-8px);background:rgba(13,30,64,.97);border:1px solid rgba(251,191,36,.2);border-radius:var(--r-lg);padding:9px 18px;font-size:12px;font-weight:700;white-space:nowrap;z-index:9999;opacity:0;pointer-events:none;transition:all .22s;max-width:90vw;text-align:center;}
-    .toast.on{opacity:1;transform:translateX(-50%) translateY(0);}
-
-    #cap-canvas{display:none;}
-
-    /* ══ LANDSCAPE HINT (mode strip) ══ */
-    .ls-hint{
-      position:absolute;inset:0;z-index:50;
-      background:rgba(6,14,32,.92);backdrop-filter:blur(8px);
-      display:none;flex-direction:column;
-      align-items:center;justify-content:center;gap:16px;
-      text-align:center;padding:32px;
-    }
-    .ls-hint.on{display:flex;}
-    .ls-hint-icon{
-      font-size:52px;
-      animation:rotatePulse 1.8s ease-in-out infinite;
-    }
-    @keyframes rotatePulse{
-      0%{transform:rotate(0deg) scale(1);}
-      40%{transform:rotate(-90deg) scale(1.1);}
-      60%{transform:rotate(-90deg) scale(1.1);}
-      100%{transform:rotate(0deg) scale(1);}
-    }
-    .ls-hint h3{font-size:18px;font-weight:900;color:#fff;line-height:1.3;}
-    .ls-hint p{font-size:13px;color:rgba(255,255,255,.5);line-height:1.6;}
-    .ls-hint-badge{
-      display:flex;align-items:center;gap:8px;
-      background:rgba(251,191,36,.12);border:1px solid rgba(251,191,36,.3);
-      border-radius:999px;padding:8px 16px;
-      font-size:12px;font-weight:700;color:var(--gold);
-    }
+/* ══ TOAST ══ */
+.toast{position:fixed;top:72px;left:50%;transform:translateX(-50%) translateY(-8px);background:rgba(13,30,64,.97);border:1px solid rgba(251,191,36,.2);border-radius:var(--r-lg);padding:9px 18px;font-size:12px;font-weight:700;white-space:nowrap;z-index:9999;opacity:0;pointer-events:none;transition:all .22s;max-width:90vw;text-align:center;}
+.toast.on{opacity:1;transform:translateX(-50%) translateY(0);}
   </style>
 </head>
 <body>
@@ -350,67 +140,16 @@
       <img src="logoalwildan.png" alt="AL-WILDAN" onerror="this.style.display='none';this.parentNode.textContent='🎓'">
     </div>
     <div class="splash-title">
-      <h1>SnapBooth</h1>
+      <h1>MomenAkbar</h1>
       <p>WISUDA AKBAR AL-WILDAN 2026</p>
     </div>
     <div class="splash-bar-wrap"><div class="splash-bar" id="splash-bar"></div></div>
-    <div class="splash-status" id="splash-status">Memuat...</div>
+    <div class="splash-status" id="splash-status">Memuat frame...</div>
   </div>
 </div>
 
-<!-- FULLSCREEN CAMERA -->
-<div class="cam-fs" id="cam-fs">
-
-  <!-- Video stream -->
-  <video id="video" autoplay playsinline muted></video>
-
-  <!-- Frame PNG overlay fullscreen (single mode) -->
-  <div class="frame-fs" id="frame-fs"></div>
-
-  <!-- Strip frame scroll container -->
-  <div class="strip-frame-wrap" id="strip-frame-wrap">
-    <div class="strip-frame-inner" id="strip-frame-inner"></div>
-  </div>
-
-  <!-- Dim panels: tutup area di luar frame (4 sisi) -->
-  <div class="dim-panel" id="dim-top"    style="left:0;right:0;top:0"></div>
-  <div class="dim-panel" id="dim-bottom" style="left:0;right:0;bottom:0"></div>
-  <div class="dim-panel" id="dim-left"   style="top:0;bottom:0;left:0"></div>
-  <div class="dim-panel" id="dim-right"  style="top:0;bottom:0;right:0"></div>
-
-  <!-- Crop guide (tampil saat tanpa frame) -->
-  <div class="crop-guide" id="crop-guide"></div>
-
-  <!-- Strip slot guides (mode strip) -->
-  <div class="strip-guides" id="strip-guides">
-    <div class="slot-guide" id="sg0"><div class="strip-slot-num">1</div></div>
-    <div class="slot-guide" id="sg1"><div class="strip-slot-num">2</div></div>
-    <div class="slot-guide" id="sg2"><div class="strip-slot-num">3</div></div>
-  </div>
-
-  <!-- Countdown -->
-  <div class="cdown" id="cdown">
-    <div class="cdown-n" id="cdown-n">3</div>
-    <div class="cdown-lbl" id="cdown-lbl">Bersiap...</div>
-  </div>
-
-  <!-- Flash -->
-  <div class="flash" id="flash"></div>
-
-  <!-- No cam -->
-  <div class="nocam" id="nocam" style="display:none">
-    <div class="nocam-ic">📷</div>
-    <h3>Kamera Tidak Tersedia</h3>
-    <p>Izinkan akses kamera<br>lalu refresh halaman</p>
-  </div>
-
-  <!-- Landscape hint untuk mode strip -->
-  <div class="ls-hint" id="ls-hint">
-    <div class="ls-hint-icon">📱</div>
-    <h3>Miringkan HP ke<br>Mode Landscape</h3>
-    <p>Mode Strip 3× memerlukan<br>orientasi landscape untuk preview<br>yang lebih baik</p>
-    <div class="ls-hint-badge">🔄 Putar HP 90°</div>
-  </div>
+<!-- MAIN WRAPPER -->
+<div class="main-wrap" id="main-wrap">
 
   <!-- TOP BAR -->
   <div class="top-bar">
@@ -419,7 +158,7 @@
         <img src="logoalwildan.png" alt="" onerror="this.style.display='none';this.parentNode.textContent='🎓'">
       </div>
       <div>
-        <div class="top-name">SNAPBOOTH</div>
+        <div class="top-name">MOMENAKBAR</div>
         <div class="top-sub">WISUDA AKBAR 2026</div>
       </div>
     </div>
@@ -429,31 +168,38 @@
     </button>
   </div>
 
-  <!-- MODE TABS -->
-  <div class="mode-tabs">
-    <button class="mode-tab active" id="tab-single" onclick="setMode('single')">📷 Single</button>
-    <button class="mode-tab" id="tab-strip" onclick="setMode('strip')">🎞️ Strip 3×</button>
+  <!-- STATE A: Upload Zone -->
+  <div class="upload-zone" id="upload-zone">
+    <div class="upload-inner" id="upload-drop-area">
+      <div class="upload-icon">📷</div>
+      <div class="upload-title">Pilih foto dari galeri</div>
+      <div class="upload-hint">atau drag & drop foto ke sini</div>
+      <button class="btn-pick-photo" onclick="triggerFileInput()">Pilih Foto</button>
+    </div>
   </div>
 
-  <!-- BOTTOM CONTROLS -->
+  <!-- STATE B: Canvas Preview -->
+  <div class="canvas-wrap" id="canvas-wrap" style="display:none">
+    <div class="dim-panel" id="dim-top"></div>
+    <div class="dim-panel" id="dim-bottom"></div>
+    <div class="dim-panel" id="dim-left"></div>
+    <div class="dim-panel" id="dim-right"></div>
+    <canvas id="preview-canvas"></canvas>
+  </div>
+
+  <!-- BOTTOM BAR -->
   <div class="bot-bar">
-    <div class="side-btns">
-      <button class="icbtn" id="btn-flip" onclick="flipCam()" aria-label="Ganti kamera">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M1 4v6h6"/><path d="M23 20v-6h-6"/>
-          <path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"/>
-        </svg>
-      </button>
-      <button class="icbtn" id="btn-torch" onclick="toggleTorch()" aria-label="Flash" style="display:none">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
-        </svg>
-      </button>
+    <div class="bot-state-a" id="bot-state-a">
+      <button class="btn-download btn-pick-center" onclick="triggerFileInput()">📷 Pilih Foto</button>
     </div>
-
-    <button class="shutter" id="shutter" onclick="startCapture()" aria-label="Ambil foto"></button>
-
-    <div class="side-btns">
+    <div class="bot-state-b" id="bot-state-b" style="display:none">
+      <button class="icbtn" onclick="triggerFileInput()" aria-label="Ganti foto" title="Ganti Foto">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+          <polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
+        </svg>
+      </button>
+      <button class="btn-download" id="btn-download" onclick="doDownload()">⬇ Download</button>
       <button class="icbtn" onclick="openSheet()" aria-label="Pilih frame">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <rect x="3" y="3" width="18" height="18" rx="2"/><rect x="7" y="7" width="10" height="10" rx="1"/>
@@ -462,7 +208,10 @@
     </div>
   </div>
 
-</div><!-- /cam-fs -->
+</div><!-- /main-wrap -->
+
+<!-- HIDDEN FILE INPUT -->
+<input type="file" id="file-input" accept="image/*" style="display:none">
 
 <!-- FRAME SHEET -->
 <div class="sheet-bg" id="sheet-bg" onclick="closeSheet()"></div>
@@ -470,18 +219,6 @@
   <div class="sheet-handle"></div>
   <div class="sheet-title" id="sheet-title">Pilih Frame</div>
   <div class="sheet-list" id="sheet-list"></div>
-</div>
-
-<!-- RESULT -->
-<div class="result-ov" id="result-ov">
-  <div class="result-wrap"><canvas id="res-canvas"></canvas></div>
-  <div class="result-btns">
-    <button class="btn-save" id="btn-save" onclick="doDownload()">
-      <span class="save-ic">⬇ Simpan Foto</span>
-      <div class="dl-spin"></div>
-    </button>
-    <button class="btn-redo" onclick="retake()">🔄 Ulang</button>
-  </div>
 </div>
 
 <!-- DL PROGRESS -->
@@ -497,8 +234,26 @@
   <div class="dl-sub">Harap tunggu sebentar</div>
 </div>
 
+<!-- SHARE MODAL -->
+<div class="share-bg" id="share-bg" onclick="closeShare()"></div>
+<div class="share-modal" id="share-modal">
+  <div class="share-handle"></div>
+  <div class="share-title">Bagikan Momenmu! 🎓</div>
+  <div class="share-btns">
+    <button class="share-btn share-ig" onclick="window.open('https://www.instagram.com/stories/create','_blank')">
+      <span>📸</span> Instagram Story
+    </button>
+    <button class="share-btn share-tt" onclick="window.open('https://www.tiktok.com/upload','_blank')">
+      <span>🎵</span> TikTok
+    </button>
+    <button class="share-btn share-copy" onclick="copyCaption()">
+      <span>📋</span> Salin Caption
+    </button>
+  </div>
+  <button class="share-dismiss" onclick="closeShare()">Nanti saja</button>
+</div>
+
 <div class="toast" id="toast-el"></div>
-<canvas id="cap-canvas"></canvas>
 
 <script>
 // ══════════════════════════════════
@@ -506,735 +261,439 @@
 // ══════════════════════════════════
 const MANIFEST = 'frames/manifest.json';
 const FB = 'frames/';
-const COUNTDOWN = 3;
-
-// Single output: 1080×1440, area foto dalam frame
-const S_FW=1080, S_FH=1440;
-const S_AREA={x:97,y:92,w:890,h:1188};
-
-// Strip output: 1080×1920, 3 slot landscape
-const T_FW=1080, T_FH=1920;
-const SLOTS=[
-  {x:86,y:263, w:908,h:411},
-  {x:86,y:709, w:908,h:411},
-  {x:86,y:1155,w:908,h:411}
-];
+const CAPTION = '#WisudaAkbar2026 #ALWILDANIslamicSchool #WisudaAkbar #BestMemories';
+const DEFAULT_W = 1080, DEFAULT_H = 1440;
 
 // ══════════════════════════════════
 //  STATE
 // ══════════════════════════════════
-let stream=null, facing='user', mode='single';
-let frames={single:[],strip:[]};
-let selFrame=null;
-let capturing=false, stripPhotos=[];
-let torchTrack=null, torchOn=false;
-let toastTmr=null;
-const $=id=>document.getElementById(id);
+let frames = [];
+let selFrame = null;
+let frameImg = null;
+let photoImg = null;
+let zoom = 1;
+let panX = 0, panY = 0;
+let isDragging = false;
+let lastX = 0, lastY = 0;
+let pinchDist = 0;
+let toastTmr = null;
+let hasPhoto = false;
 
-// ── Orientasi ──
-function isLandscape(){
-  if(screen.orientation) return screen.orientation.type.includes('landscape');
-  return window.innerWidth > window.innerHeight;
-}
-
-function checkStripOrientation(){
-  if(mode!=='strip') return;
-  const ls=isLandscape();
-  $('ls-hint').classList.toggle('on', !ls);
-  $('shutter').disabled = !ls || capturing;
-  if(ls){ updateGuide(); }
-}
-
-// ══════════════════════════════════
-//  SPLASH
-// ══════════════════════════════════
-function splashP(pct,msg){ $('splash-bar').style.width=pct+'%'; $('splash-status').textContent=msg; }
-function splashHide(){ setTimeout(()=>$('splash').classList.add('hide'),400); }
+const $ = id => document.getElementById(id);
 
 // ══════════════════════════════════
 //  AUDIO
 // ══════════════════════════════════
-let actx=null;
-function initAudio(){ if(!actx) actx=new(window.AudioContext||window.webkitAudioContext)(); }
-function beepShutter(){
-  try{
-    initAudio(); const t=actx.currentTime;
-    const buf=actx.createBuffer(1,actx.sampleRate*.1,actx.sampleRate);
-    const d=buf.getChannelData(0);
-    for(let i=0;i<d.length;i++){const s=i/actx.sampleRate;d[i]=(Math.random()*2-1)*Math.exp(-s*55)*.7+Math.sin(2*Math.PI*900*s)*Math.exp(-s*35)*.3;}
-    const src=actx.createBufferSource(); src.buffer=buf;
-    const g=actx.createGain(); g.gain.setValueAtTime(.9,t); g.gain.exponentialRampToValueAtTime(.01,t+.08);
+let actx = null;
+function initAudio() { if (!actx) actx = new (window.AudioContext || window.webkitAudioContext)(); }
+function beepShutter() {
+  try {
+    initAudio(); const t = actx.currentTime;
+    const buf = actx.createBuffer(1, actx.sampleRate * .1, actx.sampleRate);
+    const d = buf.getChannelData(0);
+    for (let i = 0; i < d.length; i++) { const s = i / actx.sampleRate; d[i] = (Math.random() * 2 - 1) * Math.exp(-s * 55) * .7 + Math.sin(2 * Math.PI * 900 * s) * Math.exp(-s * 35) * .3; }
+    const src = actx.createBufferSource(); src.buffer = buf;
+    const g = actx.createGain(); g.gain.setValueAtTime(.9, t); g.gain.exponentialRampToValueAtTime(.01, t + .08);
     src.connect(g); g.connect(actx.destination); src.start(t);
-  }catch(e){}
-}
-function beepTick(freq=440){
-  try{
-    initAudio();
-    const o=actx.createOscillator(); o.frequency.value=freq; o.type='sine';
-    const g=actx.createGain(); g.gain.setValueAtTime(.15,actx.currentTime); g.gain.exponentialRampToValueAtTime(.01,actx.currentTime+.12);
-    o.connect(g); g.connect(actx.destination); o.start(); o.stop(actx.currentTime+.12);
-  }catch(e){}
-}
-
-// ══════════════════════════════════
-//  CAMERA
-// ══════════════════════════════════
-async function startCam(){
-  if(stream) stream.getTracks().forEach(t=>t.stop());
-  torchTrack=null; torchOn=false; $('btn-torch').classList.remove('on');
-  try{
-    // Biarkan kamera pakai resolusi natural, jangan paksa aspect ratio
-    stream=await navigator.mediaDevices.getUserMedia({
-      video:{facingMode:facing, width:{ideal:1920}},
-      audio:false
-    });
-    $('video').srcObject=stream;
-    $('video').onloadedmetadata=()=>updateGuide();
-    applyStripVideoClass();
-    $('nocam').style.display='none';
-    $('shutter').disabled=false;
-    // Torch
-    const track=stream.getVideoTracks()[0];
-    if(facing==='environment'&&track?.getCapabilities?.().torch){
-      torchTrack=track; $('btn-torch').style.display='flex';
-    } else {
-      $('btn-torch').style.display='none';
-    }
-  }catch(e){
-    $('nocam').style.display='flex';
-    $('shutter').disabled=true;
-    toast('❌ Gagal akses kamera');
-  }
-}
-
-async function flipCam(){
-  facing=facing==='user'?'environment':'user';
-  const b=$('btn-flip');
-  b.style.transform='rotate(180deg)'; b.style.transition='transform .4s';
-  setTimeout(()=>b.style.transform='',400);
-  await startCam();
-}
-
-async function toggleTorch(){
-  if(!torchTrack) return;
-  torchOn=!torchOn;
-  try{ await torchTrack.applyConstraints({advanced:[{torch:torchOn}]}); }catch(e){torchOn=false;}
-  $('btn-torch').classList.toggle('on',torchOn);
-}
-
-// ══════════════════════════════════
-//  GUIDE POSITIONING — WYSIWYG
-//  capRects menyimpan screen-rect area capture.
-//  Capture memetakan rect layar → koordinat video,
-//  sehingga hasil = persis yang terlihat user.
-// ══════════════════════════════════
-let capRects={ single:null, slots:[null,null,null] };
-
-// Hitung box "contain" untuk aspect ratio dalam safe area layar
-// Safe area: hindari top-bar (70px) dan bot-bar (90px)
-// Safe area: top-bar 72px + extra padding, bot-bar + Safari address bar
-// window.innerHeight di iOS Safari sudah exclude address bar atas,
-// tapi bottom bar browser masih perlu dihitung manual
-const UI_TOP=80, UI_BOT=110;
-function containBox(arW,arH,padH=20){
-  // visualViewport lebih akurat di iOS Safari
-  const vw=window.visualViewport?window.visualViewport.width:window.innerWidth;
-  const vh=window.visualViewport?window.visualViewport.height:window.innerHeight;
-  const safeH=vh-UI_TOP-UI_BOT-padH;
-  const safeW=vw-padH*2;
-  const ar=arW/arH;
-  let h=safeH, w=h*ar;
-  if(w>safeW){ w=safeW; h=w/ar; }
-  return { x:(vw-w)/2, y:UI_TOP+Math.max(0,(safeH-h)/2), w, h };
-}
-
-// Dimensi video yang sudah di-rotate 90° untuk strip
-// Video portrait (h>w) setelah rotate 90° → terlihat landscape
-function getRotatedVideoDims(){
-  const vid=$('video');
-  const nw=vid.videoWidth||720, nh=vid.videoHeight||1280;
-  // Setelah rotate -90deg, lebar visual = tinggi video, tinggi visual = lebar video
-  return {w:nh, h:nw};
-}
-
-// State scroll frame strip
-let stripScrollIdx=0;
-
-function applyStripVideoClass(){
-  const vid=$('video');
-  if(mode==='strip'){
-    vid.className=facing==='environment'?'strip-env':'strip-front';
-  } else {
-    vid.className=facing==='environment'?'env':'';
-  }
-}
-
-function updateDimPanels(fb){
-  // Tutup area di luar frame box dengan 4 panel hitam
-  const vw=window.innerWidth, vh=window.innerHeight;
-  const panels=['dim-top','dim-bottom','dim-left','dim-right'];
-  panels.forEach(id=>{
-    const el=$(id);
-    if(!el) return;
-    el.classList.remove('hide');
-  });
-  // Top
-  $('dim-top').style.cssText   =`left:0;right:0;top:0;height:${fb.y}px;`;
-  // Bottom
-  $('dim-bottom').style.cssText=`left:0;right:0;bottom:0;height:${vh-fb.y-fb.h}px;`;
-  // Left
-  $('dim-left').style.cssText  =`top:${fb.y}px;bottom:${vh-fb.y-fb.h}px;left:0;width:${fb.x}px;`;
-  // Right
-  $('dim-right').style.cssText =`top:${fb.y}px;bottom:${vh-fb.y-fb.h}px;right:0;width:${vw-fb.x-fb.w}px;`;
-}
-
-function hideDimPanels(){
-  ['dim-top','dim-bottom','dim-left','dim-right'].forEach(id=>{
-    const el=$(id); if(el) el.classList.add('hide');
-  });
-}
-
-function updateGuide(){
-  const guide=$('crop-guide');
-  const ff=$('frame-fs');
-  const sfw=$('strip-frame-wrap');
-  const sfi=$('strip-frame-inner');
-
-  if(mode==='single'){
-    $('strip-guides').classList.remove('on');
-    sfw.style.display='none';
-    // Video class normal
-    applyStripVideoClass();
-
-    if(selFrame){
-      const fb=containBox(S_FW,S_FH);
-      ff.style.display='block';
-      ff.style.left=fb.x+'px'; ff.style.top=fb.y+'px';
-      ff.style.width=fb.w+'px'; ff.style.height=fb.h+'px';
-      guide.classList.add('hide');
-      updateDimPanels(fb);
-      const k=fb.w/S_FW;
-      capRects.single={
-        x: fb.x + S_AREA.x*k,
-        y: fb.y + S_AREA.y*k,
-        w: S_AREA.w*k,
-        h: S_AREA.h*k
-      };
-    } else {
-      ff.style.display='none';
-      guide.classList.remove('hide');
-      const gb=containBox(S_AREA.w,S_AREA.h,8);
-      guide.style.left=gb.x+'px'; guide.style.top=gb.y+'px';
-      guide.style.width=gb.w+'px'; guide.style.height=gb.h+'px';
-      updateDimPanels(gb);
-      capRects.single={...gb};
-    }
-
-  } else {
-    // ── STRIP ──
-    guide.classList.add('hide');
-    ff.style.display='none';
-    $('strip-guides').classList.add('on');
-    applyStripVideoClass(); // rotate video
-    stripScrollIdx=0;
-
-    if(selFrame){
-      // Frame 9:16 contain dalam safe area
-      // Viewport saat strip: HP portrait, tapi kita simulasi landscape via rotate
-      // Safe area: seluruh layar minus top/bot bar
-      const vw=window.innerWidth, vh=window.innerHeight;
-      const safeH=vh-UI_TOP-UI_BOT-16;
-      const safeW=vw-16;
-
-      // Frame 1080:1920 → tampilkan contain dalam safe area
-      const fb=containBox(T_FW,T_FH);
-
-      // Setup strip-frame-wrap: window kecil yang hanya menampilkan 1 slot pada satu waktu
-      // Tinggi window = tinggi 1 slot dalam skala frame
-      const k=fb.w/T_FW;
-      const slot0=SLOTS[0];
-      const slotH=slot0.h*k; // tinggi 1 slot di layar
-      const slotY0=fb.y+slot0.y*k; // posisi Y slot pertama di layar
-
-      // Window height = slotH (hanya tampilkan 1 slot)
-      sfw.style.display='block';
-      sfw.style.left=fb.x+'px';
-      sfw.style.top=slotY0+'px';
-      sfw.style.width=fb.w+'px';
-      sfw.style.height=slotH+'px';
-
-      // Frame inner: gambar full frame, offset atas = -slot0.y*k (slot pertama di atas)
-      const totalFrameH=fb.h;
-      sfi.style.backgroundImage=`url('${FB}strip/${selFrame.file}')`;
-      sfi.style.width=fb.w+'px';
-      sfi.style.height=totalFrameH+'px';
-      sfi.style.top=(-slot0.y*k)+'px'; // slot pertama visible
-
-      // Slot guides: hanya tampilkan slot yg sedang active (di center window)
-      [0,1,2].forEach(i=>{
-        const s=SLOTS[i];
-        // Posisi slot dalam frame inner (relatif terhadap window)
-        const slotInFrameY=(s.y-slot0.y)*k;
-        const r={
-          x: fb.x+s.x*k,
-          y: slotY0+slotInFrameY,
-          w: s.w*k,
-          h: s.h*k
-        };
-        capRects.slots[i]=r;
-        const sg=$('sg'+i);
-        sg.style.left=r.x+'px'; sg.style.top=r.y+'px';
-        sg.style.width=r.w+'px'; sg.style.height=r.h+'px';
-      });
-
-      // Dim: tutup area di luar window slot
-      updateDimPanels({x:fb.x, y:slotY0, w:fb.w, h:slotH});
-
-    } else {
-      sfw.style.display='none';
-      ff.style.display='none';
-      hideDimPanels();
-      // 3 slot guides tanpa frame
-      const GAP=8;
-      const slotR=908/411;
-      const safeH=window.innerHeight-UI_TOP-UI_BOT-20;
-      const safeW=window.innerWidth-40;
-      let sh=(safeH-GAP*2)/3, sw=sh*slotR;
-      if(sw>safeW){ sw=safeW; sh=sw/slotR; }
-      const sx=(window.innerWidth-sw)/2;
-      const totalH=sh*3+GAP*2;
-      const sy=UI_TOP+Math.max(0,(safeH-totalH)/2);
-      [0,1,2].forEach(i=>{
-        const r={ x:sx, y:sy+i*(sh+GAP), w:sw, h:sh };
-        capRects.slots[i]=r;
-        const sg=$('sg'+i);
-        sg.style.left=r.x+'px'; sg.style.top=r.y+'px';
-        sg.style.width=r.w+'px'; sg.style.height=r.h+'px';
-      });
-    }
-  }
-}
-
-// Scroll frame strip ke slot berikutnya
-function scrollStripToSlot(slotIdx){
-  if(!selFrame) return;
-  const sfi=$('strip-frame-inner');
-  const fb=containBox(T_FW,T_FH);
-  const k=fb.w/T_FW;
-  const slot0=SLOTS[0];
-  const targetSlot=SLOTS[slotIdx];
-  // Geser frame inner ke atas agar slot[slotIdx] menjadi visible
-  const offsetY=-(targetSlot.y-slot0.y)*k;
-  sfi.style.top=offsetY+'px';
-  // Update dim panels ke posisi slot baru
-  const slotH=slot0.h*k;
-  const slotY0=fb.y+slot0.y*k;
-  updateDimPanels({x:fb.x, y:slotY0, w:fb.w, h:slotH});
-}
-
-// ══════════════════════════════════
-//  MODE
-// ══════════════════════════════════
-function setMode(m){
-  mode=m;
-  $('tab-single').classList.toggle('active',m==='single');
-  $('tab-strip').classList.toggle('active',m==='strip');
-  stripPhotos=[]; resetSlotGuides();
-  buildSheet();
-  autoSelectFirstFrame();
-  if(m==='single'){
-    $('ls-hint').classList.remove('on');
-    $('shutter').disabled=false;
-    updateGuide();
-    startCam();
-  } else {
-    // Strip: CSS rotate, tidak perlu cek orientasi
-    $('ls-hint').classList.remove('on');
-    $('shutter').disabled=false;
-    updateGuide();
-    startCam();
-  }
-}
-
-// ══════════════════════════════════
-//  FRAMES
-// ══════════════════════════════════
-async function loadFrames(){
-  splashP(30,'Memuat frame...');
-  try{
-    const r=await fetch(MANIFEST);
-    if(!r.ok) throw 0;
-    const raw=await r.json();
-    frames.single=(raw.single||[]).map(f=>typeof f==='string'?{file:f}:f);
-    frames.strip=(raw.strip||[]).map(f=>typeof f==='string'?{file:f}:f);
-  }catch(e){ frames={single:[],strip:[]}; }
-  splashP(60,'Preload assets...');
-  await preloadFrameImages();
-  splashP(90,'Hampir selesai...');
-}
-
-async function preloadFrameImages(){
-  const all=[
-    ...(frames.single||[]).map(f=>({f,m:'single'})),
-    ...(frames.strip||[]).map(f=>({f,m:'strip'}))
-  ];
-  await Promise.allSettled(all.map(({f,m})=>new Promise(res=>{
-    const img=new Image(); img.onload=res; img.onerror=res;
-    img.src=`${FB}${m}/${f.file}`;
-  })));
-}
-
-function autoSelectFirstFrame(){
-  const list=frames[mode]||[];
-  selFrame=list.length>0?list[0]:null;
-  applyFrameUI();
-}
-
-function applyFrameUI(){
-  if(!selFrame){
-    $('top-frame-name').textContent='Tanpa Frame';
-    $('frame-fs').style.backgroundImage='';
-    $('frame-fs').style.display='none';
-    updateGuide();
-    return;
-  }
-  const url=`${FB}${mode}/${selFrame.file}`;
-  $('top-frame-name').textContent=selFrame.file.replace(/\.[^.]+$/,'').replace(/[-_]/g,' ');
-  $('frame-fs').style.backgroundImage=`url('${url}')`;
-  $('frame-fs').style.display='block';
-  updateGuide(); // sembunyikan guide saat ada frame
-}
-
-// ══════════════════════════════════
-//  FRAME SHEET
-// ══════════════════════════════════
-function buildSheet(){
-  const list=frames[mode]||[];
-  $('sheet-title').textContent=`Pilih Frame — ${mode==='single'?'Single Portrait':'Strip 3×'}`;
-  const sl=$('sheet-list'); sl.innerHTML='';
-  // None
-  const none=document.createElement('div');
-  none.className='sheet-none'+(selFrame===null?' selected':'');
-  none.innerHTML=`<div class="sheet-none-ic">⊘</div><div class="sheet-none-name">Tanpa Frame</div><span class="sheet-check">✓</span>`;
-  none.onclick=()=>pickFrame(null); sl.appendChild(none);
-  // Items
-  list.forEach(f=>{
-    const name=f.file.replace(/\.[^.]+$/,'').replace(/[-_]/g,' ');
-    const div=document.createElement('div');
-    div.className='sheet-item'+(selFrame&&selFrame.file===f.file?' selected':'');
-    div.innerHTML=`<div class="sheet-item-thumb"><img src="${FB}${mode}/${f.file}" loading="lazy"></div><span class="sheet-item-name">${name}</span><span class="sheet-check">✓</span>`;
-    div.onclick=()=>pickFrame(f); sl.appendChild(div);
-  });
-}
-
-function pickFrame(f){ selFrame=f; applyFrameUI(); buildSheet(); closeSheet(); }
-function openSheet(){ buildSheet(); $('sheet-bg').classList.add('on'); $('sheet').classList.add('on'); }
-function closeSheet(){ $('sheet-bg').classList.remove('on'); $('sheet').classList.remove('on'); }
-
-// ══════════════════════════════════
-//  COUNTDOWN
-// ══════════════════════════════════
-function runCountdown(label='Bersiap...'){
-  return new Promise(res=>{
-    $('cdown').classList.add('on');
-    $('cdown-lbl').textContent=label;
-    let n=COUNTDOWN;
-    const tick=()=>{
-      $('cdown-n').textContent=n;
-      $('cdown-n').style.animation='none';
-      void $('cdown-n').offsetHeight;
-      $('cdown-n').style.animation='';
-      beepTick(n===1?880:440);
-      if(n===0){ $('cdown').classList.remove('on'); res(); return; }
-      n--; setTimeout(tick,1000);
-    };
-    tick();
-  });
-}
-
-// ══════════════════════════════════
-//  CAPTURE — WYSIWYG
-//  Memetakan screen rect → koordinat video stream,
-//  hasil capture = persis area yang dilihat user.
-// ══════════════════════════════════
-async function captureOne(rect,outW,outH){
-  const vid=$('video');
-  const cap=$('cap-canvas');
-  cap.width=outW; cap.height=outH;
-  const ctx=cap.getContext('2d');
-
-  const vw=window.innerWidth, vh=window.innerHeight;
-  const nw=vid.videoWidth, nh=vid.videoHeight;
-
-  if(mode==='strip'){
-    // Video di-rotate 90° → video portrait (nw<nh) tampak landscape
-    // Visual display: lebar visual=nh, tinggi visual=nw
-    // object-fit:cover pada rotated element:
-    // skala berdasarkan dimensi visual
-    const dispScale=Math.max(vw/nh, vh/nw);
-    const dispW=nh*dispScale, dispH=nw*dispScale;
-    const offX=(vw-dispW)/2, offY=(vh-dispH)/2;
-
-    // Screen rect → rotated video koordinat
-    // Dalam rotated space: x layar → mapped ke Y video, y layar → mapped ke X video
-    const rxInDisplay=(rect.x-offX)/dispScale; // x dalam video-height space
-    const ryInDisplay=(rect.y-offY)/dispScale; // y dalam video-width space
-    const rwInDisplay=rect.w/dispScale;
-    const rhInDisplay=rect.h/dispScale;
-
-    // rotate-90: screen_x → video_y, screen_y → video_x (dari bawah)
-    let srcX=nh-rxInDisplay-rwInDisplay; // mapped to video height
-    let srcY=ryInDisplay;
-    let srcW=rwInDisplay;
-    let srcH=rhInDisplay;
-
-    // Untuk kamera depan yang di-mirror (strip-front: rotate -90 scaleY(-1))
-    if(facing==='user'){
-      srcY=nw-ryInDisplay-rhInDisplay;
-    }
-
-    // Clamp
-    srcX=Math.max(0,Math.min(srcX,nh-srcW));
-    srcY=Math.max(0,Math.min(srcY,nw-srcH));
-
-    // Draw dari video portrait ke canvas landscape
-    // Video portrait: dimensi nw(lebar)×nh(tinggi), kita ambil area srcX,srcY,srcW,srcH
-    // Tapi srcX,srcY mengacu ke "after rotate" space (nh×nw)
-    // Translate: dalam video asli, setelah rotate -90:
-    //   video_x = nh - srcX - srcW  (sudah di atas)
-    //   video_y = srcY
-    // Ambil dari video asli: x=nw-srcY-srcH, y=srcX, w=srcH, h=srcW (swap karena 90°)
-    const vSrcX=nw-srcY-srcH;
-    const vSrcY=nh-srcX-srcW;
-    const vSrcW=srcH;
-    const vSrcH=srcW;
-
-    ctx.drawImage(vid, vSrcY, vSrcX, vSrcW, vSrcH, 0, 0, outW, outH);
-
-  } else {
-    // Single: video portrait normal, object-fit:cover
-    const scale=Math.max(vw/nw, vh/nh);
-    const dispW=nw*scale, dispH=nh*scale;
-    const offX=(vw-dispW)/2, offY=(vh-dispH)/2;
-
-    let srcX=(rect.x-offX)/scale;
-    const srcY=(rect.y-offY)/scale;
-    const srcW=rect.w/scale;
-    const srcH=rect.h/scale;
-
-    if(facing==='user'){
-      srcX = nw - srcX - srcW;
-      ctx.translate(outW,0); ctx.scale(-1,1);
-    }
-    ctx.drawImage(vid, srcX, srcY, srcW, srcH, 0, 0, outW, outH);
-    ctx.setTransform(1,0,0,1,0,0);
-  }
-
-  // Flash
-  const fl=$('flash'); fl.style.opacity='.9'; setTimeout(()=>fl.style.opacity='0',130);
-  beepShutter();
-
-  const out=document.createElement('canvas');
-  out.width=outW; out.height=outH;
-  out.getContext('2d').drawImage(cap,0,0);
-  return out;
-}
-
-// ══════════════════════════════════
-//  LOAD IMAGE
-// ══════════════════════════════════
-function loadImg(src){
-  return new Promise(res=>{
-    const img=new Image(); img.crossOrigin='anonymous';
-    img.onload=()=>res(img); img.onerror=()=>res(null);
-    img.src=src;
-  });
-}
-
-// ══════════════════════════════════
-//  COMPOSE SINGLE
-// Foto di-place di area frame, lalu frame di-overlay
-// ══════════════════════════════════
-async function composeSingle(photo){
-  if(!selFrame) return photo; // no frame: return foto 3:4 langsung
-  const canvas=document.createElement('canvas');
-  canvas.width=S_FW; canvas.height=S_FH;
-  const ctx=canvas.getContext('2d');
-  ctx.drawImage(photo, S_AREA.x, S_AREA.y, S_AREA.w, S_AREA.h);
-  const fi=await loadImg(`${FB}single/${selFrame.file}`);
-  if(fi) ctx.drawImage(fi,0,0,S_FW,S_FH);
-  return canvas;
-}
-
-// ══════════════════════════════════
-//  COMPOSE STRIP
-// ══════════════════════════════════
-async function composeStrip(photos){
-  const canvas=document.createElement('canvas');
-  canvas.width=T_FW; canvas.height=T_FH;
-  const ctx=canvas.getContext('2d');
-  ctx.fillStyle='#0d1e40'; ctx.fillRect(0,0,T_FW,T_FH);
-  photos.forEach((p,i)=>{ const s=SLOTS[i]; ctx.drawImage(p,s.x,s.y,s.w,s.h); });
-  if(selFrame){
-    const fi=await loadImg(`${FB}strip/${selFrame.file}`);
-    if(fi) ctx.drawImage(fi,0,0,T_FW,T_FH);
-  }
-  return canvas;
-}
-
-// ══════════════════════════════════
-//  MAIN CAPTURE
-// ══════════════════════════════════
-async function startCapture(){
-  if(capturing) return;
-  capturing=true; $('shutter').disabled=true;
-  initAudio();
-  updateGuide(); // pastikan rect terkini
-
-  if(mode==='single'){
-    await runCountdown('Bersiap...');
-    const photo=await captureOne(capRects.single, S_AREA.w, S_AREA.h);
-    const result=await composeSingle(photo);
-    showResult(result);
-
-  } else {
-    // Strip: 3 foto
-    stripPhotos=[];
-    for(let i=0;i<3;i++){
-      // Scroll frame ke slot i
-      if(i>0){
-        scrollStripToSlot(i);
-        await sleep(550); // tunggu animasi scroll selesai
-      }
-      // Aktifkan slot guide
-      if(i>0) $('sg'+(i-1)).classList.remove('active');
-      $('sg'+i).classList.add('active');
-
-      await runCountdown(`Foto ${i+1} dari 3`);
-      const p=await captureOne(capRects.slots[i], SLOTS[i].w, SLOTS[i].h);
-      stripPhotos.push(p);
-
-      // Thumbnail masuk slot guide
-      const sg=$('sg'+i);
-      sg.classList.remove('active'); sg.classList.add('done');
-      sg.querySelector('.strip-slot-num')?.remove();
-      const img=document.createElement('img');
-      img.src=p.toDataURL('image/jpeg',.75);
-      sg.appendChild(img);
-    }
-    $('sg2').classList.remove('active'); $('sg2').classList.add('done');
-    const result=await composeStrip(stripPhotos);
-    showResult(result);
-  }
-}
-
-// ══════════════════════════════════
-//  SHOW RESULT
-// ══════════════════════════════════
-function showResult(canvas){
-  const rc=$('res-canvas');
-  rc.width=canvas.width; rc.height=canvas.height;
-  rc.getContext('2d').drawImage(canvas,0,0);
-  $('result-ov').classList.add('on');
-  capturing=false; $('shutter').disabled=false;
-}
-
-// ══════════════════════════════════
-//  DOWNLOAD
-// ══════════════════════════════════
-async function doDownload(){
-  const rc=$('res-canvas');
-  const prog=$('dl-prog'), ring=$('dl-rfill'), lbl=$('dl-lbl');
-  const C=207; prog.classList.add('on'); let pct=0; ring.style.strokeDashoffset=C;
-  const animTo=(tg,lb,ms=300)=>new Promise(res=>{
-    lbl.textContent=lb; const st=pct,t0=performance.now();
-    const f=now=>{ const p=Math.min((now-t0)/ms,1); pct=st+(tg-st)*p;
-      ring.style.strokeDashoffset=C*(1-pct/100); if(p<1)requestAnimationFrame(f); else res(); };
-    requestAnimationFrame(f);
-  });
-  await animTo(40,'Memproses foto...'); await sleep(200);
-  await animTo(80,'Menyiapkan file...');
-  const ts=new Date().toISOString().slice(0,19).replace(/[-:T]/g,'');
-  rc.toBlob(blob=>{
-    const a=document.createElement('a');
-    a.href=URL.createObjectURL(blob);
-    a.download=`snapbooth-wisuda-${mode}-${ts}.jpg`;
-    a.click();
-    setTimeout(()=>URL.revokeObjectURL(a.href),1000);
-  },'image/jpeg',.95);
-  await animTo(100,'✅ Tersimpan!',250); await sleep(700);
-  prog.classList.remove('on'); pct=0;
-  toast('✅ Foto berhasil disimpan!');
-}
-
-// ══════════════════════════════════
-//  RETAKE
-// ══════════════════════════════════
-function retake(){
-  $('result-ov').classList.remove('on');
-  stripPhotos=[]; resetSlotGuides();
-  // Reset frame scroll ke slot 0
-  if(mode==='strip' && selFrame){
-    const sfi=$('strip-frame-inner');
-    const fb=containBox(T_FW,T_FH);
-    const k=fb.w/T_FW;
-    const slot0=SLOTS[0];
-    sfi.style.top=(-slot0.y*k)+'px';
-    updateDimPanels({x:fb.x, y:fb.y+slot0.y*k, w:fb.w, h:slot0.h*k});
-  }
-  capturing=false; $('shutter').disabled=false;
-}
-
-function resetSlotGuides(){
-  [0,1,2].forEach(i=>{
-    const sg=$('sg'+i);
-    sg.className='slot-guide';
-    sg.innerHTML=`<div class="strip-slot-num">${i+1}</div>`;
-  });
+  } catch (e) {}
 }
 
 // ══════════════════════════════════
 //  UTILS
 // ══════════════════════════════════
-const sleep=ms=>new Promise(r=>setTimeout(r,ms));
-function toast(msg,dur=3000){
-  const el=$('toast-el'); el.textContent=msg; el.classList.add('on');
-  clearTimeout(toastTmr); toastTmr=setTimeout(()=>el.classList.remove('on'),dur);
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+function toast(msg, dur = 3000) {
+  const el = $('toast-el'); el.textContent = msg; el.classList.add('on');
+  clearTimeout(toastTmr); toastTmr = setTimeout(() => el.classList.remove('on'), dur);
 }
-document.addEventListener('keydown',e=>{
-  if(e.key===' '&&!capturing){e.preventDefault();startCapture();}
-  if(e.key==='Escape'){
-    if($('result-ov').classList.contains('on'))retake();
-    if($('sheet').classList.contains('on'))closeSheet();
+function loadImg(src) {
+  return new Promise(res => {
+    const img = new Image(); img.crossOrigin = 'anonymous';
+    img.onload = () => res(img); img.onerror = () => res(null);
+    img.src = src;
+  });
+}
+
+// ══════════════════════════════════
+//  SPLASH
+// ══════════════════════════════════
+function splashP(pct, msg) { $('splash-bar').style.width = pct + '%'; $('splash-status').textContent = msg; }
+function splashHide() { setTimeout(() => $('splash').classList.add('hide'), 400); }
+
+// ══════════════════════════════════
+//  FRAME SYSTEM
+// ══════════════════════════════════
+async function loadFrames() {
+  splashP(30, 'Memuat frame...');
+  try {
+    const r = await fetch(MANIFEST);
+    if (!r.ok) throw 0;
+    const raw = await r.json();
+    frames = (raw.frames || []).map(f =>
+      typeof f === 'string'
+        ? { file: f, name: f.replace(/\.[^.]+$/, ''), w: DEFAULT_W, h: DEFAULT_H, photoArea: { x: 0, y: 0, w: DEFAULT_W, h: DEFAULT_H } }
+        : f
+    );
+  } catch (e) { frames = []; }
+  splashP(60, 'Preload aset...');
+  await Promise.allSettled(frames.map(f => loadImg(`${FB}${f.file}`)));
+  splashP(90, 'Hampir selesai...');
+}
+
+function autoSelectFirstFrame() {
+  selFrame = frames.length > 0 ? frames[0] : null;
+  updateFrameUI();
+}
+
+function updateFrameUI() {
+  $('top-frame-name').textContent = selFrame
+    ? (selFrame.name || selFrame.file.replace(/\.[^.]+$/, '').replace(/[-_]/g, ' '))
+    : 'Tanpa Frame';
+}
+
+// ══════════════════════════════════
+//  FRAME SHEET
+// ══════════════════════════════════
+function buildSheet() {
+  $('sheet-title').textContent = 'Pilih Frame';
+  const sl = $('sheet-list'); sl.innerHTML = '';
+  const none = document.createElement('div');
+  none.className = 'sheet-none' + (selFrame === null ? ' selected' : '');
+  none.innerHTML = `<div class="sheet-none-ic">⊘</div><div class="sheet-none-name">Tanpa Frame</div><span class="sheet-check">✓</span>`;
+  none.onclick = () => pickFrame(null);
+  sl.appendChild(none);
+  frames.forEach(f => {
+    const name = f.name || f.file.replace(/\.[^.]+$/, '').replace(/[-_]/g, ' ');
+    const div = document.createElement('div');
+    div.className = 'sheet-item' + (selFrame && selFrame.file === f.file ? ' selected' : '');
+    div.innerHTML = `<div class="sheet-item-thumb"><img src="${FB}${f.file}" loading="lazy"></div><span class="sheet-item-name">${name}</span><span class="sheet-check">✓</span>`;
+    div.onclick = () => pickFrame(f);
+    sl.appendChild(div);
+  });
+}
+
+async function pickFrame(f) {
+  selFrame = f;
+  frameImg = f ? await loadImg(`${FB}${f.file}`) : null;
+  updateFrameUI(); buildSheet(); closeSheet();
+  if (hasPhoto) { resizeCanvas(); fitPhotoToArea(); renderPreview(); updateDimPanels(); }
+}
+
+function openSheet() { buildSheet(); $('sheet-bg').classList.add('on'); $('sheet').classList.add('on'); }
+function closeSheet() { $('sheet-bg').classList.remove('on'); $('sheet').classList.remove('on'); }
+
+// ══════════════════════════════════
+//  UPLOAD
+// ══════════════════════════════════
+function triggerFileInput() { initAudio(); $('file-input').click(); }
+
+$('file-input').addEventListener('change', e => {
+  const file = e.target.files[0];
+  if (file) handleFile(file);
+  e.target.value = '';
+});
+
+const dropArea = $('upload-drop-area');
+dropArea.addEventListener('dragover', e => { e.preventDefault(); dropArea.classList.add('drag-over'); });
+dropArea.addEventListener('dragleave', () => dropArea.classList.remove('drag-over'));
+dropArea.addEventListener('drop', e => {
+  e.preventDefault(); dropArea.classList.remove('drag-over');
+  const file = e.dataTransfer.files[0];
+  if (file) handleFile(file);
+});
+
+function handleFile(file) {
+  if (!file.type.startsWith('image/')) { toast('❌ File harus berupa gambar'); return; }
+  const url = URL.createObjectURL(file);
+  const img = new Image();
+  img.onload = () => {
+    URL.revokeObjectURL(url);
+    photoImg = resizeIfNeeded(img, 1920);
+    hasPhoto = true;
+    switchToStateB();
+    resizeCanvas();
+    fitPhotoToArea();
+    renderPreview();
+    requestAnimationFrame(() => updateDimPanels());
+  };
+  img.onerror = () => { URL.revokeObjectURL(url); toast('❌ Gagal memuat foto'); };
+  img.src = url;
+}
+
+function resizeIfNeeded(img, maxPx) {
+  const long = Math.max(img.width, img.height);
+  if (long <= maxPx) return img;
+  const scale = maxPx / long;
+  const c = document.createElement('canvas');
+  c.width = Math.round(img.width * scale);
+  c.height = Math.round(img.height * scale);
+  c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+  return c;
+}
+
+function switchToStateA() {
+  $('upload-zone').style.display = '';
+  $('canvas-wrap').style.display = 'none';
+  $('bot-state-a').style.display = 'flex';
+  $('bot-state-b').style.display = 'none';
+  hasPhoto = false; photoImg = null;
+}
+
+function switchToStateB() {
+  $('upload-zone').style.display = 'none';
+  $('canvas-wrap').style.display = 'flex';
+  $('bot-state-a').style.display = 'none';
+  $('bot-state-b').style.display = 'flex';
+}
+
+// ══════════════════════════════════
+//  CANVAS & RENDER
+// ══════════════════════════════════
+function getCanvasDims() {
+  return selFrame ? { w: selFrame.w, h: selFrame.h } : { w: DEFAULT_W, h: DEFAULT_H };
+}
+
+function getPhotoArea() {
+  return selFrame?.photoArea ?? { x: 0, y: 0, w: DEFAULT_W, h: DEFAULT_H };
+}
+
+function resizeCanvas() {
+  const canvas = $('preview-canvas');
+  const d = getCanvasDims();
+  canvas.width = d.w;
+  canvas.height = d.h;
+}
+
+function fitPhotoToArea() {
+  if (!photoImg) return;
+  const pa = getPhotoArea();
+  zoom = Math.max(pa.w / photoImg.width, pa.h / photoImg.height);
+  panX = 0; panY = 0;
+}
+
+function clampPan() {
+  if (!photoImg) return;
+  const pa = getPhotoArea();
+  const maxPx = Math.max(0, (photoImg.width * zoom - pa.w) / 2);
+  const maxPy = Math.max(0, (photoImg.height * zoom - pa.h) / 2);
+  panX = Math.max(-maxPx, Math.min(maxPx, panX));
+  panY = Math.max(-maxPy, Math.min(maxPy, panY));
+}
+
+function renderPreview() {
+  const canvas = $('preview-canvas');
+  const ctx = canvas.getContext('2d');
+  const d = getCanvasDims();
+  const pa = getPhotoArea();
+
+  ctx.clearRect(0, 0, d.w, d.h);
+  ctx.fillStyle = '#060e20';
+  ctx.fillRect(0, 0, d.w, d.h);
+
+  if (photoImg) {
+    ctx.save();
+    ctx.beginPath();
+    ctx.rect(pa.x, pa.y, pa.w, pa.h);
+    ctx.clip();
+    ctx.translate(pa.x + pa.w / 2 + panX, pa.y + pa.h / 2 + panY);
+    ctx.scale(zoom, zoom);
+    ctx.drawImage(photoImg, -photoImg.width / 2, -photoImg.height / 2);
+    ctx.restore();
   }
+
+  if (frameImg) ctx.drawImage(frameImg, 0, 0, d.w, d.h);
+}
+
+// ══════════════════════════════════
+//  DIM PANELS
+// ══════════════════════════════════
+function updateDimPanels() {
+  if (!hasPhoto) return;
+  const canvas = $('preview-canvas');
+  const rect = canvas.getBoundingClientRect();
+  const pa = getPhotoArea();
+  const d = getCanvasDims();
+  const sx = rect.width / d.w;
+  const sy = rect.height / d.h;
+  const left   = rect.left   + pa.x * sx;
+  const top    = rect.top    + pa.y * sy;
+  const right  = rect.left   + (pa.x + pa.w) * sx;
+  const bottom = rect.top    + (pa.y + pa.h) * sy;
+  $('dim-top').style.cssText    = `top:0;left:0;right:0;height:${top}px;`;
+  $('dim-bottom').style.cssText = `bottom:0;left:0;right:0;height:${window.innerHeight - bottom}px;`;
+  $('dim-left').style.cssText   = `top:${top}px;left:0;width:${left}px;height:${bottom - top}px;`;
+  $('dim-right').style.cssText  = `top:${top}px;right:0;width:${window.innerWidth - right}px;height:${bottom - top}px;`;
+}
+
+// ══════════════════════════════════
+//  PAN & ZOOM
+// ══════════════════════════════════
+function screenToCanvas(dScreen) {
+  const canvas = $('preview-canvas');
+  const rect = canvas.getBoundingClientRect();
+  return dScreen * (getCanvasDims().w / rect.width);
+}
+
+const previewCanvas = $('preview-canvas');
+
+previewCanvas.addEventListener('mousedown', e => {
+  if (!hasPhoto) return;
+  isDragging = true; lastX = e.clientX; lastY = e.clientY;
+  e.preventDefault();
 });
-window.addEventListener('resize',()=>{ updateGuide(); checkStripOrientation(); });
-window.visualViewport?.addEventListener('resize',()=>{ updateGuide(); checkStripOrientation(); });
-screen.orientation?.addEventListener('change',()=>{
-  setTimeout(()=>{ updateGuide(); checkStripOrientation(); startCam(); },350);
+window.addEventListener('mousemove', e => {
+  if (!isDragging) return;
+  panX += screenToCanvas(e.clientX - lastX);
+  panY += screenToCanvas(e.clientY - lastY);
+  lastX = e.clientX; lastY = e.clientY;
+  clampPan(); renderPreview();
 });
-window.addEventListener('orientationchange',()=>{
-  setTimeout(()=>{ updateGuide(); checkStripOrientation(); startCam(); },350);
+window.addEventListener('mouseup', () => { isDragging = false; });
+
+previewCanvas.addEventListener('wheel', e => {
+  if (!hasPhoto) return;
+  e.preventDefault();
+  zoom = Math.max(0.5, Math.min(5, zoom + (e.deltaY > 0 ? -0.1 : 0.1)));
+  clampPan(); renderPreview();
+}, { passive: false });
+
+previewCanvas.addEventListener('touchstart', e => {
+  if (!hasPhoto) return;
+  e.preventDefault();
+  if (e.touches.length === 1) {
+    isDragging = true; lastX = e.touches[0].clientX; lastY = e.touches[0].clientY;
+  } else if (e.touches.length === 2) {
+    isDragging = false;
+    pinchDist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+  }
+}, { passive: false });
+
+previewCanvas.addEventListener('touchmove', e => {
+  if (!hasPhoto) return;
+  e.preventDefault();
+  if (e.touches.length === 1 && isDragging) {
+    panX += screenToCanvas(e.touches[0].clientX - lastX);
+    panY += screenToCanvas(e.touches[0].clientY - lastY);
+    lastX = e.touches[0].clientX; lastY = e.touches[0].clientY;
+    clampPan(); renderPreview();
+  } else if (e.touches.length === 2) {
+    const dist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+    if (pinchDist > 0) { zoom = Math.max(0.5, Math.min(5, zoom * (dist / pinchDist))); clampPan(); renderPreview(); }
+    pinchDist = dist;
+  }
+}, { passive: false });
+
+previewCanvas.addEventListener('touchend', e => {
+  if (e.touches.length < 2) pinchDist = 0;
+  if (e.touches.length === 0) isDragging = false;
+});
+
+// ══════════════════════════════════
+//  DOWNLOAD
+// ══════════════════════════════════
+async function doDownload() {
+  if (!hasPhoto) return;
+  initAudio();
+  const prog = $('dl-prog'), ring = $('dl-rfill'), lbl = $('dl-lbl');
+  const C = 207; prog.classList.add('on'); let pct = 0; ring.style.strokeDashoffset = C;
+  const animTo = (tg, lb, ms = 300) => new Promise(res => {
+    lbl.textContent = lb; const st = pct, t0 = performance.now();
+    const f = now => {
+      const p = Math.min((now - t0) / ms, 1); pct = st + (tg - st) * p;
+      ring.style.strokeDashoffset = C * (1 - pct / 100);
+      if (p < 1) requestAnimationFrame(f); else res();
+    };
+    requestAnimationFrame(f);
+  });
+  await animTo(40, 'Memproses foto...'); await sleep(200);
+  await animTo(80, 'Menyiapkan file...');
+  const outCanvas = composeFinal();
+  const ts = new Date().toISOString().slice(0, 19).replace(/[-:T]/g, '');
+  outCanvas.toBlob(blob => {
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `wisuda-akbar-2026-${ts}.jpg`;
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+  }, 'image/jpeg', 0.95);
+  await animTo(100, '✅ Tersimpan!', 250); await sleep(700);
+  prog.classList.remove('on'); pct = 0;
+  beepShutter();
+  toast('✅ Foto berhasil disimpan!');
+  setTimeout(() => openShare(), 600);
+}
+
+function composeFinal() {
+  const d = getCanvasDims();
+  const pa = getPhotoArea();
+  const c = document.createElement('canvas');
+  c.width = d.w; c.height = d.h;
+  const ctx = c.getContext('2d');
+  ctx.fillStyle = '#060e20';
+  ctx.fillRect(0, 0, d.w, d.h);
+  if (photoImg) {
+    ctx.save();
+    ctx.beginPath();
+    ctx.rect(pa.x, pa.y, pa.w, pa.h);
+    ctx.clip();
+    ctx.translate(pa.x + pa.w / 2 + panX, pa.y + pa.h / 2 + panY);
+    ctx.scale(zoom, zoom);
+    ctx.drawImage(photoImg, -photoImg.width / 2, -photoImg.height / 2);
+    ctx.restore();
+  }
+  if (frameImg) ctx.drawImage(frameImg, 0, 0, d.w, d.h);
+  return c;
+}
+
+// ══════════════════════════════════
+//  SHARE MODAL
+// ══════════════════════════════════
+function openShare() { $('share-bg').classList.add('on'); $('share-modal').classList.add('on'); }
+function closeShare() { $('share-bg').classList.remove('on'); $('share-modal').classList.remove('on'); }
+async function copyCaption() {
+  try {
+    await navigator.clipboard.writeText(CAPTION);
+  } catch {
+    const ta = document.createElement('textarea');
+    ta.value = CAPTION; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.select(); document.execCommand('copy');
+    document.body.removeChild(ta);
+  }
+  toast('✅ Caption tersalin!');
+}
+
+// ══════════════════════════════════
+//  RESIZE
+// ══════════════════════════════════
+function onResize() { if (hasPhoto) updateDimPanels(); }
+window.addEventListener('resize', onResize);
+window.visualViewport?.addEventListener('resize', onResize);
+
+// ══════════════════════════════════
+//  KEYBOARD
+// ══════════════════════════════════
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') {
+    if ($('sheet').classList.contains('on')) closeSheet();
+    if ($('share-modal').classList.contains('on')) closeShare();
+  }
 });
 
 // ══════════════════════════════════
 //  INIT
 // ══════════════════════════════════
-async function init(){
-  splashP(10,'Memulai...');
+async function init() {
+  splashP(10, 'Memulai...');
   await sleep(200);
-  splashP(20,'Mengakses kamera...');
   await loadFrames();
-  splashP(70,'Inisialisasi kamera...');
-  await startCam();
-  splashP(90,'Mempersiapkan UI...');
-  await sleep(200);
+  splashP(95, 'Siap!');
   autoSelectFirstFrame();
   buildSheet();
-  updateGuide();
-  checkStripOrientation();
-  splashP(100,'Siap!');
-  await sleep(500);
+  if (selFrame) frameImg = await loadImg(`${FB}${selFrame.file}`);
+  resizeCanvas();
+  await sleep(300);
+  splashP(100, 'Selamat datang!');
+  await sleep(400);
   splashHide();
 }
 init();
