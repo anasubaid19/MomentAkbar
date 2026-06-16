@@ -214,7 +214,7 @@ html,body{height:100%;overflow:hidden;background:#000;font-family:'Plus Jakarta 
       <button class="mode-card" onclick="setMode('multi')">
         <div class="mode-card-icon">🎞️</div>
         <div class="mode-card-label">Multi</div>
-        <div class="mode-card-sub">1 Foto · Banyak Slot</div>
+        <div class="mode-card-sub">2-6 Foto · Pilih Frame</div>
       </button>
     </div>
   </div>
@@ -485,6 +485,16 @@ async function pickFrame(f) {
   frameImg = f ? await loadImg(getFrameUrl(f)) : null;
   updateFrameUI(); buildSheet(); closeSheet();
 
+  // Multi mode picks the frame BEFORE uploading: first selection from the mode
+  // page sets up the slot uploads and advances to the upload screen.
+  if (appPage === 'mode' && currentMode === 'multi') {
+    initSlotArrays();
+    resizeCanvas();
+    buildSlotUploads();
+    showPage('upload');
+    return;
+  }
+
   const newCount = getSlots().length;
   if (newCount !== prevCount) {
     // Different number of slots → reset arrays and clear all photos.
@@ -513,15 +523,21 @@ function closeSheet() { $('sheet-bg').classList.remove('on'); $('sheet').classLi
 // ══════════════════════════════════
 async function setMode(mode) {
   currentMode = mode;
-  // Select first frame of this mode and preload it
-  autoSelectFirstFrame();
-  buildSheet();
-  frameImg = selFrame ? await loadImg(getFrameUrl(selFrame)) : null;
-  // Size the per-slot arrays to this frame's slot count and clear any photos.
-  initSlotArrays();
-  resizeCanvas();
-  buildSlotUploads();
-  showPage('upload');
+  if (mode === 'single') {
+    // Single: auto-select the first frame and go straight to upload.
+    autoSelectFirstFrame();
+    buildSheet();
+    frameImg = selFrame ? await loadImg(getFrameUrl(selFrame)) : null;
+    initSlotArrays();
+    resizeCanvas();
+    buildSlotUploads();
+    showPage('upload');
+  } else {
+    // Multi: let the user pick a frame first (different frames have different
+    // slot counts). Stay on the mode page; pickFrame() advances to upload.
+    buildSheet();
+    openSheet();
+  }
 }
 
 // ══════════════════════════════════
