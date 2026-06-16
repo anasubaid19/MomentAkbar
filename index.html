@@ -62,16 +62,26 @@ html,body{height:100%;overflow:hidden;background:#000;font-family:'Plus Jakarta 
 .mode-card-label{font-size:15px;font-weight:800;}
 .mode-card-sub{font-size:10px;color:rgba(255,255,255,.38);font-weight:600;}
 
-/* ══ UPLOAD ZONE (State A) ══ */
-.upload-zone{flex:1;display:flex;align-items:center;justify-content:center;padding:20px;}
-.upload-single-wrap{display:flex;align-items:center;justify-content:center;width:100%;height:100%;}
-.upload-inner{display:flex;flex-direction:column;align-items:center;gap:12px;border:2px dashed rgba(251,191,36,.25);border-radius:20px;padding:48px 32px;background:rgba(251,191,36,.03);text-align:center;transition:all .2s;width:100%;max-width:360px;cursor:pointer;}
-.upload-inner.drag-over{border-color:var(--gold);background:rgba(251,191,36,.08);}
-.upload-icon{font-size:52px;line-height:1;}
-.upload-title{font-size:16px;font-weight:800;color:#fff;}
-.upload-hint{font-size:12px;color:rgba(255,255,255,.4);font-weight:500;}
+/* ══ UPLOAD ZONE (State A) — per-slot uploads ══ */
+.upload-zone{flex:1;display:flex;align-items:flex-start;justify-content:center;padding:20px;overflow-y:auto;}
+.upload-slots-wrap{display:flex;flex-direction:column;gap:16px;width:100%;max-width:420px;margin:auto;}
+.upload-slots-head{text-align:center;}
+.upload-slots-title{font-size:15px;font-weight:800;color:#fff;}
+.upload-slots-counter{font-size:12px;font-weight:700;color:var(--gold);margin-top:5px;}
+.upload-slots-grid{display:flex;flex-wrap:wrap;gap:12px;justify-content:center;}
+.slot-box{position:relative;width:122px;border:2px dashed rgba(251,191,36,.3);border-radius:14px;background:rgba(251,191,36,.03);cursor:pointer;overflow:hidden;display:flex;align-items:center;justify-content:center;transition:all .18s;-webkit-tap-highlight-color:transparent;}
+.slot-box.drag-over{border-color:var(--gold);background:rgba(251,191,36,.1);}
+.slot-box.filled{border-style:solid;border-color:rgba(251,191,36,.5);}
+.slot-box:active{transform:scale(.97);}
+.slot-box-empty{display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px;text-align:center;pointer-events:none;}
+.slot-box-icon{font-size:26px;line-height:1;}
+.slot-box-label{font-size:12px;font-weight:700;color:rgba(255,255,255,.55);}
+.slot-box-thumb{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:none;}
+.slot-box-num{position:absolute;top:6px;left:6px;z-index:2;min-width:20px;height:20px;padding:0 6px;border-radius:999px;background:rgba(6,14,32,.82);border:1px solid rgba(251,191,36,.4);color:var(--gold);font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;}
 .btn-pick-photo{margin-top:8px;padding:12px 28px;background:linear-gradient(135deg,var(--gold-dk),var(--gold));border:none;border-radius:999px;font-family:inherit;font-size:13px;font-weight:800;color:var(--navy);cursor:pointer;transition:transform .15s;outline:none;}
 .btn-pick-photo:active{transform:scale(.97);}
+.upload-preview-btn{width:100%;margin-top:2px;}
+.upload-preview-btn:disabled{opacity:.4;cursor:not-allowed;}
 
 /* ══ CANVAS WRAP (State B) ══ */
 .canvas-wrap{flex:1;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden;background:#000;}
@@ -209,15 +219,15 @@ html,body{height:100%;overflow:hidden;background:#000;font-family:'Plus Jakarta 
     </div>
   </div>
 
-  <!-- STATE A: UPLOAD ZONE (single photo for both Single & Multi) -->
+  <!-- STATE A: UPLOAD ZONE — one upload box per slot -->
   <div class="upload-zone" id="upload-zone" style="display:none">
-    <div class="upload-single-wrap" id="upload-zone-single">
-      <div class="upload-inner" id="upload-drop-area">
-        <div class="upload-icon">📷</div>
-        <div class="upload-title">Pilih foto dari galeri</div>
-        <div class="upload-hint">atau drag & drop foto ke sini</div>
-        <button class="btn-pick-photo" onclick="triggerFileInput()">Pilih Foto</button>
+    <div class="upload-slots-wrap">
+      <div class="upload-slots-head">
+        <div class="upload-slots-title">Pilih foto untuk tiap slot</div>
+        <div class="upload-slots-counter" id="slot-counter">0 / 0 foto dipilih</div>
       </div>
+      <div class="upload-slots-grid" id="upload-slots-grid"></div>
+      <button class="btn-pick-photo upload-preview-btn" id="btn-see-preview" onclick="goPreview()" disabled>Lihat Preview</button>
     </div>
   </div>
 
@@ -231,13 +241,9 @@ html,body{height:100%;overflow:hidden;background:#000;font-family:'Plus Jakarta 
   </div>
 
   <!-- BOTTOM BAR -->
-  <div class="bot-bar">
+  <div class="bot-bar" id="bot-bar">
     <!-- Mode select: empty spacer -->
     <div class="bot-state" id="bot-mode" style="display:none;min-height:48px;"></div>
-    <!-- Upload (single photo for both modes) -->
-    <div class="bot-state" id="bot-upload-single" style="display:none">
-      <button class="btn-download btn-pick-center" onclick="triggerFileInput()">📷 Pilih Foto</button>
-    </div>
     <!-- Preview -->
     <div class="bot-state bot-state-preview" id="bot-preview" style="display:none">
       <button class="icbtn" onclick="triggerReplacePhoto()" aria-label="Ganti foto" title="Ganti Foto">
@@ -323,12 +329,16 @@ const DEFAULT_MULTI_SLOTS = [
 let currentMode = null; // 'single' | 'multi'
 let appPage = 'mode';   // 'mode' | 'upload' | 'preview'
 
-// One photo for BOTH modes. In multi the same photo is drawn into every slot
-// with this single shared zoom/pan transform.
-let photoImg = null;
-let zoom = 1, panX = 0, panY = 0;
+// Per-slot photos. Each slot has its own image and independent zoom/pan.
+// Arrays are sized to getSlots().length whenever the frame/mode changes.
+let photoImgs = [];  // (HTMLImageElement|HTMLCanvasElement|null) per slot
+let zooms     = [];
+let panXs     = [];
+let panYs     = [];
+let activeSlot  = 0;     // slot currently being panned/zoomed in preview
+let pendingSlot = null;  // slot awaiting a file from the picker
 
-let hasPhoto = false;
+let hasPhoto = false;    // true only when EVERY slot has a photo
 let frames   = { single: [], multi: [] };
 let selFrame = null;
 let frameImg = null;
@@ -386,9 +396,10 @@ function showPage(page) {
   $('upload-zone').style.display = page === 'upload'  ? 'flex' : 'none';
   $('canvas-wrap').style.display = page === 'preview' ? 'flex' : 'none';
 
-  $('bot-mode').style.display          = page === 'mode'    ? 'flex' : 'none';
-  $('bot-upload-single').style.display = page === 'upload'  ? 'flex' : 'none';
-  $('bot-preview').style.display       = page === 'preview' ? 'flex' : 'none';
+  // Upload page carries its own "Lihat Preview" button, so hide the bottom bar there.
+  $('bot-bar').style.display     = page === 'upload'  ? 'none' : 'block';
+  $('bot-mode').style.display    = page === 'mode'    ? 'flex' : 'none';
+  $('bot-preview').style.display = page === 'preview' ? 'flex' : 'none';
 
   $('btn-back').style.display      = page !== 'mode' ? 'flex' : 'none';
   $('top-frame-btn').style.display = page === 'preview' ? 'flex' : 'none';
@@ -469,12 +480,26 @@ function buildSheet() {
 }
 
 async function pickFrame(f) {
+  const prevCount = photoImgs.length;
   selFrame = f;
   frameImg = f ? await loadImg(getFrameUrl(f)) : null;
   updateFrameUI(); buildSheet(); closeSheet();
-  if (appPage === 'preview') {
+
+  const newCount = getSlots().length;
+  if (newCount !== prevCount) {
+    // Different number of slots → reset arrays and clear all photos.
+    initSlotArrays();
+    buildSlotUploads();
     resizeCanvas();
-    fitPhoto();
+    if (appPage === 'preview') { showPage('upload'); toast('Frame berbeda — pilih ulang foto'); }
+    return;
+  }
+
+  // Same slot count → keep photos, just re-fit them to the new slot dimensions.
+  resizeCanvas();
+  for (let i = 0; i < photoImgs.length; i++) if (photoImgs[i]) fitSlot(i);
+  buildSlotUploads();
+  if (appPage === 'preview') {
     renderPreview();
     requestAnimationFrame(() => updateDimPanels());
   }
@@ -488,26 +513,32 @@ function closeSheet() { $('sheet-bg').classList.remove('on'); $('sheet').classLi
 // ══════════════════════════════════
 async function setMode(mode) {
   currentMode = mode;
-  // Reset photo state
-  photoImg = null; zoom = 1; panX = 0; panY = 0; hasPhoto = false;
   // Select first frame of this mode and preload it
   autoSelectFirstFrame();
   buildSheet();
   frameImg = selFrame ? await loadImg(getFrameUrl(selFrame)) : null;
+  // Size the per-slot arrays to this frame's slot count and clear any photos.
+  initSlotArrays();
   resizeCanvas();
+  buildSlotUploads();
   showPage('upload');
 }
 
 // ══════════════════════════════════
 //  UPLOAD
 // ══════════════════════════════════
-function triggerFileInput() {
+// Open the picker for a specific slot; the chosen file lands in pendingSlot.
+function triggerFileInput(slotIndex) {
   initAudio();
+  pendingSlot = (typeof slotIndex === 'number') ? slotIndex : 0;
   $('file-input').click();
 }
 
+// Preview-mode "replace" button: re-pick the currently active slot's photo.
 function triggerReplacePhoto() {
-  triggerFileInput();
+  const allFilled = photoImgs.length > 0 && photoImgs.every(p => p !== null);
+  if (!allFilled) { showPage('upload'); return; }
+  triggerFileInput(activeSlot);
 }
 
 $('file-input').addEventListener('change', e => {
@@ -516,29 +547,123 @@ $('file-input').addEventListener('change', e => {
   e.target.value = '';
 });
 
-// Drag & drop (single mode upload zone only)
-const dropArea = $('upload-drop-area');
-dropArea.addEventListener('dragover', e => { e.preventDefault(); dropArea.classList.add('drag-over'); });
-dropArea.addEventListener('dragleave', () => dropArea.classList.remove('drag-over'));
-dropArea.addEventListener('drop', e => {
-  e.preventDefault(); dropArea.classList.remove('drag-over');
-  const file = e.dataTransfer.files[0];
-  if (file) handleFile(file);
-});
-
 function handleFile(file) {
   if (!file.type.startsWith('image/')) { toast('❌ File harus berupa gambar'); return; }
+  const slot = pendingSlot;
+  if (slot == null || slot < 0 || slot >= photoImgs.length) { pendingSlot = null; return; }
   const url = URL.createObjectURL(file);
   const img = new Image();
   img.onload = () => {
     URL.revokeObjectURL(url);
-    photoImg = resizeIfNeeded(img, 1920);
-    hasPhoto = true;
-    resizeCanvas(); fitPhoto();
-    showPreview();
+    photoImgs[slot] = resizeIfNeeded(img, 1920);
+    zooms[slot] = 1; panXs[slot] = 0; panYs[slot] = 0;
+    resizeCanvas();
+    fitSlot(slot);
+    updateSlotUI(slot);
+    updateSlotCounter();
+    recomputeHasPhoto();
+    pendingSlot = null;
+
+    if (appPage === 'preview') {
+      activeSlot = slot;
+      renderPreview();
+      requestAnimationFrame(() => updateDimPanels());
+    } else if (photoImgs.every(p => p !== null)) {
+      // All slots filled while on the upload page → jump straight to preview.
+      goPreview();
+    }
   };
   img.onerror = () => { URL.revokeObjectURL(url); toast('❌ Gagal memuat foto'); };
   img.src = url;
+}
+
+// ── Per-slot array + UI helpers ──────────────────────────────
+function initSlotArrays() {
+  const n = getSlots().length;
+  photoImgs = Array(n).fill(null);
+  zooms     = Array(n).fill(1);
+  panXs     = Array(n).fill(0);
+  panYs     = Array(n).fill(0);
+  activeSlot = 0; pendingSlot = null;
+  recomputeHasPhoto();
+}
+
+function recomputeHasPhoto() {
+  hasPhoto = photoImgs.length > 0 && photoImgs.every(p => p !== null);
+  const dl = $('btn-download'); if (dl) dl.disabled = !hasPhoto;
+}
+
+// Build a thumbnail data URL from an image/canvas source.
+function thumbDataURL(src) {
+  const max = 240;
+  const long = Math.max(src.width, src.height);
+  const scale = long > max ? max / long : 1;
+  const c = document.createElement('canvas');
+  c.width = Math.max(1, Math.round(src.width * scale));
+  c.height = Math.max(1, Math.round(src.height * scale));
+  c.getContext('2d').drawImage(src, 0, 0, c.width, c.height);
+  return c.toDataURL('image/jpeg', 0.7);
+}
+
+// (Re)generate the upload boxes for every slot of the current frame.
+function buildSlotUploads() {
+  const grid = $('upload-slots-grid');
+  grid.innerHTML = '';
+  getSlots().forEach((s, i) => {
+    const box = document.createElement('div');
+    box.className = 'slot-box';
+    box.dataset.slot = i;
+    box.style.aspectRatio = (s.w / s.h).toFixed(3);
+    box.innerHTML =
+      `<span class="slot-box-num">${i + 1}</span>` +
+      `<div class="slot-box-empty"><div class="slot-box-icon">📷</div><div class="slot-box-label">Foto ${i + 1}</div></div>` +
+      `<img class="slot-box-thumb" alt="">`;
+    box.addEventListener('click', () => triggerFileInput(i));
+    box.addEventListener('dragover', e => { e.preventDefault(); box.classList.add('drag-over'); });
+    box.addEventListener('dragleave', () => box.classList.remove('drag-over'));
+    box.addEventListener('drop', e => {
+      e.preventDefault(); box.classList.remove('drag-over');
+      const f = e.dataTransfer.files[0];
+      if (f) { pendingSlot = i; handleFile(f); }
+    });
+    grid.appendChild(box);
+    updateSlotUI(i);
+  });
+  updateSlotCounter();
+}
+
+function updateSlotUI(i) {
+  const box = $('upload-slots-grid').querySelector(`.slot-box[data-slot="${i}"]`);
+  if (!box) return;
+  const empty = box.querySelector('.slot-box-empty');
+  const thumb = box.querySelector('.slot-box-thumb');
+  if (photoImgs[i]) {
+    box.classList.add('filled');
+    thumb.src = thumbDataURL(photoImgs[i]);
+    thumb.style.display = 'block';
+    empty.style.display = 'none';
+  } else {
+    box.classList.remove('filled');
+    thumb.removeAttribute('src');
+    thumb.style.display = 'none';
+    empty.style.display = 'flex';
+  }
+}
+
+function updateSlotCounter() {
+  const total = photoImgs.length;
+  const filled = photoImgs.filter(p => p !== null).length;
+  $('slot-counter').textContent = `${filled} / ${total} foto dipilih`;
+  $('btn-see-preview').disabled = total === 0 || filled < total;
+}
+
+function goPreview() {
+  if (!(photoImgs.length > 0 && photoImgs.every(p => p !== null))) return;
+  activeSlot = 0;
+  resizeCanvas();
+  renderPreview();
+  showPage('preview');
+  requestAnimationFrame(() => updateDimPanels());
 }
 
 function resizeIfNeeded(img, maxPx) {
@@ -551,12 +676,6 @@ function resizeIfNeeded(img, maxPx) {
   return c;
 }
 
-function showPreview() {
-  resizeCanvas(); renderPreview();
-  showPage('preview');
-  requestAnimationFrame(() => updateDimPanels());
-}
-
 // ══════════════════════════════════
 //  CANVAS & RENDER
 // ══════════════════════════════════
@@ -567,8 +686,7 @@ function getCanvasDims() {
     : { w: DEFAULT_SINGLE_W, h: DEFAULT_SINGLE_H };
 }
 
-// All slots of a multi frame share the same dimensions, so the single shared
-// transform is sized/clamped against the first slot.
+// The slots of the active frame; each gets its own photo + transform.
 function getSlots() {
   if (selFrame && Array.isArray(selFrame.slots) && selFrame.slots.length) return selFrame.slots;
   return currentMode === 'multi' ? DEFAULT_MULTI_SLOTS : DEFAULT_SINGLE_SLOTS;
@@ -580,34 +698,61 @@ function resizeCanvas() {
   canvas.width = d.w; canvas.height = d.h;
 }
 
-function fitPhoto() {
-  if (!photoImg) return;
-  const s = getSlots()[0];
-  zoom = Math.max(s.w / photoImg.width, s.h / photoImg.height);
-  panX = 0; panY = 0;
+// Auto-fit slot i's photo so it covers the slot, centered.
+function fitSlot(i) {
+  const img = photoImgs[i]; if (!img) return;
+  const s = getSlots()[i];
+  zooms[i] = Math.max(s.w / img.width, s.h / img.height);
+  panXs[i] = 0; panYs[i] = 0;
 }
 
-function clampPan() {
-  if (!photoImg) return;
-  const s = getSlots()[0];
-  const maxPx = Math.max(0, (photoImg.width  * zoom - s.w) / 2);
-  const maxPy = Math.max(0, (photoImg.height * zoom - s.h) / 2);
-  panX = Math.max(-maxPx, Math.min(maxPx, panX));
-  panY = Math.max(-maxPy, Math.min(maxPy, panY));
+function clampPan(i) {
+  const img = photoImgs[i]; if (!img) return;
+  const s = getSlots()[i];
+  const maxPx = Math.max(0, (img.width  * zooms[i] - s.w) / 2);
+  const maxPy = Math.max(0, (img.height * zooms[i] - s.h) / 2);
+  panXs[i] = Math.max(-maxPx, Math.min(maxPx, panXs[i]));
+  panYs[i] = Math.max(-maxPy, Math.min(maxPy, panYs[i]));
 }
 
-// Draw the photo into every slot using the single shared zoom/pan transform.
-// Single mode has one slot; multi mode replicates the same photo identically.
-function drawPhotoLayer(ctx) {
-  if (!photoImg) return;
-  for (const s of getSlots()) {
-    ctx.save();
-    ctx.beginPath(); ctx.rect(s.x, s.y, s.w, s.h); ctx.clip();
-    ctx.translate(s.x + s.w / 2 + panX, s.y + s.h / 2 + panY);
-    ctx.scale(zoom, zoom);
-    ctx.drawImage(photoImg, -photoImg.width / 2, -photoImg.height / 2);
-    ctx.restore();
+// Return the index of the slot under a screen point, or -1 if none.
+function getSlotAtPoint(clientX, clientY) {
+  const canvas = $('preview-canvas');
+  const rect   = canvas.getBoundingClientRect();
+  const d      = getCanvasDims();
+  const x = (clientX - rect.left) * (d.w / rect.width);
+  const y = (clientY - rect.top)  * (d.h / rect.height);
+  const slots = getSlots();
+  for (let i = 0; i < slots.length; i++) {
+    const s = slots[i];
+    if (x >= s.x && x <= s.x + s.w && y >= s.y && y <= s.y + s.h) return i;
   }
+  return -1;
+}
+
+// Draw each slot's own photo with its own zoom/pan. In preview, outline the
+// active slot in gold (multi only — single mode has nothing to switch between).
+function drawPhotoLayer(ctx, isPreview) {
+  const slots = getSlots();
+  slots.forEach((s, i) => {
+    const img = photoImgs[i];
+    if (img) {
+      ctx.save();
+      ctx.beginPath(); ctx.rect(s.x, s.y, s.w, s.h); ctx.clip();
+      ctx.translate(s.x + s.w / 2 + panXs[i], s.y + s.h / 2 + panYs[i]);
+      ctx.scale(zooms[i], zooms[i]);
+      ctx.drawImage(img, -img.width / 2, -img.height / 2);
+      ctx.restore();
+    }
+    if (isPreview && i === activeSlot && slots.length > 1) {
+      const lw = Math.max(4, Math.min(s.w, s.h) * 0.02);
+      ctx.save();
+      ctx.strokeStyle = '#fbbf24';
+      ctx.lineWidth = lw;
+      ctx.strokeRect(s.x + lw / 2, s.y + lw / 2, s.w - lw, s.h - lw);
+      ctx.restore();
+    }
+  });
 }
 
 function renderPreview() {
@@ -616,7 +761,7 @@ function renderPreview() {
   const d      = getCanvasDims();
   ctx.clearRect(0, 0, d.w, d.h);
   ctx.fillStyle = '#060e20'; ctx.fillRect(0, 0, d.w, d.h);
-  drawPhotoLayer(ctx);
+  drawPhotoLayer(ctx, true);
   if (frameImg) ctx.drawImage(frameImg, 0, 0, d.w, d.h);
 }
 
@@ -659,32 +804,42 @@ function screenToCanvas(dScreen) {
 
 const previewCanvas = $('preview-canvas');
 
+// Make the slot under a pointer the active one (drag/zoom target).
+function activateSlotAt(clientX, clientY) {
+  const si = getSlotAtPoint(clientX, clientY);
+  if (si >= 0 && si !== activeSlot) { activeSlot = si; renderPreview(); }
+  else if (si >= 0) activeSlot = si;
+}
+
 previewCanvas.addEventListener('mousedown', e => {
   if (appPage !== 'preview') return;
+  activateSlotAt(e.clientX, e.clientY);
   isDragging = true; lastX = e.clientX; lastY = e.clientY;
   e.preventDefault();
 });
 window.addEventListener('mousemove', e => {
   if (!isDragging) return;
-  panX += screenToCanvas(e.clientX - lastX);
-  panY += screenToCanvas(e.clientY - lastY);
+  panXs[activeSlot] += screenToCanvas(e.clientX - lastX);
+  panYs[activeSlot] += screenToCanvas(e.clientY - lastY);
   lastX = e.clientX; lastY = e.clientY;
-  clampPan(); renderPreview();
+  clampPan(activeSlot); renderPreview();
 });
 window.addEventListener('mouseup', () => { isDragging = false; });
 
 previewCanvas.addEventListener('wheel', e => {
   if (appPage !== 'preview') return;
   e.preventDefault();
+  activateSlotAt(e.clientX, e.clientY);
   const delta = e.deltaY > 0 ? -0.1 : 0.1;
-  zoom = Math.max(0.5, Math.min(5, zoom + delta));
-  clampPan(); renderPreview();
+  zooms[activeSlot] = Math.max(0.5, Math.min(5, zooms[activeSlot] + delta));
+  clampPan(activeSlot); renderPreview();
 }, { passive: false });
 
 previewCanvas.addEventListener('touchstart', e => {
   if (appPage !== 'preview') return;
   e.preventDefault();
   if (e.touches.length === 1) {
+    activateSlotAt(e.touches[0].clientX, e.touches[0].clientY);
     isDragging = true; lastX = e.touches[0].clientX; lastY = e.touches[0].clientY;
   } else if (e.touches.length === 2) {
     isDragging = false;
@@ -699,18 +854,18 @@ previewCanvas.addEventListener('touchmove', e => {
   if (appPage !== 'preview') return;
   e.preventDefault();
   if (e.touches.length === 1 && isDragging) {
-    panX += screenToCanvas(e.touches[0].clientX - lastX);
-    panY += screenToCanvas(e.touches[0].clientY - lastY);
+    panXs[activeSlot] += screenToCanvas(e.touches[0].clientX - lastX);
+    panYs[activeSlot] += screenToCanvas(e.touches[0].clientY - lastY);
     lastX = e.touches[0].clientX; lastY = e.touches[0].clientY;
-    clampPan(); renderPreview();
+    clampPan(activeSlot); renderPreview();
   } else if (e.touches.length === 2) {
     const dist = Math.hypot(
       e.touches[0].clientX - e.touches[1].clientX,
       e.touches[0].clientY - e.touches[1].clientY
     );
     if (pinchDist > 0) {
-      zoom = Math.max(0.5, Math.min(5, zoom * (dist / pinchDist)));
-      clampPan(); renderPreview();
+      zooms[activeSlot] = Math.max(0.5, Math.min(5, zooms[activeSlot] * (dist / pinchDist)));
+      clampPan(activeSlot); renderPreview();
     }
     pinchDist = dist;
   }
@@ -761,7 +916,7 @@ function composeFinal() {
   const c = document.createElement('canvas'); c.width = d.w; c.height = d.h;
   const ctx = c.getContext('2d');
   ctx.fillStyle = '#060e20'; ctx.fillRect(0, 0, d.w, d.h);
-  drawPhotoLayer(ctx);
+  drawPhotoLayer(ctx, false);
   if (frameImg) ctx.drawImage(frameImg, 0, 0, d.w, d.h);
   return c;
 }
