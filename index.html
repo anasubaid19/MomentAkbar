@@ -73,19 +73,6 @@ html,body{height:100%;overflow:hidden;background:#000;font-family:'Plus Jakarta 
 .btn-pick-photo{margin-top:8px;padding:12px 28px;background:linear-gradient(135deg,var(--gold-dk),var(--gold));border:none;border-radius:999px;font-family:inherit;font-size:13px;font-weight:800;color:var(--navy);cursor:pointer;transition:transform .15s;outline:none;}
 .btn-pick-photo:active{transform:scale(.97);}
 
-/* ══ STRIP UPLOAD (State A – strip) ══ */
-.upload-strip-wrap{display:flex;flex-direction:column;align-items:center;gap:16px;width:100%;}
-.strip-upload-title{font-size:13px;font-weight:700;color:rgba(255,255,255,.6);text-align:center;}
-.strip-slots-row{display:flex;flex-direction:column;gap:10px;width:100%;max-width:380px;}
-.strip-slot-upload{flex:none;aspect-ratio:9/4;border:2px dashed rgba(251,191,36,.22);border-radius:12px;background:rgba(251,191,36,.025);display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;transition:all .18s;overflow:hidden;position:relative;-webkit-tap-highlight-color:transparent;}
-.strip-slot-upload:active{transform:scale(.96);}
-.strip-slot-upload.has-photo{border-color:rgba(251,191,36,.45);background:rgba(251,191,36,.06);}
-.strip-slot-upload .slot-upload-ic{font-size:20px;line-height:1;}
-.strip-slot-upload .slot-upload-lbl{font-size:9px;color:rgba(255,255,255,.45);font-weight:700;margin-top:4px;}
-.strip-slot-upload .slot-thumb-img{width:100%;height:100%;object-fit:cover;position:absolute;inset:0;}
-.strip-slot-upload .slot-done-label{position:absolute;bottom:0;left:0;right:0;text-align:center;font-size:8.5px;font-weight:800;color:var(--gold);background:rgba(6,14,32,.75);padding:2px 0;}
-.strip-upload-counter{font-size:11px;color:rgba(255,255,255,.38);font-weight:600;}
-
 /* ══ CANVAS WRAP (State B) ══ */
 .canvas-wrap{flex:1;position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden;background:#000;}
 #preview-canvas{display:block;max-width:100%;max-height:100%;object-fit:contain;cursor:grab;touch-action:none;}
@@ -211,46 +198,26 @@ html,body{height:100%;overflow:hidden;background:#000;font-family:'Plus Jakarta 
     <div class="mode-cards">
       <button class="mode-card" onclick="setMode('single')">
         <div class="mode-card-icon">🖼️</div>
-        <div class="mode-card-label">1 Foto</div>
-        <div class="mode-card-sub">Single Portrait</div>
+        <div class="mode-card-label">Single</div>
+        <div class="mode-card-sub">1 Foto · 1 Slot</div>
       </button>
-      <button class="mode-card" onclick="setMode('strip')">
+      <button class="mode-card" onclick="setMode('multi')">
         <div class="mode-card-icon">🎞️</div>
-        <div class="mode-card-label">3 Foto</div>
-        <div class="mode-card-sub">Strip 3×</div>
+        <div class="mode-card-label">Multi</div>
+        <div class="mode-card-sub">1 Foto · Banyak Slot</div>
       </button>
     </div>
   </div>
 
-  <!-- STATE A: UPLOAD ZONE -->
+  <!-- STATE A: UPLOAD ZONE (single photo for both Single & Multi) -->
   <div class="upload-zone" id="upload-zone" style="display:none">
-    <!-- Single upload -->
-    <div class="upload-single-wrap" id="upload-zone-single" style="display:none">
+    <div class="upload-single-wrap" id="upload-zone-single">
       <div class="upload-inner" id="upload-drop-area">
         <div class="upload-icon">📷</div>
         <div class="upload-title">Pilih foto dari galeri</div>
         <div class="upload-hint">atau drag & drop foto ke sini</div>
-        <button class="btn-pick-photo" onclick="triggerFileInput(null)">Pilih Foto</button>
+        <button class="btn-pick-photo" onclick="triggerFileInput()">Pilih Foto</button>
       </div>
-    </div>
-    <!-- Strip upload -->
-    <div class="upload-strip-wrap" id="upload-zone-strip" style="display:none">
-      <div class="strip-upload-title">Upload 3 Foto untuk Strip</div>
-      <div class="strip-slots-row">
-        <div class="strip-slot-upload" id="slot-upload-0" onclick="triggerFileInput(0)">
-          <div class="slot-upload-ic">📷</div>
-          <div class="slot-upload-lbl">Foto 1</div>
-        </div>
-        <div class="strip-slot-upload" id="slot-upload-1" onclick="triggerFileInput(1)">
-          <div class="slot-upload-ic">📷</div>
-          <div class="slot-upload-lbl">Foto 2</div>
-        </div>
-        <div class="strip-slot-upload" id="slot-upload-2" onclick="triggerFileInput(2)">
-          <div class="slot-upload-ic">📷</div>
-          <div class="slot-upload-lbl">Foto 3</div>
-        </div>
-      </div>
-      <div class="strip-upload-counter" id="strip-upload-counter">0 / 3 foto dipilih</div>
     </div>
   </div>
 
@@ -267,13 +234,9 @@ html,body{height:100%;overflow:hidden;background:#000;font-family:'Plus Jakarta 
   <div class="bot-bar">
     <!-- Mode select: empty spacer -->
     <div class="bot-state" id="bot-mode" style="display:none;min-height:48px;"></div>
-    <!-- Upload single -->
+    <!-- Upload (single photo for both modes) -->
     <div class="bot-state" id="bot-upload-single" style="display:none">
-      <button class="btn-download btn-pick-center" onclick="triggerFileInput(null)">📷 Pilih Foto</button>
-    </div>
-    <!-- Upload strip -->
-    <div class="bot-state" id="bot-upload-strip" style="display:none">
-      <button class="btn-download" id="btn-preview-strip" onclick="showPreview()" disabled>👁️ Lihat Preview</button>
+      <button class="btn-download btn-pick-center" onclick="triggerFileInput()">📷 Pilih Foto</button>
     </div>
     <!-- Preview -->
     <div class="bot-state bot-state-preview" id="bot-preview" style="display:none">
@@ -345,9 +308,10 @@ const MANIFEST = 'frames/manifest.json';
 const FB = 'frames/';
 const CAPTION = '#WisudaAkbar2026 #ALWILDANIslamicSchool #WisudaAkbar #BestMemories';
 const DEFAULT_SINGLE_W = 1080, DEFAULT_SINGLE_H = 1440;
-const DEFAULT_STRIP_W  = 1080, DEFAULT_STRIP_H  = 1920;
-// Fallback slot coordinates for strip if no frame is selected
-const DEFAULT_SLOTS = [
+const DEFAULT_MULTI_W  = 1080, DEFAULT_MULTI_H  = 1920;
+// Fallback slots if a frame has none / no frame selected
+const DEFAULT_SINGLE_SLOTS = [{x:0, y:0, w:1080, h:1440}];
+const DEFAULT_MULTI_SLOTS = [
   {x:86, y:263,  w:908, h:411},
   {x:86, y:709,  w:908, h:411},
   {x:86, y:1155, w:908, h:411}
@@ -356,28 +320,20 @@ const DEFAULT_SLOTS = [
 // ══════════════════════════════════
 //  STATE
 // ══════════════════════════════════
-let currentMode = null; // 'single' | 'strip'
+let currentMode = null; // 'single' | 'multi'
 let appPage = 'mode';   // 'mode' | 'upload' | 'preview'
 
-// Single photo state
+// One photo for BOTH modes. In multi the same photo is drawn into every slot
+// with this single shared zoom/pan transform.
 let photoImg = null;
 let zoom = 1, panX = 0, panY = 0;
 
-// Strip photo state (3 slots)
-let photoImgs = [null, null, null];
-let zooms  = [1, 1, 1];
-let panXs  = [0, 0, 0];
-let panYs  = [0, 0, 0];
-let activeSlot = 0; // currently selected strip slot for pan/zoom
-
-// Shared
-let hasPhoto = false; // single: 1 photo ready; strip: all 3 photos ready
-let frames   = { single: [], strip: [] };
+let hasPhoto = false;
+let frames   = { single: [], multi: [] };
 let selFrame = null;
 let frameImg = null;
 let isDragging = false, lastX = 0, lastY = 0, pinchDist = 0;
 let toastTmr  = null;
-let pendingSlot = null; // which slot the next file-input pick targets
 
 const $ = id => document.getElementById(id);
 
@@ -426,19 +382,12 @@ function splashHide() { setTimeout(() => $('splash').classList.add('hide'), 400)
 function showPage(page) {
   appPage = page;
 
-  $('mode-select').style.display = page === 'mode' ? 'flex' : 'none';
-
-  $('upload-zone').style.display = page === 'upload' ? 'flex' : 'none';
-  if (page === 'upload') {
-    $('upload-zone-single').style.display = currentMode === 'single' ? 'flex' : 'none';
-    $('upload-zone-strip').style.display  = currentMode === 'strip'  ? 'flex' : 'none';
-  }
-
+  $('mode-select').style.display = page === 'mode'    ? 'flex' : 'none';
+  $('upload-zone').style.display = page === 'upload'  ? 'flex' : 'none';
   $('canvas-wrap').style.display = page === 'preview' ? 'flex' : 'none';
 
   $('bot-mode').style.display          = page === 'mode'    ? 'flex' : 'none';
-  $('bot-upload-single').style.display = (page === 'upload' && currentMode === 'single') ? 'flex' : 'none';
-  $('bot-upload-strip').style.display  = (page === 'upload' && currentMode === 'strip')  ? 'flex' : 'none';
+  $('bot-upload-single').style.display = page === 'upload'  ? 'flex' : 'none';
   $('bot-preview').style.display       = page === 'preview' ? 'flex' : 'none';
 
   $('btn-back').style.display      = page !== 'mode' ? 'flex' : 'none';
@@ -455,26 +404,27 @@ function goBack() {
 // ══════════════════════════════════
 async function loadFrames() {
   splashP(30, 'Memuat frame...');
+  // Normalize a manifest entry, attaching _type + _dir so the PNG path is
+  // always frames/${_dir}/${file} regardless of the active mode.
+  const norm = (f, dir, dw, dh, dslots) => {
+    if (typeof f === 'string') f = { file: f };
+    return {
+      ...f,
+      name: f.name || f.file.replace(/\.[^.]+$/, '').replace(/[-_]/g, ' '),
+      w: f.w || dw, h: f.h || dh,
+      slots: Array.isArray(f.slots) && f.slots.length ? f.slots : dslots,
+      _type: dir, _dir: dir
+    };
+  };
   try {
     const r = await fetch(MANIFEST);
     if (!r.ok) throw 0;
     const raw = await r.json();
-    frames.single = (raw.single || []).map(f =>
-      typeof f === 'string'
-        ? { file: f, name: f.replace(/\.[^.]+$/, ''), w: DEFAULT_SINGLE_W, h: DEFAULT_SINGLE_H, area: { x: 0, y: 0, w: DEFAULT_SINGLE_W, h: DEFAULT_SINGLE_H } }
-        : f
-    );
-    frames.strip = (raw.strip || []).map(f =>
-      typeof f === 'string'
-        ? { file: f, name: f.replace(/\.[^.]+$/, ''), w: DEFAULT_STRIP_W, h: DEFAULT_STRIP_H, areas: DEFAULT_SLOTS }
-        : f
-    );
-  } catch (e) { frames = { single: [], strip: [] }; }
+    frames.single = (raw.single || []).map(f => norm(f, 'single', DEFAULT_SINGLE_W, DEFAULT_SINGLE_H, DEFAULT_SINGLE_SLOTS));
+    frames.multi  = (raw.multi  || []).map(f => norm(f, 'multi',  DEFAULT_MULTI_W,  DEFAULT_MULTI_H,  DEFAULT_MULTI_SLOTS));
+  } catch (e) { frames = { single: [], multi: [] }; }
   splashP(60, 'Preload aset...');
-  const allSrcs = [
-    ...frames.single.map(f => `${FB}single/${f.file}`),
-    ...frames.strip.map(f  => `${FB}strip/${f.file}`)
-  ];
+  const allSrcs = [...frames.single, ...frames.multi].map(getFrameUrl);
   await Promise.allSettled(allSrcs.map(src => loadImg(src)));
   splashP(90, 'Hampir selesai...');
 }
@@ -493,14 +443,14 @@ function updateFrameUI() {
 }
 
 function getFrameUrl(f) {
-  return `${FB}${currentMode}/${f.file}`;
+  return `${FB}${f._dir}/${f.file}`;
 }
 
 // ══════════════════════════════════
 //  FRAME SHEET
 // ══════════════════════════════════
 function buildSheet() {
-  $('sheet-title').textContent = currentMode === 'strip' ? 'Pilih Frame Strip 3×' : 'Pilih Frame Single';
+  $('sheet-title').textContent = currentMode === 'multi' ? 'Pilih Frame Multi' : 'Pilih Frame Single';
   const sl = $('sheet-list'); sl.innerHTML = '';
   const none = document.createElement('div');
   none.className = 'sheet-none' + (selFrame === null ? ' selected' : '');
@@ -524,7 +474,7 @@ async function pickFrame(f) {
   updateFrameUI(); buildSheet(); closeSheet();
   if (appPage === 'preview') {
     resizeCanvas();
-    refitAllPhotos();
+    fitPhoto();
     renderPreview();
     requestAnimationFrame(() => updateDimPanels());
   }
@@ -539,11 +489,8 @@ function closeSheet() { $('sheet-bg').classList.remove('on'); $('sheet').classLi
 async function setMode(mode) {
   currentMode = mode;
   // Reset photo state
-  photoImg = null; zoom = 1; panX = 0; panY = 0;
-  photoImgs = [null, null, null]; zooms = [1, 1, 1]; panXs = [0, 0, 0]; panYs = [0, 0, 0];
-  activeSlot = 0; hasPhoto = false;
-  if (mode === 'strip') { [0, 1, 2].forEach(i => updateStripSlotUI(i)); updateStripCounter(); }
-  // Select first frame and preload it
+  photoImg = null; zoom = 1; panX = 0; panY = 0; hasPhoto = false;
+  // Select first frame of this mode and preload it
   autoSelectFirstFrame();
   buildSheet();
   frameImg = selFrame ? await loadImg(getFrameUrl(selFrame)) : null;
@@ -554,15 +501,13 @@ async function setMode(mode) {
 // ══════════════════════════════════
 //  UPLOAD
 // ══════════════════════════════════
-function triggerFileInput(slot) {
+function triggerFileInput() {
   initAudio();
-  pendingSlot = slot; // null = single mode (or strip replace via preview)
   $('file-input').click();
 }
 
 function triggerReplacePhoto() {
-  // In preview: for strip replace the active slot, for single replace the one photo
-  triggerFileInput(currentMode === 'strip' ? activeSlot : null);
+  triggerFileInput();
 }
 
 $('file-input').addEventListener('change', e => {
@@ -587,25 +532,10 @@ function handleFile(file) {
   const img = new Image();
   img.onload = () => {
     URL.revokeObjectURL(url);
-    const resized = resizeIfNeeded(img, 1920);
-    if (currentMode === 'single') {
-      photoImg = resized; hasPhoto = true;
-      resizeCanvas(); fitSinglePhoto();
-      showPreview();
-    } else {
-      const slot = pendingSlot !== null && pendingSlot !== undefined ? pendingSlot : 0;
-      photoImgs[slot] = resized;
-      zooms[slot] = 1; panXs[slot] = 0; panYs[slot] = 0;
-      fitStripSlot(slot);
-      updateStripSlotUI(slot);
-      updateStripCounter();
-      if (appPage === 'preview') {
-        renderPreview();
-      } else if (photoImgs.every(p => p !== null)) {
-        hasPhoto = true;
-        setTimeout(() => showPreview(), 200);
-      }
-    }
+    photoImg = resizeIfNeeded(img, 1920);
+    hasPhoto = true;
+    resizeCanvas(); fitPhoto();
+    showPreview();
   };
   img.onerror = () => { URL.revokeObjectURL(url); toast('❌ Gagal memuat foto'); };
   img.src = url;
@@ -622,31 +552,9 @@ function resizeIfNeeded(img, maxPx) {
 }
 
 function showPreview() {
-  if (currentMode === 'strip') hasPhoto = photoImgs.every(p => p !== null);
   resizeCanvas(); renderPreview();
   showPage('preview');
   requestAnimationFrame(() => updateDimPanels());
-}
-
-function updateStripSlotUI(i) {
-  const el = $(`slot-upload-${i}`);
-  const img = photoImgs[i];
-  if (img) {
-    const c = document.createElement('canvas');
-    const ratio = img.width / img.height; c.height = 80; c.width = Math.round(80 * ratio);
-    c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
-    el.innerHTML = `<img src="${c.toDataURL('image/jpeg', .7)}" class="slot-thumb-img"><div class="slot-done-label">Foto ${i + 1} ✓</div>`;
-    el.classList.add('has-photo');
-  } else {
-    el.innerHTML = `<div class="slot-upload-ic">📷</div><div class="slot-upload-lbl">Foto ${i + 1}</div>`;
-    el.classList.remove('has-photo');
-  }
-}
-
-function updateStripCounter() {
-  const count = photoImgs.filter(p => p !== null).length;
-  $('strip-upload-counter').textContent = `${count} / 3 foto dipilih`;
-  $('btn-preview-strip').disabled = count < 3;
 }
 
 // ══════════════════════════════════
@@ -654,18 +562,16 @@ function updateStripCounter() {
 // ══════════════════════════════════
 function getCanvasDims() {
   if (selFrame) return { w: selFrame.w, h: selFrame.h };
-  return currentMode === 'strip'
-    ? { w: DEFAULT_STRIP_W,  h: DEFAULT_STRIP_H  }
+  return currentMode === 'multi'
+    ? { w: DEFAULT_MULTI_W,  h: DEFAULT_MULTI_H  }
     : { w: DEFAULT_SINGLE_W, h: DEFAULT_SINGLE_H };
 }
 
-function getPhotoArea(slot) {
-  if (currentMode === 'single') {
-    const d = getCanvasDims();
-    return selFrame?.area ?? { x: 0, y: 0, w: d.w, h: d.h };
-  }
-  const areas = selFrame?.areas ?? DEFAULT_SLOTS;
-  return areas[slot] ?? DEFAULT_SLOTS[slot];
+// All slots of a multi frame share the same dimensions, so the single shared
+// transform is sized/clamped against the first slot.
+function getSlots() {
+  if (selFrame && Array.isArray(selFrame.slots) && selFrame.slots.length) return selFrame.slots;
+  return currentMode === 'multi' ? DEFAULT_MULTI_SLOTS : DEFAULT_SINGLE_SLOTS;
 }
 
 function resizeCanvas() {
@@ -674,41 +580,33 @@ function resizeCanvas() {
   canvas.width = d.w; canvas.height = d.h;
 }
 
-function fitSinglePhoto() {
+function fitPhoto() {
   if (!photoImg) return;
-  const pa = getPhotoArea(0);
-  zoom = Math.max(pa.w / photoImg.width, pa.h / photoImg.height);
+  const s = getSlots()[0];
+  zoom = Math.max(s.w / photoImg.width, s.h / photoImg.height);
   panX = 0; panY = 0;
 }
 
-function fitStripSlot(i) {
-  const img = photoImgs[i]; if (!img) return;
-  const pa = getPhotoArea(i);
-  zooms[i] = Math.max(pa.w / img.width, pa.h / img.height);
-  panXs[i] = 0; panYs[i] = 0;
+function clampPan() {
+  if (!photoImg) return;
+  const s = getSlots()[0];
+  const maxPx = Math.max(0, (photoImg.width  * zoom - s.w) / 2);
+  const maxPy = Math.max(0, (photoImg.height * zoom - s.h) / 2);
+  panX = Math.max(-maxPx, Math.min(maxPx, panX));
+  panY = Math.max(-maxPy, Math.min(maxPy, panY));
 }
 
-function refitAllPhotos() {
-  if (currentMode === 'single') { fitSinglePhoto(); }
-  else { [0, 1, 2].forEach(i => { if (photoImgs[i]) fitStripSlot(i); }); }
-}
-
-function clampPan(slot) {
-  if (currentMode === 'single') {
-    if (!photoImg) return;
-    const pa = getPhotoArea(0);
-    const maxPx = Math.max(0, (photoImg.width  * zoom - pa.w) / 2);
-    const maxPy = Math.max(0, (photoImg.height * zoom - pa.h) / 2);
-    panX = Math.max(-maxPx, Math.min(maxPx, panX));
-    panY = Math.max(-maxPy, Math.min(maxPy, panY));
-  } else {
-    const img = photoImgs[slot]; if (!img) return;
-    const pa = getPhotoArea(slot);
-    const z  = zooms[slot];
-    const maxPx = Math.max(0, (img.width  * z - pa.w) / 2);
-    const maxPy = Math.max(0, (img.height * z - pa.h) / 2);
-    panXs[slot] = Math.max(-maxPx, Math.min(maxPx, panXs[slot]));
-    panYs[slot] = Math.max(-maxPy, Math.min(maxPy, panYs[slot]));
+// Draw the photo into every slot using the single shared zoom/pan transform.
+// Single mode has one slot; multi mode replicates the same photo identically.
+function drawPhotoLayer(ctx) {
+  if (!photoImg) return;
+  for (const s of getSlots()) {
+    ctx.save();
+    ctx.beginPath(); ctx.rect(s.x, s.y, s.w, s.h); ctx.clip();
+    ctx.translate(s.x + s.w / 2 + panX, s.y + s.h / 2 + panY);
+    ctx.scale(zoom, zoom);
+    ctx.drawImage(photoImg, -photoImg.width / 2, -photoImg.height / 2);
+    ctx.restore();
   }
 }
 
@@ -718,38 +616,7 @@ function renderPreview() {
   const d      = getCanvasDims();
   ctx.clearRect(0, 0, d.w, d.h);
   ctx.fillStyle = '#060e20'; ctx.fillRect(0, 0, d.w, d.h);
-
-  if (currentMode === 'single') {
-    if (photoImg) {
-      const pa = getPhotoArea(0);
-      ctx.save();
-      ctx.beginPath(); ctx.rect(pa.x, pa.y, pa.w, pa.h); ctx.clip();
-      ctx.translate(pa.x + pa.w / 2 + panX, pa.y + pa.h / 2 + panY);
-      ctx.scale(zoom, zoom);
-      ctx.drawImage(photoImg, -photoImg.width / 2, -photoImg.height / 2);
-      ctx.restore();
-    }
-  } else {
-    for (let i = 0; i < 3; i++) {
-      const pa  = getPhotoArea(i);
-      const img = photoImgs[i];
-      if (img) {
-        ctx.save();
-        ctx.beginPath(); ctx.rect(pa.x, pa.y, pa.w, pa.h); ctx.clip();
-        ctx.translate(pa.x + pa.w / 2 + panXs[i], pa.y + pa.h / 2 + panYs[i]);
-        ctx.scale(zooms[i], zooms[i]);
-        ctx.drawImage(img, -img.width / 2, -img.height / 2);
-        ctx.restore();
-      }
-      // Gold border on active slot
-      ctx.save();
-      ctx.strokeStyle = i === activeSlot ? 'rgba(251,191,36,.65)' : 'rgba(255,255,255,.08)';
-      ctx.lineWidth   = i === activeSlot ? 5 : 2;
-      ctx.strokeRect(pa.x + 2, pa.y + 2, pa.w - 4, pa.h - 4);
-      ctx.restore();
-    }
-  }
-
+  drawPhotoLayer(ctx);
   if (frameImg) ctx.drawImage(frameImg, 0, 0, d.w, d.h);
 }
 
@@ -764,17 +631,11 @@ function updateDimPanels() {
   const sx     = rect.width  / d.w;
   const sy     = rect.height / d.h;
 
-  let minX, minY, maxX, maxY;
-  if (currentMode === 'single') {
-    const pa = getPhotoArea(0);
-    minX = pa.x; minY = pa.y; maxX = pa.x + pa.w; maxY = pa.y + pa.h;
-  } else {
-    const areas = selFrame?.areas ?? DEFAULT_SLOTS;
-    minX = Math.min(...areas.map(a => a.x));
-    minY = Math.min(...areas.map(a => a.y));
-    maxX = Math.max(...areas.map(a => a.x + a.w));
-    maxY = Math.max(...areas.map(a => a.y + a.h));
-  }
+  const slots = getSlots();
+  const minX = Math.min(...slots.map(s => s.x));
+  const minY = Math.min(...slots.map(s => s.y));
+  const maxX = Math.max(...slots.map(s => s.x + s.w));
+  const maxY = Math.max(...slots.map(s => s.y + s.h));
 
   const left   = rect.left + minX * sx;
   const top    = rect.top  + minY * sy;
@@ -796,38 +657,19 @@ function screenToCanvas(dScreen) {
   return dScreen * (getCanvasDims().w / rect.width);
 }
 
-function getSlotAtPoint(clientX, clientY) {
-  if (currentMode !== 'strip') return 0;
-  const canvas = $('preview-canvas');
-  const rect   = canvas.getBoundingClientRect();
-  const d      = getCanvasDims();
-  const cx     = (clientX - rect.left) * (d.w / rect.width);
-  const cy     = (clientY - rect.top)  * (d.h / rect.height);
-  const areas  = selFrame?.areas ?? DEFAULT_SLOTS;
-  for (let i = 0; i < areas.length; i++) {
-    const a = areas[i];
-    if (cx >= a.x && cx <= a.x + a.w && cy >= a.y && cy <= a.y + a.h) return i;
-  }
-  return activeSlot;
-}
-
 const previewCanvas = $('preview-canvas');
 
 previewCanvas.addEventListener('mousedown', e => {
   if (appPage !== 'preview') return;
-  const slot = getSlotAtPoint(e.clientX, e.clientY);
-  if (currentMode === 'strip' && slot !== activeSlot) { activeSlot = slot; renderPreview(); }
   isDragging = true; lastX = e.clientX; lastY = e.clientY;
   e.preventDefault();
 });
 window.addEventListener('mousemove', e => {
   if (!isDragging) return;
-  const dx = screenToCanvas(e.clientX - lastX);
-  const dy = screenToCanvas(e.clientY - lastY);
+  panX += screenToCanvas(e.clientX - lastX);
+  panY += screenToCanvas(e.clientY - lastY);
   lastX = e.clientX; lastY = e.clientY;
-  if (currentMode === 'single') { panX += dx; panY += dy; clampPan(0); }
-  else { panXs[activeSlot] += dx; panYs[activeSlot] += dy; clampPan(activeSlot); }
-  renderPreview();
+  clampPan(); renderPreview();
 });
 window.addEventListener('mouseup', () => { isDragging = false; });
 
@@ -835,22 +677,14 @@ previewCanvas.addEventListener('wheel', e => {
   if (appPage !== 'preview') return;
   e.preventDefault();
   const delta = e.deltaY > 0 ? -0.1 : 0.1;
-  if (currentMode === 'single') {
-    zoom = Math.max(0.5, Math.min(5, zoom + delta));
-    clampPan(0);
-  } else {
-    zooms[activeSlot] = Math.max(0.5, Math.min(5, zooms[activeSlot] + delta));
-    clampPan(activeSlot);
-  }
-  renderPreview();
+  zoom = Math.max(0.5, Math.min(5, zoom + delta));
+  clampPan(); renderPreview();
 }, { passive: false });
 
 previewCanvas.addEventListener('touchstart', e => {
   if (appPage !== 'preview') return;
   e.preventDefault();
   if (e.touches.length === 1) {
-    const slot = getSlotAtPoint(e.touches[0].clientX, e.touches[0].clientY);
-    if (currentMode === 'strip' && slot !== activeSlot) { activeSlot = slot; renderPreview(); }
     isDragging = true; lastX = e.touches[0].clientX; lastY = e.touches[0].clientY;
   } else if (e.touches.length === 2) {
     isDragging = false;
@@ -865,22 +699,18 @@ previewCanvas.addEventListener('touchmove', e => {
   if (appPage !== 'preview') return;
   e.preventDefault();
   if (e.touches.length === 1 && isDragging) {
-    const dx = screenToCanvas(e.touches[0].clientX - lastX);
-    const dy = screenToCanvas(e.touches[0].clientY - lastY);
+    panX += screenToCanvas(e.touches[0].clientX - lastX);
+    panY += screenToCanvas(e.touches[0].clientY - lastY);
     lastX = e.touches[0].clientX; lastY = e.touches[0].clientY;
-    if (currentMode === 'single') { panX += dx; panY += dy; clampPan(0); }
-    else { panXs[activeSlot] += dx; panYs[activeSlot] += dy; clampPan(activeSlot); }
-    renderPreview();
+    clampPan(); renderPreview();
   } else if (e.touches.length === 2) {
     const dist = Math.hypot(
       e.touches[0].clientX - e.touches[1].clientX,
       e.touches[0].clientY - e.touches[1].clientY
     );
     if (pinchDist > 0) {
-      const ratio = dist / pinchDist;
-      if (currentMode === 'single') { zoom = Math.max(0.5, Math.min(5, zoom * ratio)); clampPan(0); }
-      else { zooms[activeSlot] = Math.max(0.5, Math.min(5, zooms[activeSlot] * ratio)); clampPan(activeSlot); }
-      renderPreview();
+      zoom = Math.max(0.5, Math.min(5, zoom * (dist / pinchDist)));
+      clampPan(); renderPreview();
     }
     pinchDist = dist;
   }
@@ -931,32 +761,7 @@ function composeFinal() {
   const c = document.createElement('canvas'); c.width = d.w; c.height = d.h;
   const ctx = c.getContext('2d');
   ctx.fillStyle = '#060e20'; ctx.fillRect(0, 0, d.w, d.h);
-
-  if (currentMode === 'single') {
-    if (photoImg) {
-      const pa = getPhotoArea(0);
-      ctx.save();
-      ctx.beginPath(); ctx.rect(pa.x, pa.y, pa.w, pa.h); ctx.clip();
-      ctx.translate(pa.x + pa.w / 2 + panX, pa.y + pa.h / 2 + panY);
-      ctx.scale(zoom, zoom);
-      ctx.drawImage(photoImg, -photoImg.width / 2, -photoImg.height / 2);
-      ctx.restore();
-    }
-  } else {
-    for (let i = 0; i < 3; i++) {
-      const pa  = getPhotoArea(i);
-      const img = photoImgs[i];
-      if (img) {
-        ctx.save();
-        ctx.beginPath(); ctx.rect(pa.x, pa.y, pa.w, pa.h); ctx.clip();
-        ctx.translate(pa.x + pa.w / 2 + panXs[i], pa.y + pa.h / 2 + panYs[i]);
-        ctx.scale(zooms[i], zooms[i]);
-        ctx.drawImage(img, -img.width / 2, -img.height / 2);
-        ctx.restore();
-      }
-    }
-  }
-
+  drawPhotoLayer(ctx);
   if (frameImg) ctx.drawImage(frameImg, 0, 0, d.w, d.h);
   return c;
 }
